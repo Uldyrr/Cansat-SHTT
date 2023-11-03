@@ -12,7 +12,7 @@ mpu: MPU6050 = MPU6050(I2C(1, sda=Pin(26), scl=Pin(27)))
 bmp: BMP280 = BMP280(I2C(1, sda=Pin(26), scl=Pin(27), freq=200000))
 
 # // Components
-gpsSerialBus: UART = UART(0, tx = Pin(4), rx = Pin(5))
+gpsSerialBus: UART = UART(0, 9600, tx = Pin(4), rx = Pin(5)).init()
 gps: MicropyGPS = MicropyGPS()
 
 # // Sensor data
