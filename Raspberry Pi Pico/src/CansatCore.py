@@ -1,5 +1,6 @@
-from __future__ import annotations
-from machine import ADC, UART
+import utime
+import _thread
+from machine import Pin, ADC, UART
 from imu import MPU6050
 from bmp280 import BMP280
 from micropyGPS import MicropyGPS
@@ -7,8 +8,12 @@ from vector3d import Vector3d
 
 
 # Module values
+# // Values
+__alarmBuzzerRunning: bool = False
+
 # // Sensors
 __builtInTemperatureSensor: ADC = ADC(4)
+__alarmBuzzer: Pin = Pin(20)
 
 # // Constants
 CANSAT_UPDATEHZ: float = 1 / 5  # Hz
@@ -19,6 +24,9 @@ PRESSURE_SEALEVEL: float = 1013.25  # hPa
 LORA_FIXEDMODE: bool = False  # True if set to Fixedmode (specific reciever). False if set to Transparent (all recievers)
 LORA_FIXEDMODE_ADDRESS: dict = {"Address1": 0x07, "Address2": 0xD2}  # The two seperate int8 (byte) addresses of the reciever that is supposed to acquire the message
 LORA_FIXEDMODE_CHANNEL: int = 0x17  # The channel at which to send the message (signal) at
+
+BUZZER_ALARM_HZ: int = 2000  # The frequency at which the buzzer will play
+BUZZER_MICROSECONDS: int = 1000000  # 1 / 1000 (ms) / 1000 (us)
 
 
 def GetBuiltInTemperature() -> float:
@@ -37,7 +45,9 @@ def GetBuiltInTemperature() -> float:
 
 def GetAltitude(airPressurehPa: float, airTemperatureKelvin: float) -> float:
     """
-    Gets the current altitude using the Hypsometric equation (Max height above sea level: ~11km)
+    Gets the current altitude using the Hypsometric equation
+
+    .. note:: Max height above sea level: ~11km
 
     :param float airPressurehPa: The air pressure in hectopascals
     :param float airTemperatureKelvin: The air temperature in kelvin
@@ -57,7 +67,7 @@ def GetMPUAccelerationGyroTemp(mpu: MPU6050, bmp: BMP280, mpuData: dict) -> tupl
     :param MPU6050 mpu: The mpu6050 sensor connected to the cansat
     :param BMP280 bmp: The bmp280 sensor connected to the cansat
     :param dict mpuData: A dictionary that will be updated to the mpu and bmp's data with keys "Acceleration", "Gyroscope", "Temperature"
-    :return: Returns the acceleration data, gyroscope data, and air temperature data
+    :return: Returns the acceleration, gyroscope, and air temperature data
     """
 
     accelerationData: Vector3d = mpu.accel
@@ -86,8 +96,8 @@ def GetBMPPressureAltitude(bmp: BMP280, airTemperature: float) -> tuple[float, f
     """
     Gets the current pressure and uses it to calculate the cansat's current altitude
 
-    :param bmp: The bmp280 sensor connected to the cansat
-    :param airTemperature: The air temperature measured by the cansat
+    :param BMP280 bmp: The bmp280 sensor connected to the cansat
+    :param float airTemperature: The air temperature in Celsius measured by the cansat
     :return: Returns the air pressure measured in Pascals and the current altitude of the cansat
     """
 
@@ -105,12 +115,12 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
     """
     Uses the cansat's gps module to get the current latitude and longitude of the cansat
 
-    :param gps: The MicropyGPS object of the gps module component (Neo-7m) connected to the cansat
-    :param gpsSerialBus: The UART Serial Bus Communication object to use with reading the gps data
+    :param MicropyGPS gps: The MicropyGPS object of the gps module component (Neo-7m) connected to the cansat
+    :param UART gpsSerialBus: The UART Serial Bus Communication object to use with reading the gps data
     :return: The latitude and longitude data from the gps
     """
 
-    gpsMessage: bytes | None = gpsSerialBus.readline()
+    gpsMessage: any = gpsSerialBus.readline()
 
     # Update the MicropyGPS object with data from the gps module component
     if gpsMessage:
@@ -123,15 +133,55 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
 def LoRaSendMessage(loRaSerialBus: UART, message: str):
     """
     Sends a message using a long range (LoRa) radio component in either of the modes Fixedmode or Transparent
-    
-    :param loRaSerialBus: The UART Serial Bus Communication object to use with sending the given message
-    :param message: The message to send to a long range (LoRa) radio component reciever
+
+    :param UART loRaSerialBus: The UART Serial Bus Communication object to use with sending the given message
+    :param str message: The message to send to a long range (LoRa) radio component reciever
     """
-    
-    loRaData: str | bytes = message
+
+    loRaData: any = message
 
     if LORA_FIXEDMODE:  # Send to a specific reciever by providing an address and a channel
         loRaData = bytes([LORA_FIXEDMODE_ADDRESS["Address1"], LORA_FIXEDMODE_ADDRESS["Address2"], LORA_FIXEDMODE_CHANNEL, message])
 
     loRaSerialBus.write(loRaData)
-    
+
+
+def __AlarmBuzzerUpdate():
+    """
+    Toggles the power of the alarm buzzer in a fashion that creates a sound with a particular frequency.
+
+    .. note:: The function's while loop update will stop when the alarm buzzer's running state is set to False
+
+    .. seealso:: SetAlarmBuzzerState(alarmState: bool)
+    """
+
+    global __alarmBuzzerRunning, __alarmBuzzer
+
+    alarmBuzzerSleepTime: int = int(BUZZER_MICROSECONDS / BUZZER_ALARM_HZ / 2)
+
+    while __alarmBuzzerRunning:
+        __alarmBuzzer.value(1)
+        utime.sleep_us(alarmBuzzerSleepTime)
+
+        __alarmBuzzer.value(0)
+        utime.sleep_us(alarmBuzzerSleepTime)
+
+
+def SetAlarmBuzzerState(alarmState: bool):
+    """
+    Sets the running state of the cansat's alarm buzzer to a given state.
+
+    .. note:: This function creates a new thread when the running state is true!
+
+    :param bool alarmState: The boolean value the running state of the alarm buzzer will be set to
+    """
+
+    global __alarmBuzzerRunning
+
+    if alarmState and __alarmBuzzerRunning is False:
+        __alarmBuzzerRunning = True
+
+        _thread.start_new_thread(__AlarmBuzzerUpdate, ())
+    elif alarmState is False and __alarmBuzzerRunning:
+        __alarmBuzzerRunning = False
+
