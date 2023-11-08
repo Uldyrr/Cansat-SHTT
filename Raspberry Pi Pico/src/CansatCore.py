@@ -106,7 +106,7 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
     Uses the cansat's gps module to get the current latitude and longitude of the cansat
 
     :param gps: The MicropyGPS object of the gps module component (Neo-7m) connected to the cansat
-    :param gpsSerialBus: The UART Serial Bus Communication object used to read the gps data
+    :param gpsSerialBus: The UART Serial Bus Communication object to use with reading the gps data
     :return: The latitude and longitude data from the gps
     """
 
@@ -121,10 +121,17 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
 
 
 def LoRaSendMessage(loRaSerialBus: UART, message: str):
+    """
+    Sends a message using a long range (LoRa) radio component in either of the modes Fixedmode or Transparent
+    
+    :param loRaSerialBus: The UART Serial Bus Communication object to use with sending the given message
+    :param message: The message to send to a long range (LoRa) radio component reciever
+    """
+    
     loRaData: str | bytes = message
 
     if LORA_FIXEDMODE:  # Send to a specific reciever by providing an address and a channel
         loRaData = bytes([LORA_FIXEDMODE_ADDRESS["Address1"], LORA_FIXEDMODE_ADDRESS["Address2"], LORA_FIXEDMODE_CHANNEL, message])
 
     loRaSerialBus.write(loRaData)
-
+    
