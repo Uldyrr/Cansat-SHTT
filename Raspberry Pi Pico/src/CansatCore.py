@@ -11,10 +11,14 @@ from vector3d import Vector3d
 __builtInTemperatureSensor: ADC = ADC(4)
 
 # // Constants
-CANSAT_UPDATEHZ: float = 1 / 5  # hz
-CANSAT_ALTITUDECORRECTION: float = 120.0  # m
+CANSAT_UPDATEHZ: float = 1 / 5  # Hz
+CANSAT_ALTITUDECORRECTION: float = 120.0  # M
 
 PRESSURE_SEALEVEL: float = 1013.25  # hPa
+
+LORA_FIXEDMODE: bool = False  # True if set to Fixedmode (specific reciever). False if set to Transparent (all recievers)
+LORA_FIXEDMODE_ADDRESS: dict = {"Address1": 0x07, "Address2": 0xD2}  # The two seperate int8 (byte) addresses of the reciever that is supposed to acquire the message
+LORA_FIXEDMODE_CHANNEL: int = 0x17  # The channel at which to send the message (signal) at
 
 
 def GetBuiltInTemperature() -> float:
@@ -114,3 +118,13 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
             gps.update(chr(char))
 
     return gps.latitude, gps.longitude
+
+
+def LoRaSendMessage(loRaSerialBus: UART, message: str):
+    loRaData: str | bytes = message
+
+    if LORA_FIXEDMODE:  # Send to a specific reciever by providing an address and a channel
+        loRaData = bytes([LORA_FIXEDMODE_ADDRESS["Address1"], LORA_FIXEDMODE_ADDRESS["Address2"], LORA_FIXEDMODE_CHANNEL, message])
+
+    loRaSerialBus.write(loRaData)
+
