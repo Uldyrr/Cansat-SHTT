@@ -1,0 +1,24 @@
+import utime
+from machine import UART, Pin
+from lora_e32 import LoRaE32
+
+
+loRaSerialBus: UART = UART(0, 9600, tx=Pin(16), rx=Pin(17))
+loRa: LoRaE32 = LoRaE32("433T30D", loRaSerialBus)
+led = Pin(25, Pin.OUT)
+ledDebounce = True
+ 
+
+while True:
+    ledDebounce = not ledDebounce
+    
+    if ledDebounce or loRa.available() > 0:
+        led.value(1)
+    else:
+        led.value(0)
+        
+    print(loRa.available())
+    
+    utime.sleep(1)
+    
+
