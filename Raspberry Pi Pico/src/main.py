@@ -3,6 +3,7 @@ from machine import Pin, UART, I2C, ADC
 from imu import MPU6050
 from bmp280 import *
 from micropyGPS import MicropyGPS
+from lora_e32 import LoRaE32
 import time
 
 # Values
@@ -13,9 +14,10 @@ mpu: MPU6050 = MPU6050(I2C(1, sda=Pin(26), scl=Pin(27)))
 bmp: BMP280 = BMP280(I2C(1, sda=Pin(26), scl=Pin(27)))
 
 # // Components
-loRaSerialBus: UART = UART(1, 9600, tx=Pin(8), rx=Pin(9))
-gpsSerialBus: UART = UART(1, 9600, tx=Pin(4), rx=Pin(5))
+gpsSerialBus: UART = UART(1, tx=Pin(4), rx=Pin(5))
 gps: MicropyGPS = MicropyGPS()
+loRaSerialBus: UART = UART(1, tx=Pin(8), rx=Pin(9))
+loRa: LoRaE32 = LoRaE32("433T30D", loRaSerialBus, aux_pin=15, m0_pin=21, m1_pin=19)
 
 # // Sensor data
 mpuData: dict = {}
@@ -31,12 +33,12 @@ def MainCycle():
     global alarmBuzzerDebounce
 
     while True:
-        accelerationData, gyroData, airTemperatureData = GetMPUAccelerationGyroTemp(mpu, bmp, mpuData)
-        airPressureData, altitudeData = GetBMPPressureAltitude(bmp, airTemperatureData)
-        gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(gps, gpsSerialBus)
+        #accelerationData, gyroData, airTemperatureData = GetMPUAccelerationGyroTemp(mpu, bmp, mpuData)
+        #airPressureData, altitudeData = GetBMPPressureAltitude(bmp, airTemperatureData)
+        #gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(gps, gpsSerialBus)
 
         # print(mpuData)
-        print(f"Latitude: {gpsLatitude}, Longitude: {gpsLongitude}")
+        # print(f"Latitude: {gpsLatitude}, Longitude: {gpsLongitude}")
         # print("Air Temperature: {}C".format(airTemperatureData))
         # print("Pressure: {} Pa".format(airPressureData))
         # print("Altitude:", altitudeData)
@@ -50,5 +52,3 @@ def MainCycle():
 
 Init()
 MainCycle()
-
-
