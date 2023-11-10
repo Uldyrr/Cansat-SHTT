@@ -4,6 +4,7 @@ from machine import Pin, ADC, UART
 from imu import MPU6050
 from bmp280 import BMP280
 from micropyGPS import MicropyGPS
+from lora_e32 import LoRaE32
 from vector3d import Vector3d
 
 
@@ -13,7 +14,7 @@ __alarmBuzzerRunning: bool = False
 
 # // Sensors
 __builtInTemperatureSensor: ADC = ADC(4)
-__alarmBuzzer: Pin = Pin(20)
+__alarmBuzzer: Pin = Pin(20, Pin.OUT)
 
 # // Constants
 CANSAT_UPDATEHZ: float = 1 / 5  # Hz
@@ -21,11 +22,10 @@ CANSAT_ALTITUDECORRECTION: float = 120.0  # M
 
 PRESSURE_SEALEVEL: float = 1013.25  # hPa
 
-LORA_FIXEDMODE: bool = False  # True if set to Fixedmode (specific reciever). False if set to Transparent (all recievers)
-LORA_FIXEDMODE_ADDRESS: dict = {"Address1": 0x07, "Address2": 0xD2}  # The two seperate int8 (byte) addresses of the reciever that is supposed to acquire the message
-LORA_FIXEDMODE_CHANNEL: int = 0x17  # The channel at which to send the message (signal) at
+LORA_ADDRESS: int = 0x2  # The two seperate int8 (byte) addresses of the reciever that is supposed to acquire the message
+LORA_CHANNEL: int = 0x17  # The channel at which to send the message (signal) at
 
-BUZZER_ALARM_HZ: int = 2000  # The frequency at which the buzzer will play
+BUZZER_ALARM_HZ: int = 800  # The frequency at which the buzzer will play
 BUZZER_MICROSECONDS: int = 1000000  # 1 / 1000 (ms) / 1000 (us)
 
 
@@ -130,20 +130,15 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
     return gps.latitude, gps.longitude
 
 
-def LoRaSendMessage(loRaSerialBus: UART, message: str):
+def LoRaSendMessage(loRa: LoRaE32, message: dict):
     """
-    Sends a message using a long range (LoRa) radio component in either of the modes Fixedmode or Transparent
+    Sends a radio message using a long range (LoRa) radio component in Fixedmode
 
-    :param UART loRaSerialBus: The UART Serial Bus Communication object to use with sending the given message
-    :param str message: The message to send to a long range (LoRa) radio component reciever
+    :param LoRaE32 loRa: The long range (LoRa) radio component to use
+    :param dict message: The dictionary message to send to a long range (LoRa) radio component reciever
     """
 
-    loRaData: any = message
-
-    if LORA_FIXEDMODE:  # Send to a specific reciever by providing an address and a channel
-        loRaData = bytes([LORA_FIXEDMODE_ADDRESS["Address1"], LORA_FIXEDMODE_ADDRESS["Address2"], LORA_FIXEDMODE_CHANNEL, message])
-
-    loRaSerialBus.write(loRaData)
+    loRa.send_fixed_dict(0, LORA_ADDRESS, LORA_CHANNEL, message)
 
 
 def __AlarmBuzzerUpdate():
