@@ -18,7 +18,7 @@ alarmBuzzerDebounce: bool = False
 # gps: MicropyGPS = MicropyGPS()
 loRaSerialBus: UART = UART(0, tx=Pin(16), rx=Pin(17))
 loRa: LoRaE32 = LoRaE32("433T30D", loRaSerialBus)
-builtInLed = Pin(25, Pin.OUT)
+builtInLed: Pin = Pin(25, Pin.OUT)
 
 # // Sensor data
 mpuData: dict = {}
@@ -51,10 +51,11 @@ def MainCycle():
         LoRaSendMessage(loRa, {'temp': 20, 'lufttrykk': 1000})
 
         builtInLed.value(1)
-        time.sleep(CANSAT_UPDATEHZ/2)
+        time.sleep(CANSAT_UPDATEHZ/10)
         builtInLed.value(0)
-        time.sleep(CANSAT_UPDATEHZ/2)
+        time.sleep(CANSAT_UPDATEHZ - CANSAT_UPDATEHZ/10)
 
 
 # Init()
 MainCycle()
+
