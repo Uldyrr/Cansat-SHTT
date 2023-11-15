@@ -5,20 +5,22 @@ from lora_e32 import LoRaE32
 
 loRaSerialBus: UART = UART(0, 9600, tx=Pin(16), rx=Pin(17))
 loRa: LoRaE32 = LoRaE32("433T30D", loRaSerialBus)
-led = Pin(25, Pin.OUT)
-ledDebounce = True
+builtInLed = Pin(25, Pin.OUT)
  
 
 while True:
-    ledDebounce = not ledDebounce
-    
-    if ledDebounce or loRa.available() > 0:
-        led.value(1)
-    else:
-        led.value(0)
-        
     print(loRa.available())
     
-    utime.sleep(1)
+    if loRa.available() <= 0:
+        builtInLed.value(1)
+        utime.sleep(1/10)
+        builtInLed.value(0)
+        utime.sleep(1 - 1/10)
+    else:
+        builtInLed.value(1)
+        utime.sleep(1/2)
+        builtInLed.value(0)
+        utime.sleep(1/2)
+    
     
 
