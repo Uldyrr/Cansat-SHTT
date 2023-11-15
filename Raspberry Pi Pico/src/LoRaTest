@@ -9,6 +9,7 @@ loRa: LoRaE32 = LoRaE32("433T30D", loRaSerialBus)
 loRaAux: Pin = Pin(18, Pin.IN)
 builtInLed = Pin(25, Pin.OUT)
 
+
 for x in range(10):
     builtInLed.value(1)
     utime.sleep_ms(50)
@@ -54,7 +55,4 @@ while True:
 
         print(value)
 
-        utime.sleep_ms(1000)
-
-
-
+        utime.sleep(1)
