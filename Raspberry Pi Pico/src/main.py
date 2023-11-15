@@ -10,22 +10,23 @@ import time
 alarmBuzzerDebounce: bool = False
 
 # // Sensors
-#mpu: MPU6050 = MPU6050(I2C(1, sda=Pin(26), scl=Pin(27)))
-#bmp: BMP280 = BMP280(I2C(1, sda=Pin(26), scl=Pin(27)))
+# mpu: MPU6050 = MPU6050(I2C(1, sda=Pin(26), scl=Pin(27)))
+# bmp: BMP280 = BMP280(I2C(1, sda=Pin(26), scl=Pin(27)))
 
 # // Components
-#gpsSerialBus: UART = UART(1, tx=Pin(4), rx=Pin(5))
-#gps: MicropyGPS = MicropyGPS()
-loRaSerialBus: UART = UART(0, tx=Pin(8), rx=Pin(9))
+# gpsSerialBus: UART = UART(1, tx=Pin(4), rx=Pin(5))
+# gps: MicropyGPS = MicropyGPS()
+loRaSerialBus: UART = UART(0, tx=Pin(16), rx=Pin(17))
 loRa: LoRaE32 = LoRaE32("433T30D", loRaSerialBus)
+builtInLed = Pin(25, Pin.OUT)
 
 # // Sensor data
 mpuData: dict = {}
 
 
 # Init
-def Init():
-    bmp.use_case(BMP280_CASE_INDOOR)  # Innendørs
+# def Init():
+# bmp.use_case(BMP280_CASE_INDOOR)  # Innendørs
 
 
 # The heart of the CanSat
@@ -33,9 +34,9 @@ def MainCycle():
     global alarmBuzzerDebounce
 
     while True:
-        #accelerationData, gyroData, airTemperatureData = GetMPUAccelerationGyroTemp(mpu, bmp, mpuData)
-        #airPressureData, altitudeData = GetBMPPressureAltitude(bmp, airTemperatureData)
-        #gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(gps, gpsSerialBus)
+        # accelerationData, gyroData, airTemperatureData = GetMPUAccelerationGyroTemp(mpu, bmp, mpuData)
+        # airPressureData, altitudeData = GetBMPPressureAltitude(bmp, airTemperatureData)
+        # gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(gps, gpsSerialBus)
 
         # print(mpuData)
         # print(f"Latitude: {gpsLatitude}, Longitude: {gpsLongitude}")
@@ -45,10 +46,15 @@ def MainCycle():
 
         alarmBuzzerDebounce = not alarmBuzzerDebounce
 
-        SetAlarmBuzzerState(alarmBuzzerDebounce)
+        # SetAlarmBuzzerState(alarmBuzzerDebounce)
 
-        time.sleep(CANSAT_UPDATEHZ)
+        LoRaSendMessage(loRa, {'temp': 20, 'lufttrykk': 1000})
+
+        builtInLed.value(1)
+        time.sleep(CANSAT_UPDATEHZ/2)
+        builtInLed.value(0)
+        time.sleep(CANSAT_UPDATEHZ/2)
 
 
-Init()
+# Init()
 MainCycle()
