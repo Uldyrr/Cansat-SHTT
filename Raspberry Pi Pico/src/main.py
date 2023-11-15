@@ -10,14 +10,14 @@ import time
 alarmBuzzerDebounce: bool = False
 
 # // Sensors
-mpu: MPU6050 = MPU6050(I2C(1, sda=Pin(26), scl=Pin(27)))
-bmp: BMP280 = BMP280(I2C(1, sda=Pin(26), scl=Pin(27)))
+#mpu: MPU6050 = MPU6050(I2C(1, sda=Pin(26), scl=Pin(27)))
+#bmp: BMP280 = BMP280(I2C(1, sda=Pin(26), scl=Pin(27)))
 
 # // Components
-gpsSerialBus: UART = UART(1, tx=Pin(4), rx=Pin(5))
-gps: MicropyGPS = MicropyGPS()
-loRaSerialBus: UART = UART(1, tx=Pin(8), rx=Pin(9))
-loRa: LoRaE32 = LoRaE32("433T30D", loRaSerialBus, aux_pin=15, m0_pin=21, m1_pin=19)
+#gpsSerialBus: UART = UART(1, tx=Pin(4), rx=Pin(5))
+#gps: MicropyGPS = MicropyGPS()
+loRaSerialBus: UART = UART(0, tx=Pin(8), rx=Pin(9))
+loRa: LoRaE32 = LoRaE32("433T30D", loRaSerialBus)
 
 # // Sensor data
 mpuData: dict = {}
