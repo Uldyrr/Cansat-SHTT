@@ -37,9 +37,9 @@ LOW: bool = False
 
 def GetBuiltInTemperature() -> float:
     """
-    Gets the current ambient temperature using the raspberry pico pi's built-in temperature sensor
+    Gets the current ambient temperature using the  Raspberry Pi Pico's built-in temperature sensor
 
-    :return: Returns a float of the current temperature using the raspberry pico pi's built-in temperature sensor
+    :return: A float of the current temperature using the  Raspberry Pi Pico's built-in temperature sensor
     """
 
     adcValue: float = __builtInTemperatureSensor.read_u16()
@@ -57,7 +57,7 @@ def GetHypsometricAltitude(airPressurehPa: float, airTemperatureKelvin: float) -
 
     :param float airPressurehPa: The air pressure in hectopascals
     :param float airTemperatureKelvin: The air temperature in kelvin
-    :return: Returns a float of the current altitude of the cansat based on the given air pressure and temperature
+    :return: A float of the current altitude of the cansat based on the given air pressure and temperature
     """
 
     pressureRatio: float = CANSAT_SEALEVELPRESSURE / airPressurehPa
@@ -73,7 +73,7 @@ def GetMPUAccelerationGyroTemp(mpu: MPU6050, bmp: BMP280, mpuData: dict = None) 
     :param MPU6050 mpu: The mpu6050 sensor connected to the cansat
     :param BMP280 bmp: The bmp280 sensor connected to the cansat
     :param dict? mpuData: A dictionary that when passed will be updated with both the mpu's and bmp's data with the given keys: "Acceleration", "Gyroscope", "Temperature"
-    :return: Returns the acceleration, gyroscope, and air temperature data
+    :return: The acceleration, gyroscope, and air temperature data
     """
 
     accelerationData: Vector3d = mpu.accel
@@ -105,7 +105,7 @@ def GetBMPPressureAltitude(bmp: BMP280, airTemperature: float) -> tuple[float, f
 
     :param BMP280 bmp: The bmp280 sensor connected to the cansat
     :param float airTemperature: The air temperature in Celsius measured by the cansat
-    :return: Returns the air pressure measured in Pascals and the current altitude of the cansat
+    :return: The air pressure measured in Pascals and the current altitude of the cansat
     """
 
     airPressureData: float = bmp.pressure  # Pa
