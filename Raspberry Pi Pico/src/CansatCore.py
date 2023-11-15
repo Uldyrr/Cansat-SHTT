@@ -22,7 +22,7 @@ CANSAT_ALTITUDECORRECTION: float = 120.0  # M
 
 PRESSURE_SEALEVEL: float = 1013.25  # hPa
 
-LORA_ADDRESS: int = 0x2  # The two seperate int8 (byte) addresses of the reciever that is supposed to acquire the message
+LORA_ADDRESS: int = 0x6  # The two seperate int8 (byte) addresses of the reciever that is supposed to acquire the message
 LORA_CHANNEL: int = 0x17  # The channel at which to send the message (signal) at
 
 BUZZER_ALARM_HZ: int = 800  # The frequency at which the buzzer will play
@@ -179,4 +179,3 @@ def SetAlarmBuzzerState(alarmState: bool):
         _thread.start_new_thread(__AlarmBuzzerUpdate, ())
     elif alarmState is False and __alarmBuzzerRunning:
         __alarmBuzzerRunning = False
-
