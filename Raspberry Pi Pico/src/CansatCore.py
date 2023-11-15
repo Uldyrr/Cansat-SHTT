@@ -15,9 +15,10 @@ __alarmBuzzerRunning: bool = False
 # // Sensors
 __builtInTemperatureSensor: ADC = ADC(4)
 __alarmBuzzer: Pin = Pin(20, Pin.OUT)
+# TODO: Add builtin led code!
 
 # // Constants
-CANSAT_UPDATEHZ: float = 1 / 5  # Hz
+CANSAT_UPDATEHZ: float = 1  # Hz
 CANSAT_ALTITUDECORRECTION: float = 120.0  # M
 
 PRESSURE_SEALEVEL: float = 1013.25  # hPa
@@ -179,3 +180,4 @@ def SetAlarmBuzzerState(alarmState: bool):
         _thread.start_new_thread(__AlarmBuzzerUpdate, ())
     elif alarmState is False and __alarmBuzzerRunning:
         __alarmBuzzerRunning = False
+
