@@ -206,4 +206,3 @@ def ToggleAlarmBuzzerState(alarmState: bool = None):
         _thread.start_new_thread(__AlarmBuzzerUpdate, ())
     elif alarmState is False and __alarmBuzzerRunning:
         __alarmBuzzerRunning = False
-
