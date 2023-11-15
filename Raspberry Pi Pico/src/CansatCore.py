@@ -37,9 +37,9 @@ LOW: bool = False
 
 def GetBuiltInTemperature() -> float:
     """
-    Gets the current ambient temperature using the  Raspberry Pi Pico's built-in temperature sensor
+    Gets the current ambient temperature using the Raspberry Pi Pico's built-in temperature sensor
 
-    :return: A float of the current temperature using the  Raspberry Pi Pico's built-in temperature sensor
+    :return: A float of the current temperature using the Raspberry Pi Pico's built-in temperature sensor
     """
 
     adcValue: float = __builtInTemperatureSensor.read_u16()
