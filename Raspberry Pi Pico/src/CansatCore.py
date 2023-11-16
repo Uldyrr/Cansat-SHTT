@@ -170,7 +170,7 @@ def __AlarmBuzzerUpdate():
 
     .. note:: The function's while loop update will stop when the alarm buzzer's running state is set to False
 
-    .. seealso:: ToggleAlarmBuzzerState(alarmState: bool)
+    .. seealso:: ToggleAlarmBuzzer(alarmState: bool)
     """
 
     global __alarmBuzzerRunning, __alarmBuzzer
@@ -185,7 +185,7 @@ def __AlarmBuzzerUpdate():
         utime.sleep_us(alarmBuzzerSleepTime)
 
 
-def ToggleAlarmBuzzerState(alarmState: bool = None):
+def ToggleAlarmBuzzer(alarmState: bool = None):
     """
     Toggles the running state of the cansat's alarm buzzer to a given state
 
