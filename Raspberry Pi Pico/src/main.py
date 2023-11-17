@@ -38,7 +38,7 @@ def MainCycle():
         # airPressureData, altitudeData = GetBMPPressureAltitude(bmp, airTemperatureData)
         # gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(gps, gpsSerialBus)
 
-        print(LoRaSendDictData(loRa, {'temp': 20, 'lufttrykk': 1000}))
+        print(LoRaSendDictData(loRa, {'Arbitrary': "Data"}))
 
         utime.sleep(CANSAT_UPDATEHZ)
 
