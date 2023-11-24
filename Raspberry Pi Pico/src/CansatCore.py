@@ -2,11 +2,9 @@ from machine import Pin, ADC, UART
 from imu import MPU6050
 from bmp280 import BMP280
 from micropyGPS import MicropyGPS
-from lora_e32 import LoRaE32
-from lora_e32_operation_constant import ResponseStatusCode
 from vector3d import Vector3d
-import utime
 import _thread
+import utime
 
 
 # Module values
@@ -14,22 +12,21 @@ import _thread
 __alarmBuzzerRunning: bool = False  # Used in relation with the cansat's alarm buzzer
 
 # // Sensors
-__builtInTemperatureSensor: ADC = ADC(4)
+class __Sensors():
+    BuiltInTemperatureSensor: ADC = ADC(4)
 
 # // Components
-__builtInLed: Pin = Pin(25, Pin.OUT)
-__alarmBuzzer: Pin = Pin(20, Pin.OUT)
+class __Components():
+    BuiltInLed: Pin = Pin(25, Pin.OUT)
+    AlarmBuzzer: Pin = Pin(20, Pin.OUT)
 
 # // Constants
 CANSAT_UPDATEHZ: float = 1  # Hz
 CANSAT_ALTITUDECORRECTION: float = 120.0  # M
 CANSAT_SEALEVELPRESSURE: float = 1013.25  # hPa
 
-LORA_ADDRESS: int = 0x5  # An int8 (byte) address of the reciever that is supposed to acquire the message in Fixedmode
-LORA_CHANNEL: int = 0x17  # The channel (Frequency) at which to send the message at
-
 BUZZER_ALARM_HZ: int = 800  # The frequency at which the buzzer will play
-BUZZER_MICROSECONDS: int = 1000000  # 1 / 1000 (ms) / 1000 (us)
+BUZZER_MICROSECONDS: int = 1_000_000  # 1 / 1000 (ms) / 1000 (us)
 
 HIGH: bool = True
 LOW: bool = False
@@ -42,7 +39,7 @@ def GetBuiltInTemperature() -> float:
     :return: A float of the current temperature using the Raspberry Pi Pico's built-in temperature sensor
     """
 
-    adcValue: float = __builtInTemperatureSensor.read_u16()
+    adcValue: float = __Sensors.BuiltInTemperatureSensor.read_u16()
     voltage: float = (3.3 / 65535) * adcValue
     temperature: float = 27 - (voltage - 0.706) / 0.001721
 
@@ -137,19 +134,6 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
     return gps.latitude, gps.longitude
 
 
-def LoRaSendDictData(loRa: LoRaE32, dictData: dict) -> str:
-    """
-    Sends a dictionary through radio using a long range (LoRa) radio component in Fixedmode
-
-    :param LoRaE32 loRa: The long range (LoRa) radio component to use with transmitting the data
-    :param dict dictData: The dictionary data to send over to a long range (LoRa) radio component reciever
-    :return: The string ResponseStatusCode enum code
-    """
-
-    return ResponseStatusCode.get_description(loRa.send_fixed_dict(0, LORA_ADDRESS, LORA_CHANNEL, dictData))
-
-
-
 def ToggleBuiltInLed(ledState: bool = None):
     """
     Toggles the Raspberry Pi Pico's built-in LED on or off
@@ -159,9 +143,9 @@ def ToggleBuiltInLed(ledState: bool = None):
 
     # Inverse the current power state of the built-in LED
     if ledState is None:
-        ledState = not __builtInLed.value()
+        ledState = not __Components.BuiltInLed.value()
 
-    __builtInLed.value(ledState)
+    __Components.BuiltInLed.value(ledState)
 
 
 def __AlarmBuzzerUpdate():
@@ -173,15 +157,12 @@ def __AlarmBuzzerUpdate():
     .. seealso:: ToggleAlarmBuzzer(alarmState: bool)
     """
 
-    global __alarmBuzzerRunning, __alarmBuzzer
+    global __alarmBuzzerRunning
 
     alarmBuzzerSleepTime: int = int(BUZZER_MICROSECONDS / BUZZER_ALARM_HZ / 2)
 
     while __alarmBuzzerRunning:
-        __alarmBuzzer.value(1)
-        utime.sleep_us(alarmBuzzerSleepTime)
-
-        __alarmBuzzer.value(0)
+        __Components.AlarmBuzzer.value(not __Components.AlarmBuzzer.value())
         utime.sleep_us(alarmBuzzerSleepTime)
 
 
