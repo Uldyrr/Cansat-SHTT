@@ -12,11 +12,11 @@ import utime
 _alarmBuzzerRunning: bool = False  # Used in relation with the cansat's alarm buzzer
 
 # // Sensors
-class _Sensors():
+class _sensors:
     BuiltInTemperatureSensor: ADC = ADC(4)
 
 # // Components
-class _Components():
+class _components:
     BuiltInLed: Pin = Pin(25, Pin.OUT)
     AlarmBuzzer: Pin = Pin(20, Pin.OUT)
 
@@ -39,7 +39,7 @@ def GetBuiltInTemperature() -> float:
     :return: A float of the current temperature using the Raspberry Pi Pico's built-in temperature sensor
     """
 
-    adcValue: float = _Sensors.BuiltInTemperatureSensor.read_u16()
+    adcValue: float = _sensors.BuiltInTemperatureSensor.read_u16()
     voltage: float = (3.3 / 65535) * adcValue
     temperature: float = 27 - (voltage - 0.706) / 0.001721
 
@@ -143,9 +143,9 @@ def ToggleBuiltInLed(ledState: bool = None):
 
     # Inverse the current power state of the built-in LED
     if ledState is None:
-        ledState = not _Components.BuiltInLed.value()
+        ledState = not _components.BuiltInLed.value()
 
-    _Components.BuiltInLed.value(ledState)
+    _components.BuiltInLed.value(ledState)
 
 
 def __AlarmBuzzerUpdate():
@@ -157,12 +157,12 @@ def __AlarmBuzzerUpdate():
     .. seealso:: ToggleAlarmBuzzer(alarmState: bool)
     """
 
-    global __alarmBuzzerRunning
+    global _alarmBuzzerRunning
 
     alarmBuzzerSleepTime: int = int(BUZZER_MICROSECONDS / BUZZER_ALARM_HZ / 2)
 
-    while __alarmBuzzerRunning:
-        _Components.AlarmBuzzer.value(not _Components.AlarmBuzzer.value())
+    while _alarmBuzzerRunning:
+        _components.AlarmBuzzer.value(not _components.AlarmBuzzer.value())
         utime.sleep_us(alarmBuzzerSleepTime)
 
 
@@ -175,15 +175,15 @@ def ToggleAlarmBuzzer(alarmState: bool = None):
     :param bool alarmState: A boolean value expressing the running state of the cansat's alarm buzzer. When None, the function will simply inverse the current running state
     """
 
-    global __alarmBuzzerRunning
+    global _alarmBuzzerRunning
 
     # Inverse the current running state of the alarm buzzer
     if alarmState is None:
-        alarmState = not __alarmBuzzerRunning
+        alarmState = not _alarmBuzzerRunning
 
-    if alarmState and __alarmBuzzerRunning is False:
+    if alarmState and _alarmBuzzerRunning is False:
         __alarmBuzzerRunning = True
 
         _thread.start_new_thread(__AlarmBuzzerUpdate, ())
-    elif alarmState is False and __alarmBuzzerRunning:
+    elif alarmState is False and _alarmBuzzerRunning:
         __alarmBuzzerRunning = False
