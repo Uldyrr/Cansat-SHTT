@@ -9,14 +9,14 @@ import utime
 
 # Module values
 # // Values
-__alarmBuzzerRunning: bool = False  # Used in relation with the cansat's alarm buzzer
+_alarmBuzzerRunning: bool = False  # Used in relation with the cansat's alarm buzzer
 
 # // Sensors
-class __Sensors():
+class _Sensors():
     BuiltInTemperatureSensor: ADC = ADC(4)
 
 # // Components
-class __Components():
+class _Components():
     BuiltInLed: Pin = Pin(25, Pin.OUT)
     AlarmBuzzer: Pin = Pin(20, Pin.OUT)
 
@@ -39,7 +39,7 @@ def GetBuiltInTemperature() -> float:
     :return: A float of the current temperature using the Raspberry Pi Pico's built-in temperature sensor
     """
 
-    adcValue: float = __Sensors.BuiltInTemperatureSensor.read_u16()
+    adcValue: float = _Sensors.BuiltInTemperatureSensor.read_u16()
     voltage: float = (3.3 / 65535) * adcValue
     temperature: float = 27 - (voltage - 0.706) / 0.001721
 
@@ -143,9 +143,9 @@ def ToggleBuiltInLed(ledState: bool = None):
 
     # Inverse the current power state of the built-in LED
     if ledState is None:
-        ledState = not __Components.BuiltInLed.value()
+        ledState = not _Components.BuiltInLed.value()
 
-    __Components.BuiltInLed.value(ledState)
+    _Components.BuiltInLed.value(ledState)
 
 
 def __AlarmBuzzerUpdate():
@@ -162,7 +162,7 @@ def __AlarmBuzzerUpdate():
     alarmBuzzerSleepTime: int = int(BUZZER_MICROSECONDS / BUZZER_ALARM_HZ / 2)
 
     while __alarmBuzzerRunning:
-        __Components.AlarmBuzzer.value(not __Components.AlarmBuzzer.value())
+        _Components.AlarmBuzzer.value(not _Components.AlarmBuzzer.value())
         utime.sleep_us(alarmBuzzerSleepTime)
 
 

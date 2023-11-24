@@ -17,6 +17,8 @@ class Sensors():
 class Components():
     GPSSerialBus: UART = UART(1, tx=Pin(4), rx=Pin(5))
     GPS: MicropyGPS = MicropyGPS()
+    APC220SerialBus: UART = UART(1, tx=Pin(4), rx=Pin(5))
+    APC: APC220 = APC220(APC220SerialBus)
 
 # // Sensor data
 mpuData: dict = {}
