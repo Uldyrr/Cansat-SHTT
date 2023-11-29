@@ -9,6 +9,9 @@ class APC220:
 
     @property  # Property of the private field _serialBus with only a getter
     def SerialBus(self):
+        """
+        penis
+        """
         return self._serialBus
 
     def ReadLine(self) -> str:
