@@ -12,10 +12,16 @@ class APC220:
         return self._serialBus
 
     def Read(self) -> str:
-        return self._serialBus.read().decode("utf-8")
+        bytesData = self._serialBus.read()
+        strData = "" if bytesData is None else bytesData.decode("utf-8")
+
+        return strData
 
     def ReadLine(self) -> str:
-        return self._serialBus.readline().decode("utf-8")
+        bytesData = self._serialBus.readline()
+        strData = "" if bytesData is None else bytesData.decode("utf-8")
+
+        return strData
 
     def SendDict(self, dictionary: dict):
         self._serialBus.write(str(dictionary))
