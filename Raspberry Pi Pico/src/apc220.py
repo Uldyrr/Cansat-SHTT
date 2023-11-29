@@ -12,10 +12,10 @@ class APC220:
         return self._serialBus
 
     def Read(self) -> str:
-        return self._serialBus.read()
+        return self._serialBus.read().decode("utf-8")
 
     def ReadLine(self) -> str:
-        return self._serialBus.readline()
+        return self._serialBus.readline().decode("utf-8")
 
     def SendDict(self, dictionary: dict):
         self._serialBus.write(str(dictionary))
