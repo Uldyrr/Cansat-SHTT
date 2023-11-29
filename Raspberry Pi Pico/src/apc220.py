@@ -13,13 +13,13 @@ class APC220:
 
     def Read(self) -> str:
         bytesData = self._serialBus.read()
-        strData = "" if bytesData is None else bytesData.decode("utf-8")
+        strData = None if bytesData is None else bytesData.decode("utf-8")
 
         return strData
 
     def ReadLine(self) -> str:
         bytesData = self._serialBus.readline()
-        strData = "" if bytesData is None else bytesData.decode("utf-8")
+        strData = None if bytesData is None else bytesData.decode("utf-8")
 
         return strData
 
@@ -28,3 +28,4 @@ class APC220:
 
     def SendString(self, string: str):
         self._serialBus.write(string)
+
