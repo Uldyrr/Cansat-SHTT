@@ -11,6 +11,9 @@ class APC220:
     def SerialBus(self):
         return self._serialBus
 
+    def Read(self) -> str:
+        return self._serialBus.read()
+
     def ReadLine(self) -> str:
         return self._serialBus.readline()
 
@@ -19,4 +22,3 @@ class APC220:
 
     def SendString(self, string: str):
         self._serialBus.write(string)
-
