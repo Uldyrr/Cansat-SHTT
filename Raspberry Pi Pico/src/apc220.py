@@ -27,5 +27,7 @@ class APC220:
         self._serialBus.write(str(dictionary))
 
     def SendString(self, string: str):
-        self._serialBus.write(string)
+        bytesData = bytes(string, 'utf-8')
+
+        self._serialBus.write(bytesData)
 
