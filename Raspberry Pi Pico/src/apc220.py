@@ -11,6 +11,7 @@ class APC220:
     def SerialBus(self):
         return self._serialBus
 
+    # Read methods
     def Read(self) -> str:
         bytesData = self._serialBus.read()
         strData = bytesData.decode("utf-8")
@@ -23,8 +24,9 @@ class APC220:
 
         return strData
 
-    def SendDict(self, dictionary: dict):
+    # Write methods
+    def SendDict(self, dictionary: dict) -> None:
         self._serialBus.write(str(dictionary))
 
-    def SendString(self, string: str):
+    def SendString(self, string: str) -> None:
         self._serialBus.write(string)
