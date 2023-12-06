@@ -25,8 +25,9 @@ class APC220:
         return strData
 
     # Write methods
-    def SendDict(self, dictionary: dict) -> None:
-        self._serialBus.write(str(dictionary))
+    def Send(self, data: any) -> None:
+        if data is not str:
+            data = str(data)
 
-    def SendString(self, string: str) -> None:
-        self._serialBus.write(string)
+        self._serialBus.write(data)
+
