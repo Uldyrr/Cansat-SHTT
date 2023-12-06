@@ -34,9 +34,10 @@ def MainCycle():
         utime.sleep(CANSAT_UPDATEHZ)
 
 
-# def Init():
+def Init():
+    print("Starting!\n")
     # bmp.use_case(BMP280_CASE_INDOOR)  # Indoor use
 
 
-# Init()
+Init()
 MainCycle()
