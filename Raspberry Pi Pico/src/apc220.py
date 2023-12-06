@@ -26,7 +26,8 @@ class APC220:
 
     # Write methods
     def Send(self, data: any) -> None:
-        if data is not str:
+        if type(data) is not str:
+            print("OK")
             data = str(data)
 
         self._serialBus.write(data)
