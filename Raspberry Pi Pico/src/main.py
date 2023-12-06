@@ -36,6 +36,7 @@ def MainCycle():
 
 def Init():
     print("Starting!\n")
+
     # bmp.use_case(BMP280_CASE_INDOOR)  # Indoor use
 
 
