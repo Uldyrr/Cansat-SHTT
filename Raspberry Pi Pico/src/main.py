@@ -18,7 +18,7 @@ import utime
 class components:
     #GPSSerialBus: UART = UART(1, tx=Pin(4), rx=Pin(5))
     #GPS: MicropyGPS = MicropyGPS()
-    APC: APC220 = APC220(UART(0, tx=Pin(16), rx=Pin(17)))
+    APC: APC220 = APC220(UART(0, 9600, tx=Pin(16), rx=Pin(17)))
 
 # // Sensor data
 mpuData: dict = {}
@@ -31,7 +31,7 @@ def MainCycle():
         #airPressureData, altitudeData = GetBMPPressureAltitude(sensors.BMP, airTemperatureData)
         #gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
 
-        components.APC.Send({"Test": 123})
+        components.APC.Send("Hello")
 
         utime.sleep(CANSAT_UPDATEHZ)
 
