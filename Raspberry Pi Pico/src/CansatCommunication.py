@@ -1,11 +1,6 @@
 from machine import UART
 
 
-# Values
-# // Constants
-RADIO_MAXBYTES = 256
-
-
 class APC220:
     _serialBus: UART = None
 
