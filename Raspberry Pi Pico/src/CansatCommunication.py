@@ -8,7 +8,7 @@ class APC220:
         self._serialBus = serialBus
 
     @property  # Property of the private field _serialBus with only a getter
-    def SerialBus(self):
+    def SerialBus(self) -> UART:
         return self._serialBus
 
     def Read(self) -> str:
@@ -17,8 +17,8 @@ class APC220:
 
         return strData
 
-    def Write(self, data: str) -> None:
-        self._serialBus.write(data)
+    def Write(self, data: str) -> any:
+        return self._serialBus.write(data)
 
 
 class RadioCom:
@@ -35,6 +35,6 @@ class RadioCom:
         self._radioComponent.Write(data)
 
 
-    def Read(self) -> any:
+    def Receive(self) -> any:
         return  self._radioComponent.Read()
 
