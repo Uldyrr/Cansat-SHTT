@@ -31,7 +31,7 @@ def MainCycle():
         #airPressureData, altitudeData = GetBMPPressureAltitude(sensors.BMP, airTemperatureData)
         #gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
 
-        components.Radio.Send("Test123")
+        components.Radio.Send("Test123\n")
 
         utime.sleep(CANSAT_UPDATEHZ)
 
@@ -44,4 +44,5 @@ def Init():
 
 Init()
 MainCycle()
+
 
