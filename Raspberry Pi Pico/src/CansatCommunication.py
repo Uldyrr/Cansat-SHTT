@@ -11,24 +11,30 @@ class APC220:
     def SerialBus(self):
         return self._serialBus
 
-    # Read methods
     def Read(self) -> str:
         bytesData = self._serialBus.read()
         strData = bytesData.decode("utf-8")
 
         return strData
 
-    def ReadLine(self) -> str:
-        bytesData = self._serialBus.readline()
-        strData = bytesData.decode("utf-8")
+    def Write(self, data: str) -> None:
+        self._serialBus.write(data)
 
-        return strData
 
-    # Write methods
-    def Send(self, data: any) -> None:
+class RadioCom:
+    _radioComponent: APC220 = None
+
+    def __init__(self, radioComponent: APC220):
+        self._radioComponent = radioComponent
+
+
+    def Send(self, data: any):
         if type(data) is not str:
-            print("OK")
             data = str(data)
 
-        self._serialBus.write(data)
+        self._radioComponent.Write(data)
+
+
+    def Read(self) -> any:
+        return  self._radioComponent.Read()
 
