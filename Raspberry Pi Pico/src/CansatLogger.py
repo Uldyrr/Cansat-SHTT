@@ -1,7 +1,5 @@
 import os
 
 
-def Init():
-
-
-def Log():
+class CansatLogger:
+    def __init__(self):
