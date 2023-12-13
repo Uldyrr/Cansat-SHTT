@@ -2,7 +2,7 @@ from CansatCore import *
 from machine import Pin, UART, I2C, ADC
 from imu import MPU6050
 from bmp280 import *
-from apc220 import APC220
+from CansatCommunication import APC220
 from micropyGPS import MicropyGPS
 import _thread
 import utime
