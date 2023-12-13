@@ -1,17 +1,22 @@
+from CansatLogger import CansatLogger
 from machine import UART
 
 
-class APC220:
+_cansatLogger: CansatLogger = CansatLogger()
+
+
+class RadioCom:
     _serialBus: UART = None
 
     def __init__(self, serialBus: UART):
         self._serialBus = serialBus
 
-    @property  # Property of the private field _serialBus with only a getter
-    def SerialBus(self) -> UART:
-        return self._serialBus
+    def Write(self, data: any) -> int:
+        if type(data) is not str:
+            data = str(data)
 
-    def Write(self, data: str) -> int:
+        _cansatLogger.LogData(data)
+
         return self._serialBus.write(data)
 
     def Read(self) -> str:
@@ -19,20 +24,4 @@ class APC220:
         strData = bytesData.decode("utf-8")
 
         return strData
-
-
-class RadioCom:
-    _radioComponent: APC220 = None
-
-    def __init__(self, radioComponent: APC220):
-        self._radioComponent = radioComponent
-
-    def Send(self, data: any) -> int:
-        if type(data) is not str:
-            data = str(data)
-
-        return self._radioComponent.Write(data)
-
-    def Receive(self) -> str:
-        return self._radioComponent.Read()
 
