@@ -11,7 +11,7 @@ class RadioCom:
     def __init__(self, serialBus: UART):
         self._serialBus = serialBus
 
-    def Write(self, data: any) -> int:
+    def Send(self, data: any) -> int:
         if type(data) is not str:
             data = str(data)
 
@@ -24,4 +24,5 @@ class RadioCom:
         strData = bytesData.decode("utf-8")
 
         return strData
+
 

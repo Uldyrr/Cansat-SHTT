@@ -1,4 +1,3 @@
-from os import path
 import os
 
 
@@ -9,26 +8,18 @@ LOGGER_LOGFOLDER = "Logs"
 
 # // Paths
 _workingDirectoryPath = os.getcwd()
-_logFolderPath = path.join(_workingDirectoryPath, LOGGER_LOGFOLDER)
+_logFolderPath = f"{_workingDirectoryPath}{LOGGER_LOGFOLDER}/"
 
 
 class CansatLogger:
-    _logName = path.join(_logFolderPath, f"{LOGGER_LOGNAME}1.txt")
+    _logName = ""
     _logCount = 0
 
     def __init__(self):
-        self._GetAvailableLogName()
-
-    def _GetAvailableLogName(self) -> None:
-        logId = 1
-
-        while path.exists(self._logName):
-            logId += 1
-            self._logName = path.join(_logFolderPath, f"{LOGGER_LOGNAME}{logId}.txt")
+        self._logName = f"{_logFolderPath}/{LOGGER_LOGNAME}{len(os.listdir(_logFolderPath)) + 1}.txt"
 
     def LogData(self, data: str):
         self._logCount += 1
 
-        with open(self._logName, "w") as logFile:
-            logFile.write(f"\nID: {self._logCount} | Data: {data}")
-
+        with open(self._logName, "a") as logFile:
+            logFile.write(f"ID: {self._logCount} | Data: {data}")
