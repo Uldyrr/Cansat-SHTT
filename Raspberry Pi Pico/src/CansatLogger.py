@@ -14,6 +14,7 @@ _logFolderPath = path.join(_workingDirectoryPath, LOGGER_LOGFOLDER)
 
 class CansatLogger:
     _logName = path.join(_logFolderPath, f"{LOGGER_LOGNAME}1.txt")
+    _logCount = 0
 
     def __init__(self):
         self._GetAvailableLogName()
@@ -26,6 +27,8 @@ class CansatLogger:
             self._logName = path.join(_logFolderPath, f"{LOGGER_LOGNAME}{logId}.txt")
 
     def LogData(self, data: str):
+        self._logCount += 1
+
         with open(self._logName, "w") as logFile:
-            logFile.write(f"\n{data}")
+            logFile.write(f"\nID: {self._logCount} | Data: {data}")
 
