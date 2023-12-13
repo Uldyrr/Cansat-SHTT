@@ -23,7 +23,9 @@ class CansatLogger:
 
         while path.exists(self._logName):
             logId += 1
-            self._logName = f"{LOGGER_LOGNAME}{logId}.txt"
+            self._logName = path.join(_logFolderPath, f"{LOGGER_LOGNAME}{logId}.txt")
 
     def LogData(self, data: str):
-        print("Logging not implemented!11!1!")
+        with open(self._logName, "w") as logFile:
+            logFile.write(f"\n{data}")
+
