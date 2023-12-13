@@ -1,5 +1,5 @@
 from CansatCore import *
-from CansatCommunication import APC220, RadioCom
+from CansatCommunication import RadioCom
 from machine import Pin, UART, I2C, ADC
 from imu import MPU6050
 from bmp280 import *
