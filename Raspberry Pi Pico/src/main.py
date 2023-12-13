@@ -18,11 +18,10 @@ import utime
 # // Components
 class components:
     GPSSerialBus: UART = UART(1, tx=Pin(4), rx=Pin(5))
-    GPS: MicropyGPS = MicropyGPS()
-
     APC: APC220 = APC220(UART(0, 9600, tx=Pin(16), rx=Pin(17)))
-    Radio: RadioCom = RadioCom(APC)
 
+    GPS: MicropyGPS = MicropyGPS()
+    Radio: RadioCom = RadioCom(APC)
     CansatLogger: CansatLogger = CansatLogger()
 
 
