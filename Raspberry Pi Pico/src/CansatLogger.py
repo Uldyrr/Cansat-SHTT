@@ -21,7 +21,7 @@ class CansatLogger:
     def LogData(self, data: str):
         self._logCount += 1
 
-        data = "".join(data.splitlines())
+        data = "".join(data.splitlines())#fjeijfei
 
         with open(self._logName, "a") as logFile:
             logFile.write(f"ID: {self._logCount} | Data: {data}\n")
