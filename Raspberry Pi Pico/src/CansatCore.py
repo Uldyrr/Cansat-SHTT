@@ -25,7 +25,7 @@ CANSAT_UPDATEHZ: float = 1  # Hz
 CANSAT_ALTITUDECORRECTION: float = 120.0  # M
 CANSAT_SEALEVELPRESSURE: float = 1013.25  # hPa
 
-BUZZER_ALARM_HZ: int = 800  # The frequency at which the buzzer will play
+BUZZER_ALARMHZ: int = 800  # The frequency at which the buzzer will play
 BUZZER_MICROSECONDS: int = 1_000_000  # 1 / 1000 (ms) / 1000 (us)
 
 HIGH: bool = True
@@ -159,8 +159,8 @@ def __AlarmBuzzerUpdate():
 
     global _alarmBuzzerRunning
 
-    alarmBuzzerSleepTime: int = int(BUZZER_MICROSECONDS / BUZZER_ALARM_HZ / 2)
-
+    alarmBuzzerSleepTime: int = int(BUZZER_MICROSECONDS / BUZZER_ALARMHZ / 2)
+    
     while _alarmBuzzerRunning:
         _components.AlarmBuzzer.value(not _components.AlarmBuzzer.value())
         utime.sleep_us(alarmBuzzerSleepTime)
