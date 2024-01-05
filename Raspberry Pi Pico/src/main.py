@@ -14,7 +14,7 @@ import utime
 class sensors:
     # MPU: MPU6050 = MPU6050(I2C(1, sda=Pin(26), scl=Pin(27)))
     # BMP: BMP280 = BMP280(I2C(1, sda=Pin(26), scl=Pin(27)))
-    DHT: DHT11 = DHT11(Pin())
+    DHT: DHT11 = DHT11(Pin(9))
 
 # // Components
 class components:
