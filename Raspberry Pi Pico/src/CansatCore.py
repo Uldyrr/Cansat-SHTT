@@ -1,6 +1,7 @@
 from machine import Pin, ADC, UART
 from imu import MPU6050
 from bmp280 import BMP280
+from dht import DHT11
 from micropyGPS import MicropyGPS
 from vector3d import Vector3d
 import _thread
@@ -132,6 +133,12 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
             gps.update(chr(char))
 
     return gps.latitude, gps.longitude
+
+
+def GetAirHumidity(dht: DHT11) -> float:
+    dht.measure()
+
+    return float(f"{dht.humidity():.2f}")
 
 
 def ToggleBuiltInLed(ledState: bool = None):
