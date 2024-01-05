@@ -11,10 +11,10 @@ import utime
 
 # Values
 # // Sensors
-#class sensors:
+class sensors:
     # MPU: MPU6050 = MPU6050(I2C(1, sda=Pin(26), scl=Pin(27)))
     # BMP: BMP280 = BMP280(I2C(1, sda=Pin(26), scl=Pin(27)))
-    # DHT: DHT11 = DHT11(Pin())
+    DHT: DHT11 = DHT11(Pin())
 
 # // Components
 class components:
@@ -32,8 +32,9 @@ def MainCycle():
         #accelerationData, gyroData, airTemperatureData = GetMPUAccelerationGyroTemp(sensors.MPU, sensors.BMP, mpuData)
         #airPressureData, altitudeData = GetBMPPressureAltitude(sensors.BMP, airTemperatureData)
         #gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
+        airHumidity = GetAirHumidity(sensors.DHT)
 
-        components.Radio.Send("Hello")
+        components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidity}")
 
         utime.sleep(CANSAT_UPDATEHZ)
 
