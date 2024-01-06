@@ -29,22 +29,27 @@ mpuData: dict = {}
 # The heart of the CanSat
 def MainCycle():
     while True:
-        #accelerationData, gyroData, airTemperatureData = GetMPUAccelerationGyroTemp(sensors.MPU, sensors.BMP, mpuData)
-        #airPressureData, altitudeData = GetBMPPressureAltitude(sensors.BMP, airTemperatureData)
+        #altitudeData = GetAltitude(sensors.BMP)
+        #airTemperatureData, airPressureData = GetAirTemperature(sensors.BMP), GetAirPressure(sensors.BMP)
+        #accelerationData, gyroData = GetAccelerationGyro(sensors.MPU, mpuData)
         #gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
-        airHumidity = GetAirHumidity(sensors.DHT)
+        airHumidityData = GetAirHumidity(sensors.DHT)
 
-        components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidity}")
+        components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}")
 
         utime.sleep(CANSAT_UPDATEHZ)
 
 
 def Init():
-    InitCansatCore()
-
-    print("Starting!\n")
+    print("Initializing!\n")
 
     # bmp.use_case(BMP280_CASE_INDOOR)  # Indoor use
+
+    print("Initializing CansatCore.py!\n")
+    InitCansatCore()
+
+    print("Initialized!\n")
+    print("Starting Main cycle!\n\n")
 
 
 Init()
