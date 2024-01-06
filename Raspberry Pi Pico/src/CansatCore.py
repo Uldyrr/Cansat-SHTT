@@ -34,6 +34,7 @@ HIGH: bool = True
 LOW: bool = False
 
 
+# Primary mission helper functions
 def GetBuiltInTemperature() -> float:
     """
     Gets the current ambient temperature using the Raspberry Pi Pico's built-in temperature sensor
@@ -48,7 +49,7 @@ def GetBuiltInTemperature() -> float:
     return round(temperature, 2)
 
 
-def GetHypsometricAltitude(airPressurehPa: float, airTemperatureKelvin: float) -> float:
+def GetHypsometricEquationAltitude(airPressurehPa: float, airTemperatureKelvin: float) -> float:
     """
     Gets the current altitude of the cansat using the Hypsometric equation
 
@@ -95,6 +96,24 @@ def GetAirTemperature(bmp: BMP280) -> float:
     return bmp.temperature  # Getting the air temperature using the bmp280 as shown here, is very easy lol
 
 
+def GetAirPressure(bmp: BMP280) -> float:
+    """
+    Uses the bmp280 air pressure & temperature sensor to get the current air pressure
+
+    Parameters
+    ----------
+    bmp : BMP280
+        The BMP280 air pressure & temperature sensor object
+
+    Returns
+    -------
+    float
+        A float air pressure value
+    """
+
+    return bmp.pressure
+
+
 def GetAltitude(bmp: BMP280) -> float:
     """
     Gets the current pressure and temperature using bmp280 to calculate the cansat's current altitude
@@ -110,36 +129,33 @@ def GetAltitude(bmp: BMP280) -> float:
         The current altitude of the cansat in meters
     """
 
-    airPressurehPa: float = bmp.pressure * 0.01  # hPa
+    airPressurehPa: float = GetAirPressure(bmp) * 0.01  # hPa
     airTemperatureKelvin: float = GetAirTemperature(bmp) + 273.15  # Kelvin
 
-    altitudeData: float = GetHypsometricAltitude(airPressurehPa, airTemperatureKelvin)
+    altitudeData: float = GetHypsometricEquationAltitude(airPressurehPa, airTemperatureKelvin)
 
     return altitudeData
 
 
-def GetAccelerationGyro(mpu: MPU6050, bmp: BMP280, mpuData: dict = None) -> tuple[Vector3d, Vector3d, float]:
+def GetAccelerationGyro(mpu: MPU6050, mpuData: dict = None) -> tuple[Vector3d, Vector3d]:
     """
-    Gets the current acceleration, gyro, and temperature data using MPU6050 and BMP280
+    Gets the current acceleration and gyro of the cansat using the MPU6050 IMU sensor
 
     Parameters
     ----------
     mpu : MPU6050
-        The mpu6050 sensor connected to the cansat
-    bmp : BMP280
-        The bmp280 sensor connected to the cansat
+        The MPU6050 IMU sensor connected to the cansat
     mpuData : dict?
-        A dictionary that when passed will be updated with both the mpu's and bmp's data with the given keys: "Acceleration", "Gyroscope", "Temperature"
+        A dictionary that when passed in will be updated with the mpu6050's data with the given keys: "Acceleration", "Gyroscope". Withh the values: "x", "y", "z"
 
     Returns
     -------
-    tuple[Vector3d, Vector3d, float]
-        The acceleration, gyroscope, and air temperature data
+    tuple[Vector3d, Vector3d]
+        The acceleration and gyroscope data as Vector3d objects
     """
 
     accelerationData: Vector3d = mpu.accel
     gyroData: Vector3d = mpu.gyro
-    airTemperatureData: float = bmp.temperature
 
     # Update the mpuData dict (IF PROVIDED) with data from the MPU6050
     if type(mpuData) is dict:
@@ -155,9 +171,7 @@ def GetAccelerationGyro(mpu: MPU6050, bmp: BMP280, mpuData: dict = None) -> tupl
             "z": gyroData.z
         }
 
-        mpuData["Temperature"] = airTemperatureData
-
-    return accelerationData, gyroData, airTemperatureData
+    return accelerationData, gyroData
 
 
 def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, list]:
@@ -187,6 +201,7 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
     return gps.latitude, gps.longitude
 
 
+# Secondary mission helper functions
 def GetAirHumidity(dht: DHT11) -> float:
     """
     Uses a DHT11 object to get the current air humidity
@@ -205,6 +220,7 @@ def GetAirHumidity(dht: DHT11) -> float:
     return float(f"{dht.humidity():.2f}")
 
 
+# Helper component functions
 def ToggleBuiltInLed(ledState: bool = None):
     """
     Toggles the Raspberry Pi Pico's built-in LED on or off
