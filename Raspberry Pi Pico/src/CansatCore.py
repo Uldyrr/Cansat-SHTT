@@ -120,9 +120,16 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
     """
     Uses the cansat's gps module to get the current latitude and longitude of the cansat
 
-    :param MicropyGPS gps: The MicropyGPS object of the gps module component (Neo-7m) connected to the cansat
-    :param UART gpsSerialBus: The UART Serial Bus Communication object to use with reading the gps data
-    :return: The latitude and longitude data from the gps
+    Parameters
+    ----------
+    gps : MicropyGPS
+        The MicropyGPS object of the gps module component (Neo-7m) connected to the cansat
+    gpsSerialBus : UART
+        The UART Serial Bus Communication object to use with reading the gps data
+
+    Returns
+    -------
+    The latitude and longitude data from the gps
     """
 
     gpsMessage: any = gpsSerialBus.readline()
@@ -136,6 +143,18 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
 
 
 def GetAirHumidity(dht: DHT11) -> float:
+    """
+    Uses a DHT11 object to get the current air humidity
+
+    Note
+    ----
+    The air humidity is RELATIVE to the current air temperature
+
+    Parameters
+    ----------
+    dht : DHT11
+        An object of the DHT11 air humidity sensor class
+    """
     dht.measure()
 
     return float(f"{dht.humidity():.2f}")
@@ -145,7 +164,10 @@ def ToggleBuiltInLed(ledState: bool = None):
     """
     Toggles the Raspberry Pi Pico's built-in LED on or off
 
-    :param bool ledState: A boolean value expressing the power state of the built-in LED
+    Parameters
+    ----------
+    ledState : bool
+        A boolean value expressing the power state of the built-in LED. Null if the power state should be toggled
     """
 
     # Inverse the current power state of the built-in LED
@@ -159,9 +181,13 @@ def __AlarmBuzzerUpdate():
     """
     Toggles the power of the alarm buzzer in a fashion that creates a sound with a particular frequency
 
-    .. note:: The function's while loop update will stop when the alarm buzzer's running state is set to False
+    Note
+    ----
+    The function's while loop update will stop when the alarm buzzer's running state is set to False
 
-    .. seealso:: ToggleAlarmBuzzer(alarmState: bool)
+    See Also
+    --------
+    ToggleAlarmBuzzer(alarmState: bool)
     """
 
     global _alarmBuzzerRunning
@@ -177,9 +203,14 @@ def ToggleAlarmBuzzer(alarmState: bool = None):
     """
     Toggles the running state of the cansat's alarm buzzer to a given state
 
-    .. note:: This function will create a new thread to operate on when the alarm state is true!
+    Note
+    ----
+    This function will create a new thread to operate on when the alarm state is true!
 
-    :param bool alarmState: A boolean value expressing the running state of the cansat's alarm buzzer. When None, the function will simply inverse the current running state
+    Parameters
+    ----------
+    alarmState : bool
+        A boolean value expressing the running state of the cansat's alarm buzzer. When None, the function will simply inverse the current running state
     """
 
     global _alarmBuzzerRunning
