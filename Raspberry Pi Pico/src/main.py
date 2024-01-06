@@ -40,6 +40,7 @@ def MainCycle():
 
 
 def Init():
+    InitCansatCore()
     print("Starting!\n")
 
     # bmp.use_case(BMP280_CASE_INDOOR)  # Indoor use

@@ -22,8 +22,8 @@ class _components:
     AlarmBuzzer: Pin = Pin(20, Pin.OUT)
 
 # // Constants
-CANSAT_UPDATEHZ: float = 1  # Hz
-CANSAT_ALTITUDECORRECTION: float = 120.0  # M
+CANSAT_UPDATEHZ: float = 1.0  # hz
+CANSAT_ALTITUDECORRECTION: float = 120  # m, NOTE: Currently automatically updated in InitCansatCore() if a BMP280 object is provided
 CANSAT_SEALEVELPRESSURE: float = 1013.25  # hPa
 
 BUZZER_ALARMHZ: int = 800  # The frequency at which the buzzer will play
@@ -221,7 +221,7 @@ def GetAirHumidity(dht: DHT11) -> float:
 
 
 # Helper component functions
-def ToggleBuiltInLed(ledState: bool = None):
+def ToggleBuiltInLed(ledState: bool = None) -> None:
     """
     Toggles the Raspberry Pi Pico's built-in LED on or off
 
@@ -238,7 +238,7 @@ def ToggleBuiltInLed(ledState: bool = None):
     _components.BuiltInLed.value(ledState)
 
 
-def _AlarmBuzzerUpdate():
+def _AlarmBuzzerUpdate() -> None:
     """
     Toggles the power of the alarm buzzer in a fashion that creates a sound with a particular frequency
 
@@ -258,7 +258,7 @@ def _AlarmBuzzerUpdate():
         utime.sleep_us(BUZZER_ALARMSLEEPTIME)
 
 
-def ToggleAlarmBuzzer(alarmState: bool = None):
+def ToggleAlarmBuzzer(alarmState: bool = None) -> None:
     """
     Toggles the running state of the cansat's alarm buzzer to a given state
 
@@ -284,3 +284,22 @@ def ToggleAlarmBuzzer(alarmState: bool = None):
         _thread.start_new_thread(_AlarmBuzzerUpdate, ())
     elif alarmState is False and _alarmBuzzerRunning:
         _alarmBuzzerRunning = False
+
+
+# Init
+def InitCansatCore(bmp: BMP280 = None) -> None:
+    """
+    Initializes the Core module of SHTT Cansat
+
+    Parameters
+    ----------
+    bmp : BMP280?
+        The BMP280 air pressure & temperature sensor object, or None if no automatic altitude correction should be performed
+    """
+
+    global CANSAT_ALTITUDECORRECTION
+
+    # Initialize constants
+    if bmp is not None:
+        CANSAT_ALTITUDECORRECTION = 0  # Set to zero to get the actual altitude offset one will get from calling GetAltitude()
+        CANSAT_ALTITUDECORRECTION = GetAltitude(bmp)
