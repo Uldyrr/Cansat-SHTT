@@ -28,6 +28,7 @@ CANSAT_SEALEVELPRESSURE: float = 1013.25  # hPa
 
 BUZZER_ALARMHZ: int = 800  # The frequency at which the buzzer will play
 BUZZER_MICROSECONDS: int = 1_000_000  # 1 / 1000 (ms) / 1000 (us)
+BUZZER_ALARMSLEEPTIME: int = int(BUZZER_MICROSECONDS / BUZZER_ALARMHZ / 2)  # The time to yield every alarm buzzer value() change to get the specified frequency of sound
 
 HIGH: bool = True
 LOW: bool = False
@@ -49,13 +50,25 @@ def GetBuiltInTemperature() -> float:
 
 def GetHypsometricAltitude(airPressurehPa: float, airTemperatureKelvin: float) -> float:
     """
-    Gets the current altitude using the Hypsometric equation
+    Gets the current altitude of the cansat using the Hypsometric equation
 
-    .. note:: Max height above sea level: ~11km
+    Note
+    ----
+    float
+        Max height above sea level: ~11km
 
-    :param float airPressurehPa: The air pressure in hectopascals
-    :param float airTemperatureKelvin: The air temperature in kelvin
-    :return: A float of the current altitude of the cansat based on the given air pressure and temperature
+    Parameters
+    ----------
+    airPressurehPa : float
+        The air pressure in hectopascals
+
+    airTemperatureKelvin : float
+        The air temperature in kelvin
+
+    Returns
+    -------
+    float
+        A float of the current altitude of the cansat based on the given air pressure and temperature
     """
 
     pressureRatio: float = CANSAT_SEALEVELPRESSURE / airPressurehPa
@@ -64,14 +77,64 @@ def GetHypsometricAltitude(airPressurehPa: float, airTemperatureKelvin: float) -
     return altitude
 
 
-def GetMPUAccelerationGyroTemp(mpu: MPU6050, bmp: BMP280, mpuData: dict = None) -> tuple[Vector3d, Vector3d, float]:
+def GetAirTemperature(bmp: BMP280) -> float:
+    """
+    Uses the bmp280 air pressure & temperature sensor to get the current air temperature
+
+    Parameters
+    ----------
+    bmp : BMP280
+        The BMP280 air pressure & temperature sensor object
+
+    Returns
+    -------
+    float
+        A float air temperature value
+    """
+
+    return bmp.temperature  # Getting the air temperature using the bmp280 as shown here, is very easy lol
+
+
+def GetAltitude(bmp: BMP280) -> float:
+    """
+    Gets the current pressure and temperature using bmp280 to calculate the cansat's current altitude
+
+    Parameters
+    ----------
+    bmp : BMP280
+        The bmp280 air pressure & temperature sensor connected to the cansat
+
+    Returns
+    -------
+    float
+        The current altitude of the cansat in meters
+    """
+
+    airPressurehPa: float = bmp.pressure * 0.01  # hPa
+    airTemperatureKelvin: float = GetAirTemperature(bmp) + 273.15  # Kelvin
+
+    altitudeData: float = GetHypsometricAltitude(airPressurehPa, airTemperatureKelvin)
+
+    return altitudeData
+
+
+def GetAccelerationGyro(mpu: MPU6050, bmp: BMP280, mpuData: dict = None) -> tuple[Vector3d, Vector3d, float]:
     """
     Gets the current acceleration, gyro, and temperature data using MPU6050 and BMP280
 
-    :param MPU6050 mpu: The mpu6050 sensor connected to the cansat
-    :param BMP280 bmp: The bmp280 sensor connected to the cansat
-    :param dict? mpuData: A dictionary that when passed will be updated with both the mpu's and bmp's data with the given keys: "Acceleration", "Gyroscope", "Temperature"
-    :return: The acceleration, gyroscope, and air temperature data
+    Parameters
+    ----------
+    mpu : MPU6050
+        The mpu6050 sensor connected to the cansat
+    bmp : BMP280
+        The bmp280 sensor connected to the cansat
+    mpuData : dict?
+        A dictionary that when passed will be updated with both the mpu's and bmp's data with the given keys: "Acceleration", "Gyroscope", "Temperature"
+
+    Returns
+    -------
+    tuple[Vector3d, Vector3d, float]
+        The acceleration, gyroscope, and air temperature data
     """
 
     accelerationData: Vector3d = mpu.accel
@@ -97,25 +160,6 @@ def GetMPUAccelerationGyroTemp(mpu: MPU6050, bmp: BMP280, mpuData: dict = None) 
     return accelerationData, gyroData, airTemperatureData
 
 
-def GetBMPPressureAltitude(bmp: BMP280, airTemperature: float) -> tuple[float, float]:
-    """
-    Gets the current pressure and uses it to calculate the cansat's current altitude
-
-    :param BMP280 bmp: The bmp280 sensor connected to the cansat
-    :param float airTemperature: The air temperature in Celsius measured by the cansat
-    :return: The air pressure measured in Pascals and the current altitude of the cansat
-    """
-
-    airPressureData: float = bmp.pressure  # Pa
-
-    hpaAirPressure: float = airPressureData * 0.01  # hPa
-    airTemperatureKelvin: float = airTemperature + 273.15  # Kelvin
-
-    altitudeData: float = GetHypsometricAltitude(hpaAirPressure, airTemperatureKelvin)
-
-    return airPressureData, altitudeData
-
-
 def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, list]:
     """
     Uses the cansat's gps module to get the current latitude and longitude of the cansat
@@ -129,7 +173,8 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
 
     Returns
     -------
-    The latitude and longitude data from the gps
+    tuple[list, list]
+        The latitude and longitude data from the gps
     """
 
     gpsMessage: any = gpsSerialBus.readline()
@@ -177,7 +222,7 @@ def ToggleBuiltInLed(ledState: bool = None):
     _components.BuiltInLed.value(ledState)
 
 
-def __AlarmBuzzerUpdate():
+def _AlarmBuzzerUpdate():
     """
     Toggles the power of the alarm buzzer in a fashion that creates a sound with a particular frequency
 
@@ -191,12 +236,10 @@ def __AlarmBuzzerUpdate():
     """
 
     global _alarmBuzzerRunning
-
-    alarmBuzzerSleepTime: int = int(BUZZER_MICROSECONDS / BUZZER_ALARMHZ / 2)
     
     while _alarmBuzzerRunning:
         _components.AlarmBuzzer.value(not _components.AlarmBuzzer.value())
-        utime.sleep_us(alarmBuzzerSleepTime)
+        utime.sleep_us(BUZZER_ALARMSLEEPTIME)
 
 
 def ToggleAlarmBuzzer(alarmState: bool = None):
@@ -220,8 +263,8 @@ def ToggleAlarmBuzzer(alarmState: bool = None):
         alarmState = not _alarmBuzzerRunning
 
     if alarmState and _alarmBuzzerRunning is False:
-        __alarmBuzzerRunning = True
+        _alarmBuzzerRunning = True
 
-        _thread.start_new_thread(__AlarmBuzzerUpdate, ())
+        _thread.start_new_thread(_AlarmBuzzerUpdate, ())
     elif alarmState is False and _alarmBuzzerRunning:
-        __alarmBuzzerRunning = False
+        _alarmBuzzerRunning = False
