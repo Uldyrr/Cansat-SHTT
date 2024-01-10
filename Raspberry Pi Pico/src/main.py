@@ -35,24 +35,25 @@ def MainCycle():
         #gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
         airHumidityData = GetAirHumidity(sensors.DHT)
 
-        components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}")
+        components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
         utime.sleep(CANSAT_UPDATEHZ)
 
 
 def Init():
-    print("Initializing!\n")
+    print("Initializing!")
 
     # bmp.use_case(BMP280_CASE_INDOOR)  # Indoor use
 
-    print("Initializing CansatCore.py!\n")
+    print("Initializing CansatCore.py!")
     InitCansatCore()
 
-    print("Initialized!\n")
-    print("Starting Main cycle!\n\n")
+    print("Initialized!")
+    print("Starting Main cycle!\n")
 
 
 Init()
 MainCycle()
+
 
 
