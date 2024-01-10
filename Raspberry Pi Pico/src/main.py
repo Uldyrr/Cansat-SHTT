@@ -20,7 +20,7 @@ class sensors:
 # // Components
 class components:
     GPSSerialBus: UART = UART(1, 9600, tx=Pin(4), rx=Pin(5))
-    GPS: MicropyGPS = MicropyGPS()
+    GPS: MicropyGPS = MicropyGPS(location_formatting='dd')
     Radio: RadioCom = RadioCom(UART(0, 9600, tx=Pin(16), rx=Pin(17)))
 
 
