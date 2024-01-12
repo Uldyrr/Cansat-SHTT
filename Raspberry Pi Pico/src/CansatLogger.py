@@ -16,13 +16,16 @@ class CansatLogger:
     _logCount = 0
 
     def __init__(self):
-        self._logName = f"{_logFolderPath}/{LOGGER_LOGNAME}{len(os.listdir(_logFolderPath)) + 1}.txt"
+        self._logName = f"{_logFolderPath}/{LOGGER_LOGNAME}{len(os.listdir(_logFolderPath)) + 1}.csv"
 
-    def LogData(self, data: str):
+    def LogData(self, *data: any):
         self._logCount += 1
 
-        data = "".join(data.splitlines())
+        logStringData = ""
+
+        for i in range(0, len(data) - 1):
+            logStringData += data[i] + ("\n" if i == len(data) - 1 else ";")
 
         with open(self._logName, "a") as logFile:
-            logFile.write(f"ID: {self._logCount} | Data: {data}\n")
+            logFile.write(logStringData)
 

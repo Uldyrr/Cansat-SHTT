@@ -1,5 +1,6 @@
 from CansatCore import *
 from CansatCommunication import RadioCom
+from CansatLogger import CansatLogger
 from machine import Pin, UART, I2C, ADC
 from imu import MPU6050
 from bmp280 import *
@@ -22,6 +23,7 @@ class components:
     GPSSerialBus: UART = UART(1, 9600, tx=Pin(4), rx=Pin(5))
     GPS: MicropyGPS = MicropyGPS(location_formatting='dd')
     Radio: RadioCom = RadioCom(UART(0, 9600, tx=Pin(16), rx=Pin(17)))
+    CansatLogger = CansatLogger()
 
 
 # // Sensor data
@@ -32,12 +34,14 @@ mpuData: dict = {}
 def MainCycle():
     while True:
         # altitudeData = GetAltitude(sensors.BMP)
-        # airTemperatureData, airPressureData = GetAirTemperature(sensors.BMP), GetAirPressure(sensors.BMP)
+        airTemperatureData, airPressureData = GetAirTemperature(sensors.BMP), GetAirPressure(sensors.BMP)
         # accelerationData, gyroData = GetAccelerationGyro(sensors.MPU, mpuData)
         gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
         # airHumidityData = GetAirHumidity(sensors.DHT)
 
         # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
+
+        components.CansatLogger.LogData(airTemperatureData, airPressureData, gpsLatitude, gpsLongitude)
 
         print(gpsLatitude, gpsLongitude)
 
