@@ -24,7 +24,7 @@ class CansatLogger:
         logStringData = ""
 
         for i in range(0, len(data) - 1):
-            logStringData += data[i] + ("\n" if i == len(data) - 1 else ";")
+            logStringData += str(data[i])  + ("\n" if i == len(data) - 1 else ";")
 
         with open(self._logName, "a") as logFile:
             logFile.write(logStringData)
