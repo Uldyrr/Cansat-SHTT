@@ -3,21 +3,21 @@ import os
 
 # Values
 # // Constants
-LOGGER_LOGMAINNAME = "DataLog"
-LOGGER_LOGIMUNAME = "IMULog"
-LOGGER_LOGFOLDER = "Logs"
+LOGGER_LOGMAINNAME: str = "DataLog"
+LOGGER_LOGIMUNAME: str = "IMULog"
+LOGGER_LOGFOLDER: str = "Logs"
 
-LOGTYPE_MAINDATA = "Main"
-LOGTYPE_IMUDATA = "IMU"
+LOGTYPE_MAINDATA: str = "Main"
+LOGTYPE_IMUDATA: str = "IMU"
 
 # // Paths
-_workingDirectoryPath = os.getcwd()
-_logFolderPath = f"{_workingDirectoryPath}{LOGGER_LOGFOLDER}/"
+_workingDirectoryPath: str = os.getcwd()
+_logFolderPath: str = f"{_workingDirectoryPath}{LOGGER_LOGFOLDER}/"
 
 
 class CansatLogger:
-    _logMainName = ""
-    _logIMUName = ""
+    _logMainName: str = ""
+    _logIMUName: str = ""
 
     def __init__(self):
         self._logMainName = f"{_logFolderPath}{LOGGER_LOGMAINNAME}{len(os.listdir(_logFolderPath)) + 1}.csv"
@@ -28,7 +28,7 @@ class CansatLogger:
             logIMUFile.write("")
 
     def LogData(self, logType: str, *data: any):
-        logStringData = ""
+        logStringData: str = ""
 
         for i in range(0, len(data) - 1):
             logStringData += str(data[i]) + ("\n" if i == len(data) - 1 else ";")
