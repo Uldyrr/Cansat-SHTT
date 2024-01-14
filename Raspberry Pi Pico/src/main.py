@@ -74,7 +74,8 @@ def Init():
     print("Initialized!")
     print("Starting Main cycle!\n")
 
+    MainCycle()
+
 
 Init()
-MainCycle()
 
