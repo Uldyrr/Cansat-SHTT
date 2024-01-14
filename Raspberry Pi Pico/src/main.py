@@ -72,7 +72,7 @@ def Init():
     InitCansatCore(sensors.BMP)
 
     print("Initialized!")
-    print("Starting Main cycle!\n")
+    print("Starting MainCycle()!\n")
 
     MainCycle()
 
