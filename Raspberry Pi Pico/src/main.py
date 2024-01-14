@@ -53,9 +53,9 @@ def MainCycle():
             gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
             # airHumidityData = GetAirHumidity(sensors.DHT)
 
-            # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
+            components.CansatLogger.LogData(LOGTYPE_MAINDATA, airTemperatureData, airPressureData, gpsLatitude, gpsLongitude)
 
-            components.CansatLogger.LogData(LOGTYPE_MAINDATA,airTemperatureData, airPressureData, gpsLatitude, gpsLongitude)
+            # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
             print(gpsLatitude, gpsLongitude)
 
