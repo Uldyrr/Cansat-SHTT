@@ -30,7 +30,7 @@ class CansatLogger:
     def LogData(self, logType: str, *data: any):
         logStringData: str = ""
 
-        for i in range(0, len(data) - 1):
+        for i in range(0, len(data)):
             logStringData += str(data[i]) + ("\n" if i == len(data) - 1 else ";")
 
         with open(self._logMainName if logType == LOGTYPE_MAINDATA else self._logIMUName, "a") as logFile:
