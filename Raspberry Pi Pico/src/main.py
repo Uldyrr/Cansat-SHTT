@@ -49,9 +49,10 @@ def MainCycle():
         mainDataUpdateCounter += 1
 
         if mainDataUpdateCounter >= CANSAT_UPDATEMAINDATACOUNT:
+            mainDataLogCounter = 0
+
             # altitudeData = GetAltitude(sensors.BMP)
             airTemperatureData, airPressureData = GetAirTemperature(sensors.BMP), GetAirPressure(sensors.BMP)
-            # accelerationData, gyroData = GetAccelerationGyro(sensors.MPU, mpuData)
             gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
             # airHumidityData = GetAirHumidity(sensors.DHT)
 
