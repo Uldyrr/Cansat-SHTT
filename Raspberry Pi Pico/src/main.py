@@ -28,17 +28,13 @@ class components:
     CansatLogger = CansatLogger()
 
 
-# // Sensor data
-mpuData: dict = {}
-
-
 # The heart of the CanSat
 def MainCycle():
     global mainDataUpdateCounter
 
     while True:
         # IMU data update. Measuring and logging. (CANSAT_UPDATEHZ update time)
-        accelerationData, gyroData = GetAccelerationGyro(sensors.MPU, mpuData)
+        accelerationData, gyroData = GetAccelerationGyro(sensors.MPU)
 
         components.CansatLogger.LogData(  # We save two lists instead of two dicts (saves space & we can use eval() in the visualizer).
             LOGTYPE_IMUDATA,
