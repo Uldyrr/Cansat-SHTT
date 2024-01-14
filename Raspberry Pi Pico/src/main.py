@@ -1,6 +1,6 @@
 from CansatCore import *
 from CansatCommunication import RadioCom
-from CansatLogger import CansatLogger
+from CansatLogger import CansatLogger, LOGTYPE_MAINDATA, LOGTYPE_IMUDATA
 from machine import Pin, UART, I2C, ADC
 from imu import MPU6050
 from bmp280 import *
@@ -34,13 +34,14 @@ mpuData: dict = {}
 
 # The heart of the CanSat
 def MainCycle():
-    global mainDataLogCounter
+    global mainDataUpdateCounter
 
     while True:
         # IMU data update. Measuring and logging. (CANSAT_UPDATEHZ update time)
         accelerationData, gyroData = GetAccelerationGyro(sensors.MPU, mpuData)
 
-        components.CansatLogger.LogIMUData(  # We save two lists instead of two dicts (saves space & we can use eval() in the visualizer).
+        components.CansatLogger.LogData(  # We save two lists instead of two dicts (saves space & we can use eval() in the visualizer).
+            LOGTYPE_IMUDATA,
             [accelerationData.X, accelerationData.Y, accelerationData.Z],
             [gyroData.X, gyroData.Y, gyroData.Z]
         )
@@ -49,7 +50,7 @@ def MainCycle():
         mainDataUpdateCounter += 1
 
         if mainDataUpdateCounter >= CANSAT_UPDATEMAINDATACOUNT:
-            mainDataLogCounter = 0
+            mainDataUpdateCounter = 0
 
             # altitudeData = GetAltitude(sensors.BMP)
             airTemperatureData, airPressureData = GetAirTemperature(sensors.BMP), GetAirPressure(sensors.BMP)
@@ -58,7 +59,7 @@ def MainCycle():
 
             # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-            components.CansatLogger.LogMainData(airTemperatureData, airPressureData, gpsLatitude, gpsLongitude)
+            components.CansatLogger.LogData(LOGTYPE_MAINDATA,airTemperatureData, airPressureData, gpsLatitude, gpsLongitude)
 
             print(gpsLatitude, gpsLongitude)
 

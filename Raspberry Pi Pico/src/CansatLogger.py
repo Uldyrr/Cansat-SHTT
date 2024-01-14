@@ -20,7 +20,7 @@ class CansatLogger:
     _logIMUName = ""
 
     def __init__(self):
-        self._logMainName = f"{_logFolderPath}{LOGGER_LOGMAINNAME}{len(os.listdir(_logFolderPath))}.csv"
+        self._logMainName = f"{_logFolderPath}{LOGGER_LOGMAINNAME}{len(os.listdir(_logFolderPath)) + 1}.csv"
         self._logIMUName = f"{LOGGER_LOGIMUNAME}.csv"
 
         # Reset IMU data every restart
