@@ -22,7 +22,8 @@ class _components:
     AlarmBuzzer: Pin = Pin(20, Pin.OUT)
 
 # // Constants
-CANSAT_UPDATEHZ: float = 1.0  # hz
+CANSAT_UPDATEHZ: float = 1 / 10  # hz
+CANSAT_UPDATEMAINDATACOUNT: float = 1 / CANSAT_UPDATEHZ  # The count at which to measure, log, and send the main data
 CANSAT_ALTITUDECORRECTION: float = 120  # m, NOTE: Currently automatically updated in InitCansatCore() if a BMP280 object is provided
 CANSAT_SEALEVELPRESSURE: float = 1013.25  # hPa
 
