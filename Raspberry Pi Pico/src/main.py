@@ -42,7 +42,7 @@ def MainCycle():
             [gyroData.X, gyroData.Y, gyroData.Z]
         )
 
-        # Main data update. Measuring, logging, and radio communicating. (1s update time)
+        # Main data update. Measuring, logging, and radio communicating. (1.0s update time)
         mainDataUpdateCounter += 1
 
         if mainDataUpdateCounter >= CANSAT_UPDATEMAINDATACOUNT:
