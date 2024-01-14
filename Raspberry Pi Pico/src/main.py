@@ -65,7 +65,7 @@ def MainCycle():
 def Init():
     print("Initializing!")
 
-    sensors.BMP.use_case(BMP280_CASE_DROP)  # Indoor use
+    sensors.BMP.use_case(BMP280_CASE_DROP)  # Is DROP outdoor use?
 
     print("Initializing CansatCore.py!")
     InitCansatCore(sensors.BMP)
