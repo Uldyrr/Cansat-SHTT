@@ -27,11 +27,11 @@ class CansatLogger:
         with open(self._logIMUName, "x") as logIMUFile:
             logIMUFile.write("")
 
-    def LogData(self, logType: str, *data: any):
+    def LogData(self, logType: str, *data: tuple[any, ...]):
         logStringData: str = ""
 
         for i in range(0, len(data)):
-            logStringData += str(data[i]) + ("\n" if i == len(data) - 1 else ";")
+            logStringData += str(data[i]) + (";" if i < len(data) - 1 else "\n")
 
         with open(self._logMainName if logType == LOGTYPE_MAINDATA else self._logIMUName, "a") as logFile:
             logFile.write(logStringData)
