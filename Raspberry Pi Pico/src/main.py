@@ -38,7 +38,7 @@ def MainCycle():
     tickUpdateOffset: int = 0
 
     while True:
-        utime.sleep(CANSAT_UPDATEHZ - tickUpdateOffset)
+        utime.sleep(CANSAT_UPDATEHZ - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATEHZ * 0.1))
 
         # altitudeData = GetAltitude(sensors.BMP)
         accelerationData, gyroData = GetAccelerationGyro(sensors.MPU, mpuData)
@@ -76,6 +76,7 @@ def Init():
 
 
 Init()
+
 
 
 
