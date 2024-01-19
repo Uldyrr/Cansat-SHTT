@@ -1,6 +1,6 @@
 from CansatCore import *
 from CansatCommunication import RadioCom
-from CansatLogger import CansatLogger, LOGTYPE_MAINDATA, LOGTYPE_IMUDATA
+from CansatLogger import CansatLogger
 from machine import Pin, UART, I2C, ADC
 from imu import MPU6050
 from bmp280 import *
@@ -9,9 +9,6 @@ from micropyGPS import MicropyGPS
 import _thread
 import utime
 
-
-# Values
-mainDataUpdateCounter: int = 0  # Saves the total count of MainCycle updates before being reset due to us updating the main data.
 
 # // Sensors
 class sensors:
@@ -30,34 +27,24 @@ class components:
 
 # The heart of the CanSat
 def MainCycle():
-    global mainDataUpdateCounter
+    tick = utime.ticks_ms()
 
     while True:
-        # IMU data update. Measuring and logging. (CANSAT_UPDATEHZ update time)
+        # altitudeData = GetAltitude(sensors.BMP)
         accelerationData, gyroData = GetAccelerationGyro(sensors.MPU)
+        airTemperatureData, airPressureData = GetAirTemperature(sensors.BMP), GetAirPressure(sensors.BMP)
+        gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
+        # airHumidityData = GetAirHumidity(sensors.DHT)
 
-        components.CansatLogger.LogData(  # We save two lists instead of two dicts (saves space & we can use eval() in the visualizer).
-            LOGTYPE_IMUDATA,
-            [accelerationData.x, accelerationData.x, accelerationData.z],
-            [gyroData.x, gyroData.y, gyroData.z]
-        )
+        components.CansatLogger.LogData(airTemperatureData, airPressureData, accelerationData, gyroData, gpsLatitude, gpsLongitude)
 
-        # Main data update. Measuring, logging, and radio communicating. (1.0s update time)
-        mainDataUpdateCounter += 1
+        # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-        if mainDataUpdateCounter >= CANSAT_UPDATEMAINDATACOUNT:
-            mainDataUpdateCounter = 0
+        newTick = utime.ticks_ms()
 
-            # altitudeData = GetAltitude(sensors.BMP)
-            airTemperatureData, airPressureData = GetAirTemperature(sensors.BMP), GetAirPressure(sensors.BMP)
-            gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
-            # airHumidityData = GetAirHumidity(sensors.DHT)
+        print((newTick - tick), gpsLatitude, gpsLongitude)
 
-            components.CansatLogger.LogData(LOGTYPE_MAINDATA, airTemperatureData, airPressureData, gpsLatitude, gpsLongitude)
-
-            # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
-
-            print(gpsLatitude, gpsLongitude)
+        tick = newTick
 
         utime.sleep(CANSAT_UPDATEHZ)
 

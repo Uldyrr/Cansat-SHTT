@@ -16,7 +16,7 @@ class CansatLogger:
     def __init__(self):
         self._logMainName = f"{_logFolderPath}{LOGGER_LOGMAINNAME}{len(os.listdir(_logFolderPath)) + 1}.csv"
 
-    def LogData(self, *data: tuple[any, ...]):
+    def LogData(self, *data: any):
         logStringData: str = ""
 
         for i in range(0, len(data)):
