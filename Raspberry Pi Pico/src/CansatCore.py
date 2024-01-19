@@ -39,9 +39,9 @@ LOW: bool = False
 
 # Generic helper functions
 def Clamp(value: any, minValue: any = None, maxValue: any = None) -> any:
-    if type(minValue) is not None and minValue < min:
+    if type(minValue) is not None and value < minValue:
         return minValue
-    elif type(maxValue) is not None and maxValue > max:
+    elif type(maxValue) is not None and value > maxValue:
         return maxValue
 
     return value
@@ -316,3 +316,4 @@ def InitCansatCore(bmp: BMP280 = None) -> None:
     if bmp is not None:
         CANSAT_ALTITUDECORRECTION = 0  # Set to zero to get the actual altitude offset one will get from calling GetAltitude()
         CANSAT_ALTITUDECORRECTION = GetAltitude(bmp)
+
