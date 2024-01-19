@@ -7,28 +7,31 @@ from vector3d import Vector3d
 import _thread
 import utime
 
-
 # Module values
 # // Values
 _alarmBuzzerRunning: bool = False  # Used in relation with the cansat's alarm buzzer
 
+
 # // Sensors
 class _sensors:
     BuiltInTemperatureSensor: ADC = ADC(4)
+
 
 # // Components
 class _components:
     BuiltInLed: Pin = Pin(25, Pin.OUT)
     AlarmBuzzer: Pin = Pin(20, Pin.OUT)
 
+
 # // Constants
-CANSAT_UPDATEHZ: float = 1.0 # hz
+CANSAT_UPDATEHZ: float = 1.0  # hz
 CANSAT_ALTITUDECORRECTION: float = 120.0  # m, NOTE: Currently automatically updated in InitCansatCore() if a BMP280 object is provided
 CANSAT_SEALEVELPRESSURE: float = 1013.25  # hPa
 
 BUZZER_ALARMHZ: int = 800  # The frequency at which the buzzer will play
 BUZZER_MICROSECONDS: int = 1_000_000  # 1 / 1000 (ms) / 1000 (us)
-BUZZER_ALARMSLEEPTIME: int = int(BUZZER_MICROSECONDS / BUZZER_ALARMHZ / 2)  # The time to yield every alarm buzzer value() change to get the specified frequency of sound
+BUZZER_ALARMSLEEPTIME: int = int(
+    BUZZER_MICROSECONDS / BUZZER_ALARMHZ / 2)  # The time to yield every alarm buzzer value() change to get the specified frequency of sound
 
 HIGH: bool = True
 LOW: bool = False
@@ -252,7 +255,7 @@ def _AlarmBuzzerUpdate() -> None:
     """
 
     global _alarmBuzzerRunning
-    
+
     while _alarmBuzzerRunning:
         _components.AlarmBuzzer.value(not _components.AlarmBuzzer.value())
         utime.sleep_us(BUZZER_ALARMSLEEPTIME)

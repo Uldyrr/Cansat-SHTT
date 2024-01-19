@@ -10,6 +10,7 @@ import _thread
 import utime
 
 
+# Values
 # // Sensors
 class sensors:
     MPU: MPU6050 = MPU6050(I2C(1, sda=Pin(26), scl=Pin(27)))
@@ -25,18 +26,23 @@ class components:
     CansatLogger = CansatLogger()
 
 
+# // Sensor data
+mpuData: dict = {}
+
+
 # The heart of the CanSat
 def MainCycle():
     tick = utime.ticks_ms()
 
     while True:
         # altitudeData = GetAltitude(sensors.BMP)
-        accelerationData, gyroData = GetAccelerationGyro(sensors.MPU)
+        accelerationData, gyroData = GetAccelerationGyro(sensors.MPU, mpuData)
         airTemperatureData, airPressureData = GetAirTemperature(sensors.BMP), GetAirPressure(sensors.BMP)
         gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
         # airHumidityData = GetAirHumidity(sensors.DHT)
 
-        components.CansatLogger.LogData(airTemperatureData, airPressureData, accelerationData, gyroData, gpsLatitude, gpsLongitude)
+        components.CansatLogger.LogData(airTemperatureData, airPressureData, mpuData["Acceleration"],
+                                        mpuData["Gyroscope"], gpsLatitude, gpsLongitude)
 
         # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
@@ -65,5 +71,6 @@ def Init():
 
 
 Init()
+
 
 
