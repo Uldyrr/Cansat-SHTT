@@ -335,3 +335,4 @@ def InitCansatCore(bmp: BMP280 = None) -> None:
         CANSAT_ALTITUDECORRECTION = 0  # Set to zero to get the actual altitude offset one will get from calling GetAltitude()
         CANSAT_ALTITUDECORRECTION = GetAltitude(bmp)
 
+
