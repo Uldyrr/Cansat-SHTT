@@ -32,27 +32,32 @@ mpuData: dict = {}
 
 # The heart of the CanSat
 def MainCycle():
-    tick = utime.ticks_ms()
+    previousTick: int = utime.ticks_ms()
+    currentTick: int = 0
+    tickDifference: int = 0
+    tickUpdateOffset: int = 0
 
     while True:
+        utime.sleep(CANSAT_UPDATEHZ - tickUpdateOffset)
+
         # altitudeData = GetAltitude(sensors.BMP)
         accelerationData, gyroData = GetAccelerationGyro(sensors.MPU, mpuData)
         airTemperatureData, airPressureData = GetAirTemperature(sensors.BMP), GetAirPressure(sensors.BMP)
         gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
         # airHumidityData = GetAirHumidity(sensors.DHT)
 
-        components.CansatLogger.LogData(airTemperatureData, airPressureData, mpuData["Acceleration"],
+        components.CansatLogger.LogData(airTemperatureData, airPressureData, tickDifference / 1000, mpuData["Acceleration"],
                                         mpuData["Gyroscope"], gpsLatitude, gpsLongitude)
 
         # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-        newTick = utime.ticks_ms()
+        print(tickUpdateOffset, tickDifference, gpsLatitude, gpsLongitude)
 
-        print((newTick - tick), gpsLatitude, gpsLongitude)
-
-        tick = newTick
-
-        utime.sleep(CANSAT_UPDATEHZ)
+        # Evaluate tick differences
+        currentTick = utime.ticks_ms()
+        tickDifference = currentTick - previousTick
+        previousTick = currentTick
+        tickUpdateOffset = tickDifference - 1000 if tickDifference > (tickUpdateOffset + 1000) else tickUpdateOffset
 
 
 def Init():

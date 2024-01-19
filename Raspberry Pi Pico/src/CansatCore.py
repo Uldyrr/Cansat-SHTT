@@ -37,6 +37,16 @@ HIGH: bool = True
 LOW: bool = False
 
 
+# Generic helper functions
+def Clamp(value: any, minValue: any = None, maxValue: any = None) -> any:
+    if type(minValue) is not None and minValue < min:
+        return min
+    elif type(maxValue) is not None and maxValue > max:
+        return max
+
+    return value
+
+
 # Primary mission helper functions
 def GetBuiltInTemperature() -> float:
     """
