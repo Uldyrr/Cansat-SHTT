@@ -6,6 +6,7 @@ from micropyGPS import MicropyGPS
 from vector3d import Vector3d
 import _thread
 import utime
+import random
 
 # Module values
 # // Values
@@ -28,10 +29,7 @@ CANSAT_UPDATEHZ: float = 1.0  # hz
 CANSAT_ALTITUDECORRECTION: float = 120.0  # m, NOTE: Currently automatically updated in InitCansatCore() if a BMP280 object is provided
 CANSAT_SEALEVELPRESSURE: float = 1013.25  # hPa
 
-BUZZER_ALARMHZ: int = 800  # The frequency at which the buzzer will play
 BUZZER_MICROSECONDS: int = 1_000_000  # 1 / 1000 (ms) / 1000 (us)
-BUZZER_ALARMSLEEPTIME: int = int(
-    BUZZER_MICROSECONDS / BUZZER_ALARMHZ / 2)  # The time to yield every alarm buzzer value() change to get the specified frequency of sound
 
 HIGH: bool = True
 LOW: bool = False
@@ -251,7 +249,28 @@ def ToggleBuiltInLed(ledState: bool = None) -> None:
     _components.BuiltInLed.value(ledState)
 
 
-def _AlarmBuzzerUpdate() -> None:
+def _AlarmBuzzerIntervalUpdate(pitch: int, time: float) -> None:
+    """
+    Used to create amazing alarm buzzer sounds
+
+    Parameters
+    ----------
+    pitch : int
+        An integer value that will be used to create a specific pitch of sound
+    time : float
+        A floating point type value that will be used to play the pitch for a certain amount of time
+    """
+    sleepTime: int = int(BUZZER_MICROSECONDS / pitch / 2)  # Microseconds pitch time
+    loopIntervals: int = int(time * BUZZER_MICROSECONDS / sleepTime)
+
+    for _ in range(0, loopIntervals):
+        _components.AlarmBuzzer.value(1)
+        utime.sleep_us(sleepTime)
+        _components.AlarmBuzzer.value(0)
+        utime.sleep_us(sleepTime)
+
+
+def _AlarmBuzzerThreadUpdate() -> None:
     """
     Toggles the power of the alarm buzzer in a fashion that creates a sound with a particular frequency
 
@@ -267,8 +286,7 @@ def _AlarmBuzzerUpdate() -> None:
     global _alarmBuzzerRunning
 
     while _alarmBuzzerRunning:
-        _components.AlarmBuzzer.value(not _components.AlarmBuzzer.value())
-        utime.sleep_us(BUZZER_ALARMSLEEPTIME)
+        _AlarmBuzzerIntervalUpdate(random.randint(100, 3000), random.randint(5, 10) / 100)
 
 
 def ToggleAlarmBuzzer(alarmState: bool = None) -> None:
@@ -294,7 +312,7 @@ def ToggleAlarmBuzzer(alarmState: bool = None) -> None:
     if alarmState and _alarmBuzzerRunning is False:
         _alarmBuzzerRunning = True
 
-        _thread.start_new_thread(_AlarmBuzzerUpdate, ())
+        _thread.start_new_thread(_AlarmBuzzerThreadUpdate, ())
     elif alarmState is False and _alarmBuzzerRunning:
         _alarmBuzzerRunning = False
 
