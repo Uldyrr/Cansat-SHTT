@@ -162,17 +162,17 @@ def GetAccelerationGyro(mpu: MPU6050, mpuData: dict = None) -> tuple[Vector3d, V
 
     # Update the mpuData dict (IF PROVIDED) with data from the MPU6050
     if type(mpuData) is dict:
-        mpuData["Acceleration"] = {
-            "x": accelerationData.x,
-            "y": accelerationData.y,
-            "z": accelerationData.z
-        }
+        mpuData["Acceleration"] = [
+            accelerationData.x,
+            accelerationData.y,
+            accelerationData.z
+        ]
 
-        mpuData["Gyroscope"] = {
-            "x": gyroData.x,
-            "y": gyroData.y,
-            "z": gyroData.z
-        }
+        mpuData["Gyroscope"] = [
+            gyroData.x,
+            gyroData.y,
+            gyroData.z
+        ]
 
     return accelerationData, gyroData
 
