@@ -40,7 +40,7 @@ def MainCycle():
     while True:
         utime.sleep(CANSAT_UPDATEHZ - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATEHZ * 0.1))
 
-        # altitudeData = GetAltitude(sensors.BMP)
+        altitudeData = GetAltitude(sensors.BMP)
         accelerationData, gyroData = GetAccelerationGyro(sensors.MPU, mpuData)
         airTemperatureData, airPressureData = GetAirTemperature(sensors.BMP), GetAirPressure(sensors.BMP)
         gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
@@ -51,7 +51,7 @@ def MainCycle():
 
         # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-        print(tickUpdateOffset, tickDifference, gpsLatitude, gpsLongitude)
+        print(altitudeData, gpsLatitude, gpsLongitude)
 
         # Evaluate tick differences
         currentTick = utime.ticks_ms()
@@ -63,7 +63,7 @@ def MainCycle():
 def Init():
     print("Initializing!")
 
-    sensors.BMP.use_case(BMP280_CASE_DROP)  # Is DROP an outdoor use case? :/
+    sensors.BMP.use_case(BMP280_CASE_INDOOR)  # Is DROP an outdoor use case? :/
 
     print("Initializing CansatCore.py!")
 
