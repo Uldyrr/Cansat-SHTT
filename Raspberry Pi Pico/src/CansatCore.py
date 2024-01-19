@@ -20,7 +20,7 @@ class _sensors:
 # // Components
 class _components:
     BuiltInLed: Pin = Pin(25, Pin.OUT)
-    AlarmBuzzer: Pin = Pin(20, Pin.OUT)
+    AlarmBuzzer: Pin = Pin(13, Pin.OUT)
 
 
 # // Constants
