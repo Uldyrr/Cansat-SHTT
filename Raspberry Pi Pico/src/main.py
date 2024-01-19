@@ -38,8 +38,8 @@ def MainCycle():
 
         components.CansatLogger.LogData(  # We save two lists instead of two dicts (saves space & we can use eval() in the visualizer).
             LOGTYPE_IMUDATA,
-            [accelerationData.X, accelerationData.Y, accelerationData.Z],
-            [gyroData.X, gyroData.Y, gyroData.Z]
+            [accelerationData.x, accelerationData.x, accelerationData.z],
+            [gyroData.x, gyroData.y, gyroData.z]
         )
 
         # Main data update. Measuring, logging, and radio communicating. (1.0s update time)
@@ -78,4 +78,5 @@ def Init():
 
 
 Init()
+
 

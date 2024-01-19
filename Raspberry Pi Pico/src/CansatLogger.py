@@ -24,7 +24,7 @@ class CansatLogger:
         self._logIMUName = f"{LOGGER_LOGIMUNAME}.csv"
 
         # Reset IMU data every restart
-        with open(self._logIMUName, "x") as logIMUFile:
+        with open(self._logIMUName, "w") as logIMUFile:
             logIMUFile.write("")
 
     def LogData(self, logType: str, *data: tuple[any, ...]):
@@ -35,4 +35,5 @@ class CansatLogger:
 
         with open(self._logMainName if logType == LOGTYPE_MAINDATA else self._logIMUName, "a") as logFile:
             logFile.write(logStringData)
+
 
