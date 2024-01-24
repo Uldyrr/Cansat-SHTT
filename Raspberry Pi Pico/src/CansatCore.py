@@ -238,7 +238,7 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
 
 
 # Secondary mission helper functions
-def GetAirHumidity(dht: DHT11) -> float:
+def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
     """
     Uses a DHT11 object to get the current air humidity
 
@@ -250,10 +250,21 @@ def GetAirHumidity(dht: DHT11) -> float:
     ----------
     dht : DHT11
         An object of the DHT11 air humidity sensor class
-    """
-    dht.measure()
 
-    return float(f"{dht.humidity():.2f}")
+    Returns
+    -------
+    float
+        The relative air humidity floating point value
+    bool
+        A boolean value indicating whether the DHT11's air humidity value was read successfully
+    """
+    try:
+        dht.measure()
+
+        return float(f"{dht.humidity():.2f}"), True
+    except:
+        return 0.0, False
+
 
 
 # Helper component functions

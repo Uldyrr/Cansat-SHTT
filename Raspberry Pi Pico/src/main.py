@@ -45,7 +45,7 @@ def MainCycle():
         airPressureData, airPressureReadSuccess = GetAirPressure(sensors.BMP)
         accelerationData, gyroData, altitudeGyroSuccess = GetAccelerationGyro(sensors.MPU, mpuData)
         gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
-        # airHumidityData = GetAirHumidity(sensors.DHT)
+        # airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
 
         components.CansatLogger.LogData(airTemperatureData, airPressureData, tickDifference / 1000, mpuData["Acceleration"],
                                         mpuData["Gyroscope"], gpsLatitude, gpsLongitude)
