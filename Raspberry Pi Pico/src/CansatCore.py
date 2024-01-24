@@ -60,7 +60,7 @@ def GetBuiltInTemperature() -> float:
     return round(temperature, 2)
 
 
-def GetHypsometricEquationAltitude(airPressurehPa: float, airTemperatureKelvin: float) -> float:
+def GetHypsometricEquationAltitude(airPressurePa: float, airTemperatureCelsius: float) -> float:
     """
     Gets the current altitude of the cansat using the Hypsometric equation
 
@@ -71,17 +71,20 @@ def GetHypsometricEquationAltitude(airPressurehPa: float, airTemperatureKelvin: 
 
     Parameters
     ----------
-    airPressurehPa : float
-        The air pressure in hectopascals
+    airPressurePa : float
+        The air pressure in pascals
 
-    airTemperatureKelvin : float
-        The air temperature in kelvin
+    airTemperatureCelsius : float
+        The air temperature in celsius
 
     Returns
     -------
     float
         A float of the current altitude of the cansat based on the given air pressure and temperature
     """
+
+    airPressurehPa = airPressurePa * 0.01
+    airTemperatureKelvin = airTemperatureCelsius + 273.15
 
     pressureRatio: float = CANSAT_SEALEVELPRESSURE / airPressurehPa
     altitude: float = (((pressureRatio ** (1 / 5.257)) - 1) * airTemperatureKelvin) / 0.0065 - CANSAT_ALTITUDECORRECTION
@@ -151,10 +154,10 @@ def GetAltitude(bmp: BMP280) -> float:
         The current altitude of the cansat in meters
     """
 
-    airPressurehPa, airPressureSuccess = GetAirPressure(bmp) * 0.01  # hPa
-    airTemperatureKelvin, airTemperatureSuccess = GetAirTemperature(bmp) + 273.15  # Kelvin
+    airPressurehPa, airPressureSuccess = GetAirPressure(bmp)
+    airTemperatureCelsius, airTemperatureSuccess = GetAirTemperature(bmp)
 
-    altitudeData: float = GetHypsometricEquationAltitude(airPressurehPa, airTemperatureKelvin)
+    altitudeData: float = GetHypsometricEquationAltitude(airPressurehPa, airTemperatureCelsius)
 
     return altitudeData
 
