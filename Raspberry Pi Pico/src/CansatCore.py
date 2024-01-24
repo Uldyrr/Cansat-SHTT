@@ -258,6 +258,7 @@ def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
     bool
         A boolean value indicating whether the DHT11's air humidity value was read successfully
     """
+
     try:
         dht.measure()
 
