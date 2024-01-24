@@ -40,12 +40,15 @@ def MainCycle():
     while True:
         utime.sleep(CANSAT_UPDATEHZ - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATEHZ * 0.1))
 
-        altitudeData = GetAltitude(sensors.BMP)
-        airTemperatureData, airPressureData = GetAirTemperature(sensors.BMP), GetAirPressure(sensors.BMP)
+        altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
+        airTemperatureData, airTemperatureReadSucces = GetAirTemperature(sensors.BMP)
+        airPressureData, airPressureReadSuccess = GetAirPressure(sensors.BMP)
+        accelerationData, gyroData, altitudeGyroSuccess = GetAccelerationGyro(sensors.MPU, mpuData)
         gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
         # airHumidityData = GetAirHumidity(sensors.DHT)
 
-        components.CansatLogger.LogData(airTemperatureData, airPressureData, tickDifference / 1000, gpsLatitude, gpsLongitude)
+        components.CansatLogger.LogData(airTemperatureData, airPressureData, tickDifference / 1000, mpuData["Acceleration"],
+                                        mpuData["Gyroscope"], gpsLatitude, gpsLongitude)
 
         # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
@@ -74,7 +77,3 @@ def Init():
 
 
 Init()
-
-
-
-
