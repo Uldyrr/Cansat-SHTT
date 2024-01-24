@@ -139,7 +139,7 @@ def GetAirPressure(bmp: BMP280) -> tuple[float, bool]:
 
 
 
-def GetAltitude(bmp: BMP280) -> float:
+def GetAltitude(bmp: BMP280) -> tuple[float, bool]:
     """
     Gets the current pressure and temperature using bmp280 to calculate the cansat's current altitude
 
@@ -152,6 +152,8 @@ def GetAltitude(bmp: BMP280) -> float:
     -------
     float
         The current altitude of the cansat in meters
+    bool
+        A value indicating that all sensor values were read successfully
     """
 
     airPressurehPa, airPressureSuccess = GetAirPressure(bmp)
@@ -159,10 +161,12 @@ def GetAltitude(bmp: BMP280) -> float:
 
     altitudeData: float = GetHypsometricEquationAltitude(airPressurehPa, airTemperatureCelsius)
 
-    return altitudeData
+    altitudeReadSuccess = airPressureSuccess and airTemperatureSuccess
+
+    return altitudeData, altitudeReadSuccess
 
 
-def GetAccelerationGyro(mpu: MPU6050, mpuData: dict = None) -> tuple[Vector3d, Vector3d]:
+def GetAccelerationGyro(mpu: MPU6050, mpuData: dict = None) -> tuple[dict, dict, bool]:
     """
     Gets the current acceleration and gyro of the cansat using the MPU6050 IMU sensor
 
@@ -175,28 +179,35 @@ def GetAccelerationGyro(mpu: MPU6050, mpuData: dict = None) -> tuple[Vector3d, V
 
     Returns
     -------
-    tuple[Vector3d, Vector3d]
-        The acceleration and gyroscope data as Vector3d objects
+    tuple[dict, dict, bool]
+        The acceleration and gyroscope data as dict objects and a value indicating whether the MPU6050 data was read
     """
 
-    accelerationData: Vector3d = mpu.accel
-    gyroData: Vector3d = mpu.gyro
+    accelerationGyroSuccess: bool = True
+    accelerationData: dict = {"x": 0, "y": 0, "z": 0}
+    gyroData: dict = {"x": 0, "y": 0, "z": 0}
+
+    try:
+        accelerationData = {"x": mpu.accel.x, "y": mpu.accel.y, "z": mpu.accel.x}
+        gyroData = {"x": mpu.gyro.x, "y": mpu.gyro.y, "z": mpu.gyro.x}
+    except:
+        accelerationGyroSuccess = False
 
     # Update the mpuData dict (IF PROVIDED) with data from the MPU6050
-    if type(mpuData) is dict:
+    if accelerationGyroSuccess and type(mpuData) is dict:
         mpuData["Acceleration"] = [
-            accelerationData.x,
-            accelerationData.y,
-            accelerationData.z
+            accelerationData["x"],
+            accelerationData["y"],
+            accelerationData["z"]
         ]
 
         mpuData["Gyroscope"] = [
-            gyroData.x,
-            gyroData.y,
-            gyroData.z
+            gyroData["x"],
+            gyroData["y"],
+            gyroData["z"]
         ]
 
-    return accelerationData, gyroData
+    return accelerationData, gyroData, accelerationGyroSuccess
 
 
 def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, list]:
