@@ -89,7 +89,7 @@ def GetHypsometricEquationAltitude(airPressurehPa: float, airTemperatureKelvin: 
     return altitude
 
 
-def GetAirTemperature(bmp: BMP280) -> float:
+def GetAirTemperature(bmp: BMP280) -> tuple[float, bool]:
     """
     Uses the bmp280 air pressure & temperature sensor to get the current air temperature
 
@@ -102,12 +102,17 @@ def GetAirTemperature(bmp: BMP280) -> float:
     -------
     float
         A float air temperature value
+    bool
+        A boolean value indicating whether the BMP280's temperature value was read successfully
     """
 
-    return bmp.temperature  # Getting the air temperature using the bmp280 as shown here, is very easy lol
+    try:
+        return bmp.temperature, True
+    except:
+        return 0.0, False
 
 
-def GetAirPressure(bmp: BMP280) -> float:
+def GetAirPressure(bmp: BMP280) -> tuple[float, bool]:
     """
     Uses the bmp280 air pressure & temperature sensor to get the current air pressure
 
@@ -120,9 +125,15 @@ def GetAirPressure(bmp: BMP280) -> float:
     -------
     float
         A float air pressure value
+    bool
+        A boolean value indicating whether the BMP280's pressure value was read successfully
     """
 
-    return bmp.pressure
+    try:
+        return bmp.pressure, True
+    except:
+        return 0.0, False
+
 
 
 def GetAltitude(bmp: BMP280) -> float:
@@ -140,8 +151,8 @@ def GetAltitude(bmp: BMP280) -> float:
         The current altitude of the cansat in meters
     """
 
-    airPressurehPa: float = GetAirPressure(bmp) * 0.01  # hPa
-    airTemperatureKelvin: float = GetAirTemperature(bmp) + 273.15  # Kelvin
+    airPressurehPa, airPressureSuccess = GetAirPressure(bmp) * 0.01  # hPa
+    airTemperatureKelvin, airTemperatureSuccess = GetAirTemperature(bmp) + 273.15  # Kelvin
 
     altitudeData: float = GetHypsometricEquationAltitude(airPressurehPa, airTemperatureKelvin)
 
