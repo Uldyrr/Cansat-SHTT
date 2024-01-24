@@ -156,10 +156,10 @@ def GetAltitude(bmp: BMP280) -> tuple[float, bool]:
         A value indicating that all sensor values were read successfully
     """
 
-    airPressurehPa, airPressureSuccess = GetAirPressure(bmp)
+    airPressurePa, airPressureSuccess = GetAirPressure(bmp)
     airTemperatureCelsius, airTemperatureSuccess = GetAirTemperature(bmp)
 
-    altitudeData: float = GetHypsometricEquationAltitude(airPressurehPa, airTemperatureCelsius)
+    altitudeData: float = GetHypsometricEquationAltitude(airPressurePa, airTemperatureCelsius)
 
     altitudeReadSuccess = airPressureSuccess and airTemperatureSuccess
 
@@ -358,6 +358,6 @@ def InitCansatCore(bmp: BMP280 = None) -> None:
     # Initialize constants
     if bmp is not None:
         CANSAT_ALTITUDECORRECTION = 0  # Set to zero to get the actual altitude offset one will get from calling GetAltitude()
-        CANSAT_ALTITUDECORRECTION = GetAltitude(bmp)
+        CANSAT_ALTITUDECORRECTION, _ = GetAltitude(bmp)
 
 
