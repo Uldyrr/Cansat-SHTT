@@ -373,3 +373,4 @@ def InitCansatCore(bmp: BMP280 = None) -> None:
         CANSAT_ALTITUDECORRECTION, _ = GetAltitude(bmp)
 
 
+

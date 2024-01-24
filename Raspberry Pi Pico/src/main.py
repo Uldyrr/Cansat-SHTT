@@ -47,12 +47,11 @@ def MainCycle():
         gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
         # airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
 
-        components.CansatLogger.LogData(airTemperatureData, airPressureData, tickDifference / 1000, mpuData["Acceleration"],
-                                        mpuData["Gyroscope"], gpsLatitude, gpsLongitude)
+        components.CansatLogger.LogData(gpsLatitude, gpsLongitude, airTemperatureData, airPressureData)
 
         # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-        print(altitudeData, gpsLatitude, gpsLongitude)
+        print(gpsLatitude, gpsLongitude, airTemperatureData, airPressureData)
 
         # Evaluate tick differences
         currentTick = utime.ticks_ms()
@@ -77,3 +76,4 @@ def Init():
 
 
 Init()
+
