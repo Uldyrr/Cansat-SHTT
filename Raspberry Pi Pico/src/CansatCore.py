@@ -247,6 +247,26 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
 
 
 # Secondary mission helper functions
+def ToggleSoilMoistureSensor(extendedState: bool) -> None:
+    """
+    EXTENDS or Retracts the POINTY soil moisture sensor
+
+    Note
+    ----
+    THIS SENSOR HAS TWO FUCKING SHARP GROUND PENETRATORS
+
+    Parameters
+    ----------
+    extendedState : bool
+        The extented state of the soil moisture sensor. When set to true, EXERCISE CAUTION
+    """
+
+    if extendedState:
+        raise NotImplementedError
+    else:
+        raise NotImplementedError
+
+
 def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
     """
     Uses a DHT11 object to get the current air humidity

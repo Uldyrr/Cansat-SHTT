@@ -36,15 +36,17 @@ missionPreviousAltitudeTrigger = 0
 
 
 # The mission state status update
-def MissionStateUpdate(altitudeData: float, altitudeReadSuccess: bool) -> None:
+def MissionStateUpdate() -> None:
     global missionMode, missionPreviousAltitude, missionPreviousAltitudeTrigger
 
+    altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
+
     if missionMode == MISSION_MODES.PRELAUNCH:
-        # Check whether the cansat is above a certain valid launch altitude
+        # Check whether the cansat is above a certain valid launch altitude to confirm launch
         missionMode = MISSION_MODES.LAUNCH if altitudeData >= MISSION_LAUNCHALTITUDE else missionMode
         missionPreviousAltitude = altitudeData
 
-    elif missionMode == MISSION_MODES.LAUNCH:  # (I'm not sure if the cansat can land somewhere higher, hopefully not)
+    elif missionMode == MISSION_MODES.LAUNCH:
         # Check whether the cansat is below the launch alitude and stays under an altitude for a certain amount of time
         if altitudeData > MISSION_LAUNCHALTITUDE:
             missionPreviousAltitude = altitudeData
@@ -69,15 +71,14 @@ def MainCycle():
     while True:
         utime.sleep(CANSAT_UPDATEHZ - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATEHZ * 0.1))
 
-        altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
+        MissionStateUpdate()
 
-        MissionStateUpdate(altitudeData, altitudeReadSuccess)
-
-        if missionMode == MISSION_MODES.PRELAUNCH:
-            print("AWAITING PROPER HEIGHT!", altitudeData, missionPreviousAltitude, MISSION_LAUNCHALTITUDE)
+        # if missionMode == MISSION_MODES.PRELAUNCH:
+        #     print("AWAITING PROPER HEIGHT!", altitudeData, missionPreviousAltitude, MISSION_LAUNCHALTITUDE)
 
         # MISSION STATUS: Cansat has been launched, run all systems nominally
         if missionMode != MISSION_MODES.PRELAUNCH:
+            altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
             airTemperatureData, airTemperatureReadSucces = GetAirTemperature(sensors.BMP)
             airPressureData, airPressureReadSuccess = GetAirPressure(sensors.BMP)
             accelerationData, gyroData, altitudeGyroSuccess = GetAccelerationGyro(sensors.MPU, mpuData)
@@ -90,6 +91,7 @@ def MainCycle():
 
             print(gpsLatitude, gpsLongitude, airTemperatureData, altitudeData)
 
+        # MISSION STATUS: Cansat has landed, continue systems running, but start the alarm buzzer
         if missionMode == MISSION_MODES.LANDED:
             ToggleAlarmBuzzer(True)
 
