@@ -33,8 +33,6 @@ mpuData: dict = {}
 # The heart of the CanSat
 def MainCycle():
     previousTick: int = utime.ticks_ms()
-    currentTick: int = 0
-    tickDifference: int = 0
     tickUpdateOffset: int = 0
 
     while True:
