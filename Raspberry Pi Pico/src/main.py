@@ -21,7 +21,7 @@ class sensors:
 # // Components
 class components:
     GPSSerialBus: UART = UART(1, 9600, tx=Pin(4), rx=Pin(5))
-    GPS: MicropyGPS = MicropyGPS(location_formatting="dd")
+    GPS: MicropyGPS = MicropyGPS(location_formatting='dd')
     Radio: RadioCom = RadioCom(UART(0, 9600, tx=Pin(16), rx=Pin(17)))
     CansatLogger = CansatLogger()
 
@@ -33,6 +33,8 @@ mpuData: dict = {}
 # The heart of the CanSat
 def MainCycle():
     previousTick: int = utime.ticks_ms()
+    currentTick: int = 0
+    tickDifference: int = 0
     tickUpdateOffset: int = 0
 
     while True:
@@ -49,7 +51,7 @@ def MainCycle():
 
         # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-        print(gpsLatitude, gpsLongitude, airTemperatureData, airPressureData)
+        print(gpsLatitude, gpsLongitude, airTemperatureData, altitudeData)
 
         # Evaluate tick differences
         currentTick = utime.ticks_ms()
