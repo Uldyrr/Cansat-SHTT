@@ -46,12 +46,11 @@ def MissionStateUpdate() -> None:
         missionMode = MISSION_MODES.LAUNCH if altitudeData >= MISSION_LAUNCHALTITUDE else missionMode
         missionPreviousAltitude = altitudeData
 
-    elif missionMode == MISSION_MODES.LAUNCH:
+    elif missionMode == MISSION_MODES.LAUNCH:  # TODO: Implement a more dynamic landing check?
         # Check whether the cansat is below the launch alitude and stays under an altitude for a certain amount of time
         if altitudeData > MISSION_LAUNCHALTITUDE:
             missionPreviousAltitude = altitudeData
             missionPreviousAltitudeTrigger = 0
-
             return
 
         if abs(altitudeData - missionPreviousAltitude) < MISSION_LANDEDTHRESHOLD:

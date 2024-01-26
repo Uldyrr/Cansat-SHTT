@@ -121,7 +121,7 @@ def GetAirTemperature(bmp: BMP280) -> tuple[float, bool]:
     try:
         return bmp.temperature, True
     except:
-        return -1, False
+        return -1.0, False
 
 
 def GetAirPressure(bmp: BMP280) -> tuple[float, bool]:
@@ -144,7 +144,7 @@ def GetAirPressure(bmp: BMP280) -> tuple[float, bool]:
     try:
         return bmp.pressure, True
     except:
-        return -1, False
+        return -1.0, False
 
 
 
@@ -293,8 +293,7 @@ def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
 
         return float(f"{dht.humidity():.2f}"), True
     except:
-        return 0.0, False
-
+        return -1.0, False
 
 
 # Helper component functions
