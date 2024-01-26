@@ -121,7 +121,7 @@ def GetAirTemperature(bmp: BMP280) -> tuple[float, bool]:
     try:
         return bmp.temperature, True
     except:
-        return 0.0, False
+        return -1, False
 
 
 def GetAirPressure(bmp: BMP280) -> tuple[float, bool]:
@@ -144,7 +144,7 @@ def GetAirPressure(bmp: BMP280) -> tuple[float, bool]:
     try:
         return bmp.pressure, True
     except:
-        return 0.0, False
+        return -1, False
 
 
 
@@ -380,6 +380,7 @@ def InitCansatCore(bmp: BMP280 = None) -> None:
     if bmp is not None:
         CANSAT_ALTITUDECORRECTION = 0  # Set to zero to get the actual altitude offset one will get from calling GetAltitude()
         CANSAT_ALTITUDECORRECTION, _ = GetAltitude(bmp)
+
 
 
 

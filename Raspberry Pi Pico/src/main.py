@@ -25,6 +25,7 @@ class components:
     Radio: RadioCom = RadioCom(UART(0, 9600, tx=Pin(16), rx=Pin(17)))
     CansatLogger = CansatLogger()
 
+
 # // Sensor data
 mpuData: dict = {}
 
@@ -41,10 +42,17 @@ def MissionStateUpdate(altitudeData: float, altitudeReadSuccess: bool) -> None:
     if missionMode == MISSION_MODES.PRELAUNCH:
         # Check whether the cansat is above a certain valid launch altitude
         missionMode = MISSION_MODES.LAUNCH if altitudeData >= MISSION_LAUNCHALTITUDE else missionMode
+        missionPreviousAltitude = altitudeData
 
-    elif missionMode == MISSION_MODES.LAUNCH and altitudeData <= MISSION_LAUNCHALTITUDE:  # (I'm not sure if the cansat can land somewhere higher, hopefully not)
+    elif missionMode == MISSION_MODES.LAUNCH:  # (I'm not sure if the cansat can land somewhere higher, hopefully not)
         # Check whether the cansat is below the launch alitude and stays under an altitude for a certain amount of time
-        if abs(altitudeData - missionPreviousAltitude) > MISSION_LANDEDTHRESHOLD:
+        if altitudeData > MISSION_LAUNCHALTITUDE:
+            missionPreviousAltitude = altitudeData
+            missionPreviousAltitudeTrigger = 0
+
+            return
+
+        if abs(altitudeData - missionPreviousAltitude) < MISSION_LANDEDTHRESHOLD:
             missionPreviousAltitudeTrigger += 1
         else:
             missionPreviousAltitudeTrigger = 0
@@ -64,6 +72,9 @@ def MainCycle():
         altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
 
         MissionStateUpdate(altitudeData, altitudeReadSuccess)
+
+        if missionMode == MISSION_MODES.PRELAUNCH:
+            print("AWAITING PROPER HEIGHT!", altitudeData, missionPreviousAltitude, MISSION_LAUNCHALTITUDE)
 
         # MISSION STATUS: Cansat has been launched, run all systems nominally
         if missionMode != MISSION_MODES.PRELAUNCH:
@@ -109,4 +120,6 @@ def Init():
 
 
 Init()
+
+on
 
