@@ -34,8 +34,8 @@ class MISSION_MODES:
     LAUNCH = 2,     # Mission mode, all systems will turned on
     LANDED = 3      # Retrival mode, all systems will continue running and an alarm buzzer will toggle
 
-MISSION_LAUNCHALTITUDE = 150  # m
-MISSION_LANDEDTHRESHOLD = 5  # m
+MISSION_LAUNCHALTITUDE = 3  # m
+MISSION_LANDEDTHRESHOLD = 1  # m
 MISSION_LANDEDTRIGGER = 10  # Count before we can consider the cansat landed
 
 BUZZER_MICROSECONDS: int = 1_000_000  # 1 / 1000 (ms) / 1000 (us)
