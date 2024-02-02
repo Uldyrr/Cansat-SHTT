@@ -24,6 +24,7 @@ class components:
     GPS: MicropyGPS = MicropyGPS(location_formatting='dd')
     Radio: RadioCom = RadioCom(UART(0, 9600, tx=Pin(16), rx=Pin(17)))
     CansatLogger = CansatLogger()
+    CansatLED = Pin(0, Pin.Out)
 
 
 # // Sensor data
@@ -105,6 +106,7 @@ def Init():
     print("Initializing!")
 
     # Standard initialization
+    components.CansatLED.value(0)
     ToggleAlarmBuzzer(False)
 
     sensors.BMP.use_case(BMP280_CASE_INDOOR)  # Is DROP an outdoor use case? :/
@@ -121,6 +123,4 @@ def Init():
 
 
 Init()
-
-on
 
