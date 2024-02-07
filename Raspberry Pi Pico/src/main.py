@@ -24,7 +24,6 @@ class components:
     GPS: MicropyGPS = MicropyGPS(location_formatting='dd')
     Radio: RadioCom = RadioCom(UART(0, 9600, tx=Pin(16), rx=Pin(17)))
     CansatLogger = CansatLogger()
-    CansatLED = Pin(0, Pin.Out)
 
 
 # // Sensor data

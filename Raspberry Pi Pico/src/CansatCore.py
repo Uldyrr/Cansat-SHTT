@@ -383,15 +383,18 @@ def ToggleAlarmBuzzer(alarmState: bool = None) -> None:
         _alarmBuzzerRunning = False
 
 
-def TogglePowerLed(ledState: bool) -> None:
+def TogglePowerLed(ledState: bool = None) -> None:
     """
     Toggles the cansat's power led to show whether or not the cansat is powered
 
     Parameters
     ----------
     ledState : bool
-        The on state of the power led
+        The on state of the power led. When None, the function will inverse the led state
     """
+
+    if ledState == None:
+        _components.PowerLed.value(_components.PowerLed.value() == True)
 
     _components.PowerLed.value(ledState)
 
