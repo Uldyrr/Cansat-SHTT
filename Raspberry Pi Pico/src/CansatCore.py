@@ -22,6 +22,7 @@ class _sensors:
 class _components:
     BuiltInLed: Pin = Pin(25, Pin.OUT)
     AlarmBuzzer: Pin = Pin(13, Pin.OUT)
+    PowerLed: Pin = Pin(0, Pin.OUT)
 
 
 # // Constants
@@ -380,6 +381,19 @@ def ToggleAlarmBuzzer(alarmState: bool = None) -> None:
         _thread.start_new_thread(_AlarmBuzzerThreadUpdate, ())
     elif alarmState is False and _alarmBuzzerRunning:
         _alarmBuzzerRunning = False
+
+
+def TogglePowerLed(ledState: bool) -> None:
+    """
+    Toggles the cansat's power led to show whether or not the cansat is powered
+
+    Parameters
+    ----------
+    ledState : bool
+        The on state of the power led
+    """
+
+    _components.PowerLed.value(ledState)
 
 
 # Init

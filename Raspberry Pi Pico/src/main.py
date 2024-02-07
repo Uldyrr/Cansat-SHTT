@@ -106,7 +106,7 @@ def Init():
     print("Initializing!")
 
     # Standard initialization
-    components.CansatLED.value(0)
+    TogglePowerLed(False)
     ToggleAlarmBuzzer(False)
 
     sensors.BMP.use_case(BMP280_CASE_INDOOR)  # Is DROP an outdoor use case? :/
@@ -115,6 +115,9 @@ def Init():
 
     # Core module initalization
     InitCansatCore(sensors.BMP)
+
+    # Finilization
+    TogglePowerLed(True)
 
     print("Initialized!")
     print("Starting MainCycle()!\n")
