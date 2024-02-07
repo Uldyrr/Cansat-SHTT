@@ -394,7 +394,7 @@ def TogglePowerLed(ledState: bool = None) -> None:
     """
 
     if ledState == None:
-        _components.PowerLed.value(_components.PowerLed.value() == True)
+        _components.PowerLed.value(not _components.PowerLed.value())
 
     _components.PowerLed.value(ledState)
 
@@ -416,6 +416,7 @@ def InitCansatCore(bmp: BMP280 = None) -> None:
     if bmp is not None:
         CANSAT_ALTITUDECORRECTION = 0  # Set to zero to get the actual altitude offset one will get from calling GetAltitude()
         CANSAT_ALTITUDECORRECTION, _ = GetAltitude(bmp)
+
 
 
 
