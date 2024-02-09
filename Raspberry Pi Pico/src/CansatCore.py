@@ -270,7 +270,7 @@ def ToggleSoilMoistureSensor(extendedState: bool) -> None:
 
 
 def GetAmmoniaPPM(mq135: ADC) -> float:
-
+    return mq135.read_uv()
 
 
 def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
@@ -398,7 +398,7 @@ def TogglePowerLed(ledState: bool = None) -> None:
         The on state of the power led. When None, the function will inverse the led state
     """
 
-    if ledState == None:
+    if ledState is None:
         ledState = not _components.PowerLed.value()
 
     _components.PowerLed.value(ledState)
