@@ -26,6 +26,7 @@ class _components:
 
 
 # // Constants
+CANSAT_ADC = 2**12 - 1  # 12-bit ADC
 CANSAT_UPDATEHZ: float = 1.0  # hz
 CANSAT_ALTITUDECORRECTION: float = 120.0  # m, NOTE: Currently automatically updated in InitCansatCore() if a BMP280 object is provided
 CANSAT_SEALEVELPRESSURE: float = 1013.25  # hPa
@@ -268,6 +269,10 @@ def ToggleSoilMoistureSensor(extendedState: bool) -> None:
         raise NotImplementedError
 
 
+def GetAmmoniaPPM():
+
+
+
 def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
     """
     Uses a DHT11 object to get the current air humidity
@@ -394,7 +399,7 @@ def TogglePowerLed(ledState: bool = None) -> None:
     """
 
     if ledState == None:
-        _components.PowerLed.value(not _components.PowerLed.value())
+        ledState = not _components.PowerLed.value()
 
     _components.PowerLed.value(ledState)
 
