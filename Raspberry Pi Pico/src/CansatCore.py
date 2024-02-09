@@ -44,6 +44,7 @@ MISSION_LANDEDTRIGGER = 10   # Count before we can consider the cansat landed
 BUZZER_MICROSECONDS: int = 1_000_000  # 1 / 1000 (ms) / 1000 (us)
 
 MQ135_LOADRESISTANCE = 20.0  # kOhm
+MQ135_ATMAMMONIA = 0.00285   # PPM
 
 HIGH: bool = True
 LOW: bool = False
@@ -278,7 +279,7 @@ def ToVoltageADC16Bit(adc16Bit: float) -> float:
 
 def GetAmmoniaPPM(mq135: ADC) -> float:
     adc16Bit = mq135.read_u16()
-    loadResistance = ToVoltageADC16Bit(adc16Bit) * MQ135_LOADRESISTANCE
+    loadResistance = (5 / ToVoltageADC16Bit(adc16Bit) - 1) * MQ135_LOADRESISTANCE
 
     return loadResistance
 
