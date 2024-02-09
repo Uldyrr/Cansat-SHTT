@@ -26,9 +26,9 @@ class _components:
 
 
 # // Constants
-CANSAT_ADC = 2**12 - 1  # 12-bit ADC
-CANSAT_UPDATEHZ: float = 1.0  # hz
-CANSAT_ALTITUDECORRECTION: float = 120.0  # m, NOTE: Currently automatically updated in InitCansatCore() if a BMP280 object is provided
+CANSAT_ADC = 2**12 - 1                    # 12-bit ADC
+CANSAT_UPDATEHZ: float = 1.0              # hz
+CANSAT_ALTITUDECORRECTION: float = 120.0  # m, NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
 CANSAT_SEALEVELPRESSURE: float = 1013.25  # hPa
 
 class MISSION_MODES:
@@ -36,9 +36,9 @@ class MISSION_MODES:
     LAUNCH = 2,     # Mission mode, all systems will turned on
     LANDED = 3      # Retrival mode, all systems will continue running and an alarm buzzer will toggle
 
-MISSION_LAUNCHALTITUDE = 3  # m
+MISSION_LAUNCHALTITUDE = 3   # m
 MISSION_LANDEDTHRESHOLD = 1  # m
-MISSION_LANDEDTRIGGER = 10  # Count before we can consider the cansat landed
+MISSION_LANDEDTRIGGER = 10   # Count before we can consider the cansat landed
 
 BUZZER_MICROSECONDS: int = 1_000_000  # 1 / 1000 (ms) / 1000 (us)
 
@@ -269,8 +269,8 @@ def ToggleSoilMoistureSensor(extendedState: bool) -> None:
         raise NotImplementedError
 
 
-def GetAmmoniaPPM():
-    raise NotImplementedError
+def GetAmmoniaPPM(mq135: ADC) -> float:
+
 
 
 def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
