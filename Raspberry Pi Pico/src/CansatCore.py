@@ -270,7 +270,7 @@ def ToggleSoilMoistureSensor(extendedState: bool) -> None:
 
 
 def GetAmmoniaPPM(mq135: ADC) -> float:
-    return mq135.read_uv()
+    return mq135.read_u16()
 
 
 def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
@@ -421,6 +421,7 @@ def InitCansatCore(bmp: BMP280 = None) -> None:
     if bmp is not None:
         CANSAT_ALTITUDECORRECTION = 0  # Set to zero to get the actual altitude offset one will get from calling GetAltitude()
         CANSAT_ALTITUDECORRECTION, _ = GetAltitude(bmp)
+
 
 
 

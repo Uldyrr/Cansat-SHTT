@@ -13,8 +13,8 @@ import utime
 # Values
 # // Sensors
 class sensors:
-    MPU: MPU6050 = MPU6050(I2C(1, sda=Pin(18), scl=Pin(19)))
-    BMP: BMP280 = BMP280(I2C(1, sda=Pin(18), scl=Pin(19)))
+    MPU: MPU6050 = MPU6050(I2C(0, sda=Pin(20), scl=Pin(21)))
+    BMP: BMP280 = BMP280(I2C(0, sda=Pin(20), scl=Pin(21)))
     DHT: DHT11 = DHT11(Pin(9))
     MQ135: ADC = ADC(27)
 
@@ -126,4 +126,5 @@ def Init():
 
 
 Init()
+
 
