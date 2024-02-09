@@ -26,7 +26,8 @@ class _components:
 
 
 # // Constants
-CANSAT_ADC = 2**12 - 1                    # 12-bit ADC
+CANSAT_ADC16BIT = 2**16 - 1               # 16-bit ADC
+CANSAT_ADC12BIT = 2**12 - 1               # 12-bit ADC
 CANSAT_UPDATEHZ: float = 1.0              # hz
 CANSAT_ALTITUDECORRECTION: float = 120.0  # m, NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
 CANSAT_SEALEVELPRESSURE: float = 1013.25  # hPa
@@ -41,6 +42,8 @@ MISSION_LANDEDTHRESHOLD = 1  # m
 MISSION_LANDEDTRIGGER = 10   # Count before we can consider the cansat landed
 
 BUZZER_MICROSECONDS: int = 1_000_000  # 1 / 1000 (ms) / 1000 (us)
+
+MQ135_LOADRESISTANCE = 20.0  # kOhm
 
 HIGH: bool = True
 LOW: bool = False
@@ -269,8 +272,15 @@ def ToggleSoilMoistureSensor(extendedState: bool) -> None:
         raise NotImplementedError
 
 
+def ToVoltageADC16Bit(adc16Bit: float) -> float:
+    return 5 * adc16Bit/CANSAT_ADC16BIT
+
+
 def GetAmmoniaPPM(mq135: ADC) -> float:
-    return mq135.read_u16()
+    adc16Bit = mq135.read_u16()
+    loadResistance = ToVoltageADC16Bit(adc16Bit) * MQ135_LOADRESISTANCE
+
+    return loadResistance
 
 
 def GetOzonePPM(mq131: ADC) -> float:
