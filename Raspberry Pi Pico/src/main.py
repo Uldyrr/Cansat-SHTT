@@ -17,6 +17,7 @@ class sensors:
     BMP: BMP280 = BMP280(I2C(0, sda=Pin(20), scl=Pin(21)))
     DHT: DHT11 = DHT11(Pin(9))
     MQ135: ADC = ADC(27)
+    MQ131: ADC = ADC(26)
 
 
 # // Components
