@@ -26,12 +26,14 @@ class _components:
 
 
 # // Constants
+# -- General Cansat Constants
 CANSAT_ADC16BIT = 2**16 - 1               # 16-bit ADC
 CANSAT_ADC12BIT = 2**12 - 1               # 12-bit ADC
 CANSAT_UPDATEHZ: float = 1.0              # hz
 CANSAT_ALTITUDECORRECTION: float = 120.0  # m, NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
 CANSAT_SEALEVELPRESSURE: float = 1013.25  # hPa
 
+# -- Mission Constants
 class MISSION_MODES:
     PRELAUNCH = 1,  # Hibernate mode, all systems will be off
     LAUNCH = 2,     # Mission mode, all systems will turned on
@@ -41,13 +43,21 @@ MISSION_LAUNCHALTITUDE = 3   # m
 MISSION_LANDEDTHRESHOLD = 1  # m
 MISSION_LANDEDTRIGGER = 10   # Count before we can consider the cansat landed
 
+# -- Gass Constants
+GAS_PPM_A: float = 116.6020682  # Parameter a as the coefficient for calculating PPM
+GAS_PPM_B: float = 2.769034857  # Parameter b as the exponent for calculating PPM
+
+# Parameters to model temperature and humidity depencdence
+GAS_COR_A: float = 0.00035
+GAS_COR_B: float = 0.02718
+GAS_COR_C: float = 1.39538
+GAS_COR_D: float = 0.0018
+
+# -- Component Constants
+MQ135_LOADRESISTANCE = 1.0  # kOhm
+MQ131_LOADRESISTANCE = 1.0  # kOhm
+
 BUZZER_MICROSECONDS: int = 1_000_000  # 1 / 1000 (ms) / 1000 (us)
-
-MQ135_LOADRESISTANCE = 20.0  # kOhm
-MQ135_ATMAMMONIA = 0.00285   # PPM
-
-HIGH: bool = True
-LOW: bool = False
 
 
 # Generic helper functions
@@ -277,7 +287,7 @@ def ToVoltageADC16Bit(adc16Bit: float) -> float:
     return 5 * adc16Bit/CANSAT_ADC16BIT
 
 
-def GetAmmoniaPPM(mq135: ADC) -> float:
+def GetAmmoniaPPM(mq135: ADC, airTemperature: float, relativeHumidity: float) -> float:
     adc16Bit = mq135.read_u16()
     loadResistance = (5 / ToVoltageADC16Bit(adc16Bit) - 1) * MQ135_LOADRESISTANCE
 
