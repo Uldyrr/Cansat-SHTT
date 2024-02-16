@@ -27,8 +27,8 @@ class _components:
 
 # // Constants
 # -- General Cansat Constants
-CANSAT_ADC16BIT = 2**16 - 1               # 16-bit ADC
-CANSAT_ADC12BIT = 2**12 - 1               # 12-bit ADC
+CANSAT_ADC16BIT: float = 2**16 - 1               # 16-bit ADC
+CANSAT_ADC12BIT: float = 2**12 - 1               # 12-bit ADC
 CANSAT_UPDATEHZ: float = 1.0              # hz
 CANSAT_ALTITUDECORRECTION: float = 120.0  # m, NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
 CANSAT_SEALEVELPRESSURE: float = 1013.25  # hPa
@@ -283,13 +283,13 @@ def ToggleSoilMoistureSensor(extendedState: bool) -> None:
         raise NotImplementedError
 
 
-def ToVoltageADC16Bit(adc16Bit: float) -> float:
-    return 5 * adc16Bit/CANSAT_ADC16BIT
+def ToVoltageADC16(adcVoltage: float, adc16Bit: float) -> float:
+    return adcVoltage * adc16Bit / CANSAT_ADC16BIT
 
 
 def GetAmmoniaPPM(mq135: ADC, airTemperature: float, relativeHumidity: float) -> float:
-    adc16Bit = mq135.read_u16()
-    loadResistance = (5 / ToVoltageADC16Bit(adc16Bit) - 1) * MQ135_LOADRESISTANCE
+    adc16Bit: float = mq135.read_u16()
+    loadResistance = (5.0 / ToVoltageADC16(5.0, adc16Bit) - 1) * MQ135_LOADRESISTANCE
 
     return loadResistance
 
