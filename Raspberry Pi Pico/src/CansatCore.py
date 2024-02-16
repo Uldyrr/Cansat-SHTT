@@ -289,7 +289,7 @@ def ToVoltageADC16(adcVoltage: float, adc16Bit: float) -> float:
 
 def GetAmmoniaPPM(mq135: ADC, airTemperature: float, relativeHumidity: float) -> float:
     adc16Bit: float = mq135.read_u16()
-    loadResistance = (5.0 / ToVoltageADC16(5.0, adc16Bit) - 1) * MQ135_LOADRESISTANCE
+    loadResistance = ((CANSAT_ADC16BIT / adc16Bit) * 5.0 - 1) * MQ135_LOADRESISTANCE
     ppm = GAS_PPM_A * pow(loadResistance/76.63, -GAS_PPM_B)
 
     return ppm
