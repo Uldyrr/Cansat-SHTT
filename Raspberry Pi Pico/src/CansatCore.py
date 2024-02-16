@@ -69,7 +69,7 @@ def GetBuiltInTemperature() -> float:
     """
 
     adcValue: float = _sensors.BuiltInTemperatureSensor.read_u16()
-    voltage: float = (3.3 / 65535) * adcValue
+    voltage: float = (3.3 / CANSAT_ADC16BIT) * adcValue
     temperature: float = 27 - (voltage - 0.706) / 0.001721
 
     return round(temperature, 2)
