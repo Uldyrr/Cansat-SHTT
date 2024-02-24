@@ -1,6 +1,7 @@
 from CansatCore import *
 from CansatCommunication import RadioCom
 from CansatLogger import CansatLogger
+from CansatGas import GasSensor, GASSENSOR_CALIBRATIONGAS, GASSENSOR_RZERO
 from machine import Pin, UART, I2C, ADC
 from imu import MPU6050
 from bmp280 import *
@@ -16,8 +17,8 @@ class sensors:
     MPU: MPU6050 = MPU6050(I2C(0, sda=Pin(20), scl=Pin(21)))
     BMP: BMP280 = BMP280(I2C(0, sda=Pin(20), scl=Pin(21)))
     DHT: DHT11 = DHT11(Pin(9))
-    MQ135: ADC = ADC(27)
-    MQ131: ADC = ADC(26)
+    MQ135: GasSensor = GasSensor(27, 1.0, GASSENSOR_RZERO.OXYGEN)
+    MQ131: GasSensor = GasSensor(26, 1.0, GASSENSOR_RZERO.CO2)
 
 
 # // Components

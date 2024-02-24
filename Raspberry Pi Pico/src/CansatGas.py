@@ -13,7 +13,8 @@ class GASSENSOR_RZERO:
     It would be best to have these values calibrated for every new environment
     """
 
-    CO2: float = 18.61  # NOTE: It would be best to have it calibrated in every new environment
+    CO2: float = 18.61
+    OXYGEN: float = 0.0
     OZONE: float = 0.0
 
 
@@ -24,8 +25,8 @@ class GASSENSOR_CALIBRATIONGAS:
     Contains rough PPM values of various gasses in regular air for calibration purposes
     """
     CO2: float = 411.9
-    Oxygen: float = 0.0
-    Ozone: float = 0.0
+    OXYGEN: float = 0.0
+    OZONE: float = 0.0
 
 # // PPM calculation constants
 GASSENSOR_PPM_A: float = 116.6020682

@@ -283,18 +283,6 @@ def ToggleSoilMoistureSensor(extendedState: bool) -> None:
         raise NotImplementedError
 
 
-def GetAmmoniaPPM(mq135: ADC, airTemperature: float, relativeHumidity: float) -> float:
-    adc16Bit: float = mq135.read_u16()
-    loadResistance = ((CANSAT_ADC16BIT / adc16Bit) * 5.0 - 1) * MQ135_LOADRESISTANCE
-    ppm = GAS_PPM_A * pow(loadResistance/76.63, -GAS_PPM_B)
-
-    return ppm
-
-
-def GetOzonePPM(mq131: ADC) -> float:
-    return mq131.read_u16()
-
-
 def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
     """
     Uses a DHT11 object to get the current air humidity
