@@ -283,10 +283,6 @@ def ToggleSoilMoistureSensor(extendedState: bool) -> None:
         raise NotImplementedError
 
 
-def ToVoltageADC16(adcVoltage: float, adc16Bit: float) -> float:
-    return adcVoltage * adc16Bit / CANSAT_ADC16BIT
-
-
 def GetAmmoniaPPM(mq135: ADC, airTemperature: float, relativeHumidity: float) -> float:
     adc16Bit: float = mq135.read_u16()
     loadResistance = ((CANSAT_ADC16BIT / adc16Bit) * 5.0 - 1) * MQ135_LOADRESISTANCE
