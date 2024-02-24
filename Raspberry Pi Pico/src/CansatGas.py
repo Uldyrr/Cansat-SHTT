@@ -47,6 +47,9 @@ class GasSensor:
     _loadResistance: float
     _zeroResistance: float
 
+    _calibrationR0Total: float = 0.0
+    _calibrationR0Count: int = 0
+
     def __init__(self, adcPin: int, loadResistance: float, zeroResistance: float):
         """
         Creates a new object of GasSensor taking in an adc pin, RL and R0.
@@ -108,10 +111,34 @@ class GasSensor:
         -------
         float
             The averaged R0 value, gets more precise the longer you call this function
+
+        Note
+        ----
+        Use this to calibrate a specific resistance zero ONLY in the same environment. Does not average a finite amount of resistance zero values
         """
 
-        return self.GetSensorResistance(airTemperature, airHumidity) * pow((calibrationGas/GASSENSOR_PPM_A), (1.0/GASSENSOR_PPM_B))
+        currentR0: float = self.GetSensorResistance(airTemperature, airHumidity) * pow((calibrationGas / GASSENSOR_PPM_A), (1.0 / GASSENSOR_PPM_B))
+
+        self._calibrationR0Total += currentR0
+        self._calibrationR0Count += 1
+
+        return self._calibrationR0Total / self._calibrationR0Count
 
     def GetSensorPPM(self, airTemperature: float, airHumidity: float) -> float:
+        """
+        Calculates the ppm for a specific gas
+
+        Parameters
+        ----------
+        airTemperature : float
+            The current air temperature
+        airHumidity : float
+            The current relative air humidity
+
+        Returns
+        -------
+        float
+            The ppm for a specific gas after a calibrated R0
+        """
         return GASSENSOR_PPM_A * pow(_GetCorrectionFactor(airTemperature, airHumidity) / self._zeroResistance, -GASSENSOR_PPM_B)
 
