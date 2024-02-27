@@ -3,6 +3,9 @@ from machine import Pin, ADC
 
 
 # Constants
+# // Settings
+GASSENSOR_PPMMEASUREMENTS: int = 10
+
 # // RZero constants
 class GASSENSOR_RZERO:
     """
@@ -47,6 +50,9 @@ class GasSensor:
     _adc: ADC
     _loadResistance: float
     _zeroResistance: float
+
+    _ppmMeasurements: list = []
+    _ppmMeasurementsIndex: int = 0
 
     _calibrationR0Total: float = 0.0
     _calibrationR0Count: int = 0
@@ -141,5 +147,13 @@ class GasSensor:
         float
             The ppm for a specific gas after a calibrated R0
         """
-        return GASSENSOR_PPM_A * pow(_GetCorrectionFactor(airTemperature, airHumidity) / self._zeroResistance, -GASSENSOR_PPM_B)
+        self._ppmMeasurementsIndex = self._ppmMeasurementsIndex + 1 if self._ppmMeasurementsIndex < GASSENSOR_PPMMEASUREMENTS else 1
+        self._ppmMeasurements[self._ppmMeasurementsIndex - 1] = GASSENSOR_PPM_A * pow(self.GetSensorResistance(airTemperature, airHumidity)/self._zeroResistance, -GASSENSOR_PPM_B)
+
+        ppmMeasurementsTotal: float = 0.0
+
+        for ppmMeasurement in self._ppmMeasurements:
+            ppmMeasurementsTotal += ppmMeasurement
+
+        return ppmMeasurementsTotal / GASSENSOR_PPMMEASUREMENTS
 
