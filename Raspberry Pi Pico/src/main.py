@@ -18,7 +18,7 @@ class sensors:
     BMP: BMP280 = BMP280(I2C(0, sda=Pin(20), scl=Pin(21)))
     DHT: DHT11 = DHT11(Pin(9))
     MQ135: GasSensor = GasSensor(27, 1.0, GASSENSOR_RZERO.OXYGEN)
-    MQ131: GasSensor = GasSensor(26, 1.0, GASSENSOR_RZERO.CO2)
+    MQ131: GasSensor = GasSensor(26, 1.0, GASSENSOR_RZERO.OZONE)
 
 
 # // Components
@@ -79,13 +79,15 @@ def MainCycle():
         #     print("AWAITING PROPER HEIGHT!", altitudeData, missionPreviousAltitude, MISSION_LAUNCHALTITUDE)
 
         # MISSION STATUS: Cansat has been launched, run all systems nominally
-        if missionMode != MISSION_MODES.PRELAUNCH:
+        if missionMode != MISSION_MODES.LAUNCH:
             altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
             airTemperatureData, airTemperatureReadSucces = GetAirTemperature(sensors.BMP)
             airPressureData, airPressureReadSuccess = GetAirPressure(sensors.BMP)
             accelerationData, gyroData, altitudeGyroSuccess = GetAccelerationGyro(sensors.MPU, mpuData)
             gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
             # airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
+
+            sensors.MQ131.GetResistanceZero(airTemperatureData, airPressureData, GASSENSOR_CALIBRATIONGAS.OZONE)
 
             components.CansatLogger.LogData(gpsLatitude, gpsLongitude, airTemperatureData, airPressureData)
 
