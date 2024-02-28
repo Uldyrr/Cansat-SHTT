@@ -75,25 +75,24 @@ def MainCycle():
 
         MissionStateUpdate()
 
+        # NOT SETUP FOR LAUNCH!!!
         # if missionMode == MISSION_MODES.PRELAUNCH:
         #     print("AWAITING PROPER HEIGHT!", altitudeData, missionPreviousAltitude, MISSION_LAUNCHALTITUDE)
 
         # MISSION STATUS: Cansat has been launched, run all systems nominally
-        if missionMode != MISSION_MODES.LAUNCH:
+        if missionMode != MISSION_MODES.PRELAUNCH:
             altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
             airTemperatureData, airTemperatureReadSucces = GetAirTemperature(sensors.BMP)
             airPressureData, airPressureReadSuccess = GetAirPressure(sensors.BMP)
             accelerationData, gyroData, altitudeGyroSuccess = GetAccelerationGyro(sensors.MPU, mpuData)
             gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
-            # airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
+            airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
 
-            sensors.MQ131.GetResistanceZero(airTemperatureData, airPressureData, GASSENSOR_CALIBRATIONGAS.OZONE)
-
-            components.CansatLogger.LogData(gpsLatitude, gpsLongitude, airTemperatureData, airPressureData)
+            # components.CansatLogger.LogData(gpsLatitude, gpsLongitude, airTemperatureData, airPressureData)
 
             # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-            print(gpsLatitude, gpsLongitude, airTemperatureData, altitudeData)
+            print(sensors.MQ131.GetResistanceZero(airTemperatureData, airHumidityData, GASSENSOR_CALIBRATIONGAS.CO2))
 
         # MISSION STATUS: Cansat has landed, continue systems running, but start the alarm buzzer
         if missionMode == MISSION_MODES.LANDED:
