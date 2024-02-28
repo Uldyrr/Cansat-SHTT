@@ -130,7 +130,7 @@ class GasSensor:
 
         return self._calibrationR0Total / self._calibrationR0Count
 
-    def GetSensorPPM(self, airTemperature: float, airHumidity: float) -> float:
+    def GetPPM(self, airTemperature: float, airHumidity: float) -> float:
         """
         Calculates the ppm for a specific gas
 
