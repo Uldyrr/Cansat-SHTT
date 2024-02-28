@@ -51,7 +51,7 @@ class GasSensor:
     _loadResistance: float
     _zeroResistance: float
 
-    _ppmMeasurements: list = [None] * GASSENSOR_PPMMEASUREMENTS
+    _ppmMeasurements: list = [0] * GASSENSOR_PPMMEASUREMENTS
     _ppmMeasurementsIndex: int = 0
 
     _calibrationR0Total: float = 0.0
