@@ -96,8 +96,7 @@ class GasSensor:
         Both the MQ-131 and MQ-135 operate on 5V and therefore have an unsafe analog top voltage of around 4-5V!
         """
 
-        sensorValue: int = self._adc.read_u16()
-        uncorrectedSensorResistance: float = ((CANSAT_ADC16BIT / sensorValue) * 5.0 - 1.0) * self._loadResistance
+        uncorrectedSensorResistance: float = ((CANSAT_ADC16BIT / self._adc.read_u16()) * 5.0 - 1.0) * self._loadResistance
 
         return uncorrectedSensorResistance / _GetCorrectionFactor(airTemperature, airHumidity)
 
