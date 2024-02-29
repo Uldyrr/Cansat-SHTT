@@ -27,17 +27,17 @@ class _components:
 
 # // Constants
 # -- General Cansat Constants
-CANSAT_ADC16BIT: float = 2**16 - 1               # 16-bit ADC
-CANSAT_ADC12BIT: float = 2**12 - 1               # 12-bit ADC
-CANSAT_UPDATEHZ: float = 1.0              # hz
+CANSAT_ADC16BIT: float = 2**16 - 1        # 16-bit ADC
+CANSAT_ADC12BIT: float = 2**12 - 1        # 12-bit ADC
+CANSAT_UPDATEHZ: float = 1.0              # Hz
 CANSAT_ALTITUDECORRECTION: float = 120.0  # m, NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
 CANSAT_SEALEVELPRESSURE: float = 1013.25  # hPa
 
 # -- Mission Constants
 class MISSION_MODES:
-    PRELAUNCH = 1,  # Hibernate mode, all systems will be off
-    LAUNCH = 2,     # Mission mode, all systems will turned on
-    LANDED = 3      # Retrival mode, all systems will continue running and an alarm buzzer will toggle
+    PRELAUNCH = 1,           # Hibernate mode, all systems will be off
+    LAUNCH = 2,              # Mission mode, all systems will turned on
+    LANDED = 3               # Retrival mode, all systems will continue running and an alarm buzzer will toggle
 
 MISSION_LAUNCHALTITUDE = 3   # m
 MISSION_LANDEDTHRESHOLD = 1  # m
