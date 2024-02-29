@@ -9,7 +9,7 @@ GASSENSOR_PPMMEASUREMENTS: int = 10
 # // RZero constants
 class GASSENSOR_RZERO:
     """
-    Contains the rough averaged gas sensor resistance zero value for various gasses
+    Contains the roughly averaged gas sensor resistance zero value for various gasses
 
     Note
     ----
