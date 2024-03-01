@@ -278,8 +278,10 @@ def ToggleSoilMoistureSensor(extendedState: bool, soilMoistureServo: Servo) -> N
     extendedState : bool
         The extented state of the soil moisture sensor. When set to true, EXERCISE CAUTION
     """
-
-    soilMoistureServo.
+    if extendedState:
+        soilMoistureServo.move(90)
+    else:
+        soilMoistureServo.move(0)
 
 
 def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
