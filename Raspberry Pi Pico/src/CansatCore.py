@@ -1,9 +1,10 @@
-from machine import Pin, ADC, PWM, UART
+from machine import Pin, ADC, UART
 from imu import MPU6050
 from bmp280 import BMP280
 from dht import DHT11
 from micropyGPS import MicropyGPS
 from vector3d import Vector3d
+from Servo import Servo
 import _thread
 import utime
 import random
@@ -264,7 +265,7 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
 
 
 # Secondary mission helper functions
-def ToggleSoilMoistureSensor(extendedState: bool, soilMoistureServo: PWM) -> None:
+def ToggleSoilMoistureSensor(extendedState: bool, soilMoistureServo: Servo) -> None:
     """
     EXTENDS or Retracts the POINTY soil moisture sensor
 

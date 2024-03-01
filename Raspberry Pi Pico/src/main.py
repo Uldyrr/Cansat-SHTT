@@ -2,11 +2,12 @@ from CansatCore import *
 from CansatCommunication import RadioCom
 from CansatLogger import CansatLogger
 from CansatGas import GasSensor, GASSENSOR_CALIBRATIONGAS, GASSENSOR_RZERO
-from machine import Pin, ADC, PWM, UART, I2C
+from machine import Pin, ADC, UART, I2C
 from imu import MPU6050
 from bmp280 import *
 from dht import DHT11
 from micropyGPS import MicropyGPS
+from Servo import Servo
 import _thread
 import utime
 
@@ -23,7 +24,7 @@ class sensors:
 
 # // Components
 class components:
-    SoilMoistureServo: PWM = PWM(8)
+    SoilMoistureServo: Servo = Servo(8)
     GPSSerialBus: UART = UART(1, 9600, tx=Pin(4), rx=Pin(5))
     GPS: MicropyGPS = MicropyGPS(location_formatting='dd')
     Radio: RadioCom = RadioCom(UART(0, 9600, tx=Pin(16), rx=Pin(17)))
