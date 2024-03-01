@@ -71,7 +71,7 @@ def MainCycle():
     tickUpdateOffset: int = 0
 
     while True:
-        utime.sleep(CANSAT_UPDATEHZ - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATEHZ * 0.1))
+        utime.sleep(CANSAT_UPDATETIME - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATETIME * 0.1))
 
         MissionStateUpdate()
 
