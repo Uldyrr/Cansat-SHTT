@@ -308,7 +308,7 @@ def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
     try:
         dht.measure()
 
-        return float(f"{dht.humidity():.2f}"), True
+        return round(dht.humidity(), 2), True
     except:
         return -1.0, False
 
