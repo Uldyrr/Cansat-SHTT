@@ -187,7 +187,6 @@ class GasSensor:
             The current relative air humidity
         """
 
-        print(
-            f"Air temperature: {airTemperature}\nAir humidity: {airHumidity}\nADC value: {self.GetRawADC()}\nSensor resistance: {self.GetSensorResistance(airTemperature, airHumidity)}\nResistance Zero: {self.GetResistanceZero(airTemperature, airHumidity)}\nPPM CO2: {self.GetPPM(airTemperature, airHumidity)}\n")
+        print(f"Air temperature: {airTemperature}\nAir humidity: {airHumidity}\nADC value: {self.GetRawADC()}\nSensor resistance: {self.GetSensorResistance(airTemperature, airHumidity)}\nResistance Zero: {self.GetResistanceZero(airTemperature, airHumidity)}\nPPM CO2: {self.GetPPM(airTemperature, airHumidity)}\n")
 
 
