@@ -1,4 +1,4 @@
-from machine import Pin, ADC, UART
+from machine import Pin, ADC, PWM, UART
 from imu import MPU6050
 from bmp280 import BMP280
 from dht import DHT11
@@ -264,7 +264,7 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
 
 
 # Secondary mission helper functions
-def ToggleSoilMoistureSensor(extendedState: bool) -> None:
+def ToggleSoilMoistureSensor(extendedState: bool, soilMoistureServo: PWM) -> None:
     """
     EXTENDS or Retracts the POINTY soil moisture sensor
 
