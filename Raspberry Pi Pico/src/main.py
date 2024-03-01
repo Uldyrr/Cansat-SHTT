@@ -71,7 +71,7 @@ def MainCycle():
     tickUpdateOffset: int = 0
 
     while True:
-        utime.sleep(CANSAT_UPDATETIME - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATETIME * 0.1))
+        utime.sleep(CANSAT_UPDATETIME - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATETIME * 0.3))
 
         MissionStateUpdate()
 
@@ -92,7 +92,7 @@ def MainCycle():
 
             # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-            print(sensors.MQ131.GetResistanceZero(airTemperatureData, airHumidityData, GASSENSOR_CALIBRATIONGAS.CO2))
+            print(sensors.MQ131.GetResistanceZero(airTemperatureData, airHumidityData))
 
         # MISSION STATUS: Cansat has landed, continue systems running, but start the alarm buzzer
         if missionMode == MISSION_MODES.LANDED:

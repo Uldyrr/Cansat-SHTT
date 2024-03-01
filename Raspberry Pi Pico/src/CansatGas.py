@@ -1,10 +1,10 @@
 from CansatCore import CANSAT_ADC16BIT
 from machine import Pin, ADC
 
-
 # Constants
 # // Settings
 GASSENSOR_PPMMEASUREMENTS: int = 10
+
 
 # // RZero constants
 class GASSENSOR_RZERO:
@@ -16,7 +16,7 @@ class GASSENSOR_RZERO:
     It would be best to have these values calibrated for every new environment
     """
 
-    CO2: float = 18.61
+    CO2: float = 112.4269
     OXYGEN: float = 0.0
     OZONE: float = 0.0
 
@@ -31,6 +31,7 @@ class GASSENSOR_CALIBRATIONGAS:
     OXYGEN: float = 0.0
     OZONE: float = 0.0
 
+
 # // PPM calculation constants
 GASSENSOR_PPM_A: float = 116.6020682
 GASSENSOR_PPM_B: float = 2.769034857
@@ -43,13 +44,15 @@ GASSENSOR_COR_D: float = 0.0018
 
 
 def _GetCorrectionFactor(airTemperature: float, airHumidity: float) -> float:
-    return GASSENSOR_COR_A * airTemperature * airTemperature - GASSENSOR_COR_B * airTemperature + GASSENSOR_COR_C - (airHumidity - 33.0) * GASSENSOR_COR_D
+    return GASSENSOR_COR_A * airTemperature * airTemperature - GASSENSOR_COR_B * airTemperature + GASSENSOR_COR_C - (
+                airHumidity - 33.0) * GASSENSOR_COR_D
 
 
 class GasSensor:
     _adc: ADC
     _loadResistance: float
     _zeroResistance: float
+    _calibrationGas: float
 
     _ppmMeasurements: list = [0] * GASSENSOR_PPMMEASUREMENTS
     _ppmMeasurementsIndex: int = 0
@@ -57,7 +60,7 @@ class GasSensor:
     _calibrationR0Total: float = 0.0
     _calibrationR0Count: int = 0
 
-    def __init__(self, adcPin: int, loadResistance: float, zeroResistance: float):
+    def __init__(self, adcPin: int, loadResistance: float, zeroResistance: float, calibrationGas: float):
         """
         Creates a new object of GasSensor taking in an adc pin, RL and R0.
 
@@ -69,11 +72,25 @@ class GasSensor:
             Used by the object to calculate correct sensor resistances
         zeroResistance : float
             Used by the object to calculate PPM of a specific gas
+        calibrationGas : float
+            Used by the object to calculate a calibrated resistance zero
         """
 
         self._adc = ADC(adcPin)
         self._loadResistance = loadResistance
         self._zeroResistance = zeroResistance
+        self._calibrationGas = calibrationGas
+
+    def GetRawADC(self) -> float:
+        """
+        Gets the raw ADC value from the gas sensor's analog pin
+
+        Returns
+        -------
+        float
+            The raw ADC value as a unsigned short value (u16)
+        """
+        return self._adc.read_u16() + 1
 
     def GetSensorResistance(self, airTemperature: float, airHumidity: float) -> float:
         """
@@ -96,11 +113,11 @@ class GasSensor:
         Both the MQ-131 and MQ-135 operate on 5V and therefore have an unsafe analog top voltage of around 4-5V!
         """
 
-        uncorrectedSensorResistance: float = ((CANSAT_ADC16BIT / self._adc.read_u16()) * 5.0 - 1.0) * self._loadResistance
+        uncorrectedSensorResistance: float = ((CANSAT_ADC16BIT / self.GetRawADC()) * 5.0 - 1.0) * self._loadResistance
 
         return uncorrectedSensorResistance / _GetCorrectionFactor(airTemperature, airHumidity)
 
-    def GetResistanceZero(self, airTemperature: float, airHumidity: float, calibrationGas: float) -> float:
+    def GetResistanceZero(self, airTemperature: float, airHumidity: float) -> float:
         """
         Calculates the R0 for a specific gas
 
@@ -123,7 +140,8 @@ class GasSensor:
         Use this to calibrate a specific resistance zero ONLY in the same environment. Does not average a finite amount of resistance zero values
         """
 
-        currentR0: float = self.GetSensorResistance(airTemperature, airHumidity) * pow((calibrationGas / GASSENSOR_PPM_A), (1.0 / GASSENSOR_PPM_B))
+        currentR0: float = self.GetSensorResistance(airTemperature, airHumidity) * pow(
+            (self._calibrationGas / GASSENSOR_PPM_A), (1.0 / GASSENSOR_PPM_B))
 
         self._calibrationR0Total += currentR0
         self._calibrationR0Count += 1
@@ -147,7 +165,8 @@ class GasSensor:
             The ppm for a specific gas after a calibrated R0
         """
         self._ppmMeasurementsIndex = self._ppmMeasurementsIndex + 1 if self._ppmMeasurementsIndex < GASSENSOR_PPMMEASUREMENTS else 1
-        self._ppmMeasurements[self._ppmMeasurementsIndex - 1] = GASSENSOR_PPM_A * pow(self.GetSensorResistance(airTemperature, airHumidity)/self._zeroResistance, -GASSENSOR_PPM_B)
+        self._ppmMeasurements[self._ppmMeasurementsIndex - 1] = GASSENSOR_PPM_A * pow(
+            self.GetSensorResistance(airTemperature, airHumidity) / self._zeroResistance, -GASSENSOR_PPM_B)
 
         ppmMeasurementsTotal: float = 0.0
 
@@ -155,4 +174,20 @@ class GasSensor:
             ppmMeasurementsTotal += ppmMeasurement
 
         return ppmMeasurementsTotal / GASSENSOR_PPMMEASUREMENTS
+
+    def Debug(self, airTemperature: float, airHumidity: float) -> None:
+        """
+        Prints debug data to the console
+
+        Parameters
+        ----------
+        airTemperature : float
+            The current air temperature
+        airHumidity : float
+            The current relative air humidity
+        """
+
+        print(
+            f"Air temperature: {airTemperatureData}\nAir humidity: {airHumidityData}\nADC value: {ADC(Pin(27)).read_u16()}\nSensor resistance: {sensors.MQ135.GetSensorResistance(airTemperatureData, airHumidityData)}\nResistance Zero: {sensors.MQ135.GetResistanceZero(airTemperatureData, airHumidityData, GASSENSOR_CALIBRATIONGAS.CO2)}\nPPM CO2: {sensors.MQ135.GetPPM(airTemperatureData, airHumidityData)}\n")
+
 
