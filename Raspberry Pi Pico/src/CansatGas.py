@@ -3,7 +3,7 @@ from machine import Pin, ADC
 
 # Constants
 # // Settings
-GASSENSOR_PPMMEASUREMENTS: int = 10
+GASSENSOR_PPMMEASUREMENTS: int = 3
 
 
 # // RZero constants
@@ -188,6 +188,6 @@ class GasSensor:
         """
 
         print(
-            f"Air temperature: {airTemperatureData}\nAir humidity: {airHumidityData}\nADC value: {ADC(Pin(27)).read_u16()}\nSensor resistance: {sensors.MQ135.GetSensorResistance(airTemperatureData, airHumidityData)}\nResistance Zero: {sensors.MQ135.GetResistanceZero(airTemperatureData, airHumidityData, GASSENSOR_CALIBRATIONGAS.CO2)}\nPPM CO2: {sensors.MQ135.GetPPM(airTemperatureData, airHumidityData)}\n")
+            f"Air temperature: {airTemperature}\nAir humidity: {airHumidity}\nADC value: {self.GetRawADC()}\nSensor resistance: {self.GetSensorResistance(airTemperature, airHumidity)}\nResistance Zero: {self.GetResistanceZero(airTemperature, airHumidity)}\nPPM CO2: {self.GetPPM(airTemperature, airHumidity)}\n")
 
 
