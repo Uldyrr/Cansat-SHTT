@@ -75,7 +75,7 @@ def MainCycle():
 
         MissionStateUpdate()
 
-        # NOT SETUP FOR LAUNCH!!!
+        # WARNING: NOT SETUP FOR LAUNCH!!!
         # if missionMode == MISSION_MODES.PRELAUNCH:
         #     print("AWAITING PROPER HEIGHT!", altitudeData, missionPreviousAltitude, MISSION_LAUNCHALTITUDE)
 
@@ -92,7 +92,7 @@ def MainCycle():
 
             # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-            print(sensors.MQ131.GetResistanceZero(airTemperatureData, airHumidityData))
+            print(sensors.MQ135.GetResistanceZero(airTemperatureData, airHumidityData))
 
         # MISSION STATUS: Cansat has landed, continue systems running, but start the alarm buzzer
         if missionMode == MISSION_MODES.LANDED:
