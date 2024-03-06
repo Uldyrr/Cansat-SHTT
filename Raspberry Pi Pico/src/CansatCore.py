@@ -294,7 +294,7 @@ def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
         return -1.0, False
 
 
-def ToggleSoilMoistureSensor(extendedState: bool, soilMoistureServo: Servo) -> None:
+def ToggleSoilMoistureSensor(soilMoistureServo: Servo, extendedState: bool) -> None:
     """
     EXTENDS or Retracts the POINTY soil moisture sensor
 
