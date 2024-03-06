@@ -47,6 +47,7 @@ def MissionStateUpdate() -> None:
 
     altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
 
+    # Stop the cansat from going to MISSION_MODES.LANDED and inform the ground station if the bmp280 has gone kaput
     if not altitudeReadSuccess:
         missionAltitudeFailed = True
 
