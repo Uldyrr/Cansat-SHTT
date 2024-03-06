@@ -36,15 +36,19 @@ mpuData: dict = {}
 
 # // Mission data
 missionMode: int = MISSION_MODES.PRELAUNCH
+missionAltitudeFailed: bool = False
 missionPreviousAltitude: float = 0.0
 missionPreviousAltitudeTrigger: float = 0.0
 
 
 # The mission state status update
 def MissionStateUpdate() -> None:
-    global missionMode, missionPreviousAltitude, missionPreviousAltitudeTrigger
+    global missionMode, missionAltitudeFailed, missionPreviousAltitude, missionPreviousAltitudeTrigger
 
     altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
+
+    if not altitudeReadSuccess:
+        missionAltitudeFailed = True
 
     if missionMode == MISSION_MODES.PRELAUNCH:
         # Check whether the cansat is above a certain valid launch altitude to confirm launch
@@ -52,14 +56,14 @@ def MissionStateUpdate() -> None:
         missionPreviousAltitude = altitudeData
         missionLaunchTick = utime.ticks_ms()
 
-    elif missionMode == MISSION_MODES.LAUNCH:
+    elif missionMode == MISSION_MODES.LAUNCH and not missionAltitudeFailed:
         # Check whether the cansat is below the launch alitude and stays under an altitude for a certain amount of time
         if altitudeData >= MISSION_LAUNCHALTITUDE:  # If we are above the launch altitude, reset values & early return
             missionPreviousAltitude = altitudeData
             missionPreviousAltitudeTrigger = 0
             return
 
-        if altitudeReadSuccess and abs(altitudeData - missionPreviousAltitude) < MISSION_LANDEDTHRESHOLD:  # Increment trigger if the delta altitude is below a delta thershold
+        if abs(altitudeData - missionPreviousAltitude) < MISSION_LANDEDTHRESHOLD:  # Increment trigger if the delta altitude is below a delta thershold
             missionPreviousAltitudeTrigger += 1
         else:  # If our altitude change is too high, reset values and continue trying to evaluate whether we've landed
             missionPreviousAltitudeTrigger = 0
