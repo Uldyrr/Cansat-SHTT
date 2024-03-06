@@ -104,7 +104,7 @@ def MainCycle():
         currentTick = utime.ticks_ms()
         tickDifference = currentTick - previousTick
         previousTick = currentTick
-        tickUpdateOffset = tickDifference - 1000 if tickDifference > (tickUpdateOffset + 1000) else tickUpdateOffset
+        tickUpdateOffset = tickDifference - 1000 if tickDifference > (1000 + tickUpdateOffset) else tickUpdateOffset
 
 
 def Init():
