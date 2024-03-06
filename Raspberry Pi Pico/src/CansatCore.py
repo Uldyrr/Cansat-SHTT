@@ -45,9 +45,9 @@ class MISSION_MODES:
     LAUNCH = 2,              # Mission mode, all systems will turned on
     LANDED = 3               # Retrival mode, all systems will continue running and an alarm buzzer will toggle
 
-MISSION_LAUNCHALTITUDE = 3   # m
-MISSION_LANDEDTHRESHOLD = 1  # m
-MISSION_LANDEDTRIGGER = 10   # Count before we can consider the cansat landed
+MISSION_LAUNCHALTITUDE: float = 3.0      # m
+MISSION_LANDEDTHRESHOLD: float = 1.0     # m
+MISSION_LANDEDTRIGGER: int = 10          # Count before we can consider the cansat landed
 
 # -- Gass Constants
 GAS_PPM_A: float = 116.6020682  # Parameter a as the coefficient for calculating PPM

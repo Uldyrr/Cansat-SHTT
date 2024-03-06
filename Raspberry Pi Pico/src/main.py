@@ -50,6 +50,7 @@ def MissionStateUpdate() -> None:
         # Check whether the cansat is above a certain valid launch altitude to confirm launch
         missionMode = MISSION_MODES.LAUNCH if altitudeData >= MISSION_LAUNCHALTITUDE else MISSION_MODES.PRELAUNCH
         missionPreviousAltitude = altitudeData
+        missionLaunchTick = utime.ticks_ms()
 
     elif missionMode == MISSION_MODES.LAUNCH:
         # Check whether the cansat is below the launch alitude and stays under an altitude for a certain amount of time
@@ -58,7 +59,7 @@ def MissionStateUpdate() -> None:
             missionPreviousAltitudeTrigger = 0
             return
 
-        if abs(altitudeData - missionPreviousAltitude) < MISSION_LANDEDTHRESHOLD:  # Increment trigger if the delta altitude is below a delta thershold
+        if altitudeReadSuccess and abs(altitudeData - missionPreviousAltitude) < MISSION_LANDEDTHRESHOLD:  # Increment trigger if the delta altitude is below a delta thershold
             missionPreviousAltitudeTrigger += 1
         else:  # If our altitude change is too high, reset values and continue trying to evaluate whether we've landed
             missionPreviousAltitudeTrigger = 0
@@ -77,12 +78,13 @@ def MainCycle():
 
         MissionStateUpdate()
 
-        # WARNING: NOT SETUP FOR LAUNCH!!!
-        # if missionMode == MISSION_MODES.PRELAUNCH:
-        #     print("AWAITING PROPER HEIGHT!", altitudeData, missionPreviousAltitude, MISSION_LAUNCHALTITUDE)
+        if missionMode == MISSION_MODES.PRELAUNCH:
+            print("AWAITING PROPER HEIGHT!", altitudeData, missionPreviousAltitude, MISSION_LAUNCHALTITUDE)
 
         # MISSION STATUS: Cansat has been launched, run all systems nominally
-        if missionMode != MISSION_MODES.PRELAUNCH:
+        if missionMode != MISSION_MODES.LAUNCH:
+            ToggleSoilMoistureSensor(components.SoilMoistureServo, True)
+
             altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
             airTemperatureData, airTemperatureReadSucces = GetAirTemperature(sensors.BMP)
             airPressureData, airPressureReadSuccess = GetAirPressure(sensors.BMP)
