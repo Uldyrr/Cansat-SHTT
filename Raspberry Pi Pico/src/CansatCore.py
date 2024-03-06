@@ -181,10 +181,8 @@ def GetAltitude(bmp: BMP280) -> tuple[float, bool]:
 
     Returns
     -------
-    float
-        The current altitude of the cansat in meters
-    bool
-        A value indicating that all sensor values were read successfully
+    tuple[float, bool]
+        The current altitude of the cansat in meters and a boolean value indicating that all sensor values were read successfully
     """
 
     airPressurePa, airPressureSuccess = GetAirPressure(bmp)
