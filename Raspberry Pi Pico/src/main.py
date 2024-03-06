@@ -125,10 +125,10 @@ def Init():
     # Finalization
     print("Initialized!")
 
-    for i in range(0, CANSAT_INILIZATIONBLINKS):
-        utime.sleep_ms(100)
+    for i in range(0, CANSAT_INITALIZATION_BLINKS):
+        utime.sleep_ms(CANSAT_INITALIZATION_BLINKTIME)
         TogglePowerLed(True)
-        utime.sleep_ms(100)
+        utime.sleep_ms(CANSAT_INITALIZATION_BLINKTIME)
         TogglePowerLed(False)
 
     TogglePowerLed(True)

@@ -28,13 +28,16 @@ class _components:
 
 # // Constants
 # -- General Cansat Constants
-CANSAT_ADC16BIT: float = 2**16 - 1              # 16-bit ADC
-CANSAT_ADC12BIT: float = 2**12 - 1              # 12-bit ADC
-CANSAT_UPDATEHZ: float = 1.0                    # Hz
-CANSAT_UPDATETIME: float = 1 / CANSAT_UPDATEHZ  # Seconds
-CANSAT_ALTITUDECORRECTION: float = 120.0        # m, NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
-CANSAT_SEALEVELPRESSURE: float = 1013.25        # hPa
-CANSAT_INILIZATIONBLINKS: int = 3              # Count of power led blinks
+CANSAT_ADC16BIT: float = 2**16 - 1                  # 16-bit ADC
+CANSAT_ADC12BIT: float = 2**12 - 1                  # 12-bit ADC
+CANSAT_UPDATEHZ: float = 1.0                        # Hz
+CANSAT_UPDATETIME: float = 1 / CANSAT_UPDATEHZ      # Seconds
+CANSAT_ALTITUDECORRECTION: float = 120.0            # m | NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
+CANSAT_SEALEVELPRESSURE: float = 1013.25            # hPa
+
+# -- Initialization Cansat Constants
+CANSAT_INITALIZATION_BLINKS: int = 5                # Count of power led blinks
+CANSAT_INITALIZATION_BLINKTIME: int = int(100 / 2)  # Time of one power led blink
 
 # -- Mission Constants
 class MISSION_MODES:
