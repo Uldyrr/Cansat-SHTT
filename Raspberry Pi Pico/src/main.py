@@ -35,9 +35,9 @@ class components:
 mpuData: dict = {}
 
 # // Mission data
-missionMode = MISSION_MODES.PRELAUNCH
-missionPreviousAltitude = 0
-missionPreviousAltitudeTrigger = 0
+missionMode: int = MISSION_MODES.PRELAUNCH
+missionPreviousAltitude: float = 0.0
+missionPreviousAltitudeTrigger: float = 0.0
 
 
 # The mission state status update
@@ -48,12 +48,12 @@ def MissionStateUpdate() -> None:
 
     if missionMode == MISSION_MODES.PRELAUNCH:
         # Check whether the cansat is above a certain valid launch altitude to confirm launch
-        missionMode = MISSION_MODES.LAUNCH if altitudeData >= MISSION_LAUNCHALTITUDE else missionMode
+        missionMode = MISSION_MODES.LAUNCH if altitudeData >= MISSION_LAUNCHALTITUDE else MISSION_MODES.PRELAUNCH
         missionPreviousAltitude = altitudeData
 
     elif missionMode == MISSION_MODES.LAUNCH:
         # Check whether the cansat is below the launch alitude and stays under an altitude for a certain amount of time
-        if altitudeData > MISSION_LAUNCHALTITUDE:  # If we are above the launch altitude, reset values & return
+        if altitudeData >= MISSION_LAUNCHALTITUDE:  # If we are above the launch altitude, reset values & early return
             missionPreviousAltitude = altitudeData
             missionPreviousAltitudeTrigger = 0
             return
@@ -64,7 +64,7 @@ def MissionStateUpdate() -> None:
             missionPreviousAltitudeTrigger = 0
             missionPreviousAltitude = altitudeData
 
-        missionMode = MISSION_MODES.LANDED if missionPreviousAltitudeTrigger >= MISSION_LANDEDTRIGGER else missionMode
+        missionMode = MISSION_MODES.LANDED if missionPreviousAltitudeTrigger >= MISSION_LANDEDTRIGGER else MISSION_MODES.LAUNCH
 
 
 # The heart of the Cansat
