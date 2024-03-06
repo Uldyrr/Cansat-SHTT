@@ -113,6 +113,7 @@ def Init():
     # Standard initialization
     TogglePowerLed(False)
     ToggleAlarmBuzzer(False)
+    ToggleSoilMoistureSensor(components.SoilMoistureServo, False)
 
     sensors.BMP.use_case(BMP280_CASE_INDOOR)  # Is DROP an outdoor use case? :/
 
