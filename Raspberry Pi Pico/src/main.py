@@ -54,7 +54,6 @@ def MissionStateUpdate() -> None:
         # Check whether the cansat is above a certain valid launch altitude to confirm launch
         missionMode = MISSION_MODES.LAUNCH if altitudeData >= MISSION_LAUNCHALTITUDE else MISSION_MODES.PRELAUNCH
         missionPreviousAltitude = altitudeData
-        missionLaunchTick = utime.ticks_ms()
 
     elif missionMode == MISSION_MODES.LAUNCH and not missionAltitudeFailed:
         # Check whether the cansat is below the launch alitude and stays under an altitude for a certain amount of time
