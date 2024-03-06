@@ -34,6 +34,7 @@ CANSAT_UPDATEHZ: float = 1.0                    # Hz
 CANSAT_UPDATETIME: float = 1 / CANSAT_UPDATEHZ  # Seconds
 CANSAT_ALTITUDECORRECTION: float = 120.0        # m, NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
 CANSAT_SEALEVELPRESSURE: float = 1013.25        # hPa
+CANSAT_INILIZATIONBLINKS: int = 3              # Count of power led blinks
 
 # -- Mission Constants
 class MISSION_MODES:

@@ -117,15 +117,22 @@ def Init():
 
     sensors.BMP.use_case(BMP280_CASE_INDOOR)  # Is DROP an outdoor use case? :/
 
+    # Core module initalization
     print("Initializing CansatCore.py!")
 
-    # Core module initalization
     InitCansatCore(sensors.BMP)
 
-    # Finilization
+    # Finalization
+    print("Initialized!")
+
+    for i in range(0, CANSAT_INILIZATIONBLINKS):
+        utime.sleep_ms(100)
+        TogglePowerLed(True)
+        utime.sleep_ms(100)
+        TogglePowerLed(False)
+
     TogglePowerLed(True)
 
-    print("Initialized!")
     print("Starting MainCycle()!\n")
 
     MainCycle()
