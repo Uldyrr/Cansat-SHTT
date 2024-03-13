@@ -46,7 +46,7 @@ class MISSION_MODES:
     LANDED = 3               # Retrival mode, all systems will continue running and an alarm buzzer will toggle
 
 MISSION_LAUNCHALTITUDE: float = 0.3      # m
-MISSION_LANDEDTHRESHOLD: float = 0.1     # m
+MISSION_LANDEDTHRESHOLD: float = 1.0     # m
 MISSION_LANDEDTRIGGER: int = 10          # Count before we can consider the cansat landed
 
 # -- Gass Constants
