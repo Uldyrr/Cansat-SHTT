@@ -74,6 +74,8 @@ def MissionStateUpdate() -> None:
 
 # The heart of the Cansat
 def MainCycle():
+    global missionAltitudeFailed, missionPreviousAltitude, missionPreviousAltitudeTrigger
+
     previousTick: int = utime.ticks_ms()
     tickUpdateOffset: int = 0
 
@@ -99,7 +101,7 @@ def MainCycle():
 
             # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-            print(f"Alt: {altitudeData:.2f} | Air Temp: {airTemperatureData:.1f} | Air Pa: {airPressureData:.1f} | LatLng: {gpsLatitude}, {gpsLongitude}")
+            print(f"Alt: {altitudeData:.2f} | Air Temp: {airTemperatureData:.1f} | Air Pa: {airPressureData:.1f} | LatLng: {gpsLatitude}, {gpsLongitude} | Landing: {abs(altitudeData - missionPreviousAltitude)} | {missionPreviousAltitudeTrigger}/{MISSION_LANDEDTRIGGER}")
 
         # MISSION STATUS: Cansat has landed, continue systems running, but start the alarm buzzer
         if missionMode == MISSION_MODES.LANDED:
