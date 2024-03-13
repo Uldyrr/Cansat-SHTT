@@ -139,7 +139,7 @@ def Init():
         utime.sleep_ms(CANSAT_INITALIZATION_BLINKTIME)
         TogglePowerLed(False)
 
-    TogglePowerLed(True)
+    TogglePowerLed(False)
 
     print("Starting MainCycle()!\n")
 
@@ -147,5 +147,6 @@ def Init():
 
 
 Init()
+
 
 
