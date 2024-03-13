@@ -44,8 +44,7 @@ GASSENSOR_COR_D: float = 0.0018
 
 
 def _GetCorrectionFactor(airTemperature: float, airHumidity: float) -> float:
-    return GASSENSOR_COR_A * airTemperature * airTemperature - GASSENSOR_COR_B * airTemperature + GASSENSOR_COR_C - (
-                airHumidity - 33.0) * GASSENSOR_COR_D
+    return GASSENSOR_COR_A * airTemperature * airTemperature - GASSENSOR_COR_B * airTemperature + GASSENSOR_COR_C - (airHumidity - 33.0) * GASSENSOR_COR_D
 
 
 class GasSensor:
@@ -140,8 +139,7 @@ class GasSensor:
         Use this to calibrate a specific resistance zero ONLY in the same environment. Does not average a finite amount of resistance zero values
         """
 
-        currentR0: float = self.GetSensorResistance(airTemperature, airHumidity) * pow(
-            (self._calibrationGas / GASSENSOR_PPM_A), (1.0 / GASSENSOR_PPM_B))
+        currentR0: float = self.GetSensorResistance(airTemperature, airHumidity) * pow((self._calibrationGas / GASSENSOR_PPM_A), (1.0 / GASSENSOR_PPM_B))
 
         self._calibrationR0Total += currentR0
         self._calibrationR0Count += 1
@@ -165,8 +163,7 @@ class GasSensor:
             The ppm for a specific gas after a calibrated R0
         """
         self._ppmMeasurementsIndex = self._ppmMeasurementsIndex + 1 if self._ppmMeasurementsIndex < GASSENSOR_PPMMEASUREMENTS else 1
-        self._ppmMeasurements[self._ppmMeasurementsIndex - 1] = GASSENSOR_PPM_A * pow(
-            self.GetSensorResistance(airTemperature, airHumidity) / self._zeroResistance, -GASSENSOR_PPM_B)
+        self._ppmMeasurements[self._ppmMeasurementsIndex - 1] = GASSENSOR_PPM_A * pow(self.GetSensorResistance(airTemperature, airHumidity) / self._zeroResistance, -GASSENSOR_PPM_B)
 
         ppmMeasurementsTotal: float = 0.0
 
@@ -187,7 +184,6 @@ class GasSensor:
             The current relative air humidity
         """
 
-        print(
-            f"Air temperature: {airTemperature}\nAir humidity: {airHumidity}\nADC value: {self.GetRawADC()}\nSensor resistance: {self.GetSensorResistance(airTemperature, airHumidity)}\nResistance Zero: {self.GetResistanceZero(airTemperature, airHumidity)}\nPPM CO2: {self.GetPPM(airTemperature, airHumidity)}\n")
+        print(f"Air temperature: {airTemperature}\nAir humidity: {airHumidity}\nADC value: {self.GetRawADC()}\nSensor resistance: {self.GetSensorResistance(airTemperature, airHumidity)}\nResistance Zero: {self.GetResistanceZero(airTemperature, airHumidity)}\nPPM CO2: {self.GetPPM(airTemperature, airHumidity)}\n")
 
 
