@@ -99,7 +99,7 @@ def MainCycle():
 
             # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-            print(f"Alt: {altitudeData:.1f} | Air Temp: {airTemperatureData:.1f} | Air Pa: {airPressureData:.1f} | LatLng: {gpsLatitude}, {gpsLongitude}")
+            print(f"Alt: {altitudeData:.2f} | Air Temp: {airTemperatureData:.1f} | Air Pa: {airPressureData:.1f} | LatLng: {gpsLatitude}, {gpsLongitude}")
 
         # MISSION STATUS: Cansat has landed, continue systems running, but start the alarm buzzer
         if missionMode == MISSION_MODES.LANDED:
