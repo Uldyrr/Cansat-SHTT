@@ -83,7 +83,7 @@ def MainCycle():
         MissionStateUpdate()
 
         if missionMode == MISSION_MODES.PRELAUNCH:
-            print("AWAITING PROPER HEIGHT!", GetAltitude(sensors.BMP), missionPreviousAltitude, MISSION_LAUNCHALTITUDE)
+            print(f"AWAITING PROPER HEIGHT! Previous Altitude: {missionPreviousAltitude:.1f} | Launch Altitude: {MISSION_LAUNCHALTITUDE:.1f}")
 
         # MISSION STATUS: Cansat has been launched, run all systems nominally
         if missionMode != MISSION_MODES.LAUNCH:
