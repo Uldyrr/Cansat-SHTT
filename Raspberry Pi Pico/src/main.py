@@ -73,7 +73,7 @@ def MissionStateUpdate() -> None:
 
 
 # The heart of the Cansat
-def MainCycle():
+def MainCycle() -> None:
     global missionAltitudeFailed, missionPreviousAltitude, missionPreviousAltitudeTrigger
 
     previousTick: int = utime.ticks_ms()
@@ -104,8 +104,10 @@ def MainCycle():
             print(f"Alt: {altitudeData:.2f} | Air Temp: {airTemperatureData:.1f} | Air Pa: {airPressureData:.1f} | LatLng: {gpsLatitude}, {gpsLongitude} | Landing: ({abs(altitudeData - missionPreviousAltitude)} | {missionPreviousAltitudeTrigger}/{MISSION_LANDEDTRIGGER})")
 
         # MISSION STATUS: Cansat has landed, continue systems running, but start the alarm buzzer
-        if missionMode == MISSION_MODES.LANDED:
+        if missionMode == MISSION_MODES.LANDED:  # Amazing use of power
             ToggleAlarmBuzzer(True)
+            TogglePowerLed(True)
+            ToggleBuiltInLed(True)
 
         # Evaluate tick differences
         currentTick = utime.ticks_ms()
