@@ -92,7 +92,6 @@ def MainCycle():
             altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
             airTemperatureData, airTemperatureReadSucces = GetAirTemperature(sensors.BMP)
             airPressureData, airPressureReadSuccess = GetAirPressure(sensors.BMP)
-            accelerationData, gyroData, altitudeGyroSuccess = GetAccelerationGyro(sensors.MPU, mpuData)
             gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
             airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
 
@@ -100,7 +99,7 @@ def MainCycle():
 
             # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-            print(sensors.MQ135.GetResistanceZero(airTemperatureData, airHumidityData))
+            print(f"Alt: {altitudeData:.1f} | Air Temp: {airTemperatureData:.1f} | Air Pa: {airPressureData:.1f} | LatLng: {gpsLatitude}, {gpsLongitude}")
 
         # MISSION STATUS: Cansat has landed, continue systems running, but start the alarm buzzer
         if missionMode == MISSION_MODES.LANDED:
