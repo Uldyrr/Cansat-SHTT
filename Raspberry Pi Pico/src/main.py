@@ -105,8 +105,11 @@ def MainCycle() -> None:
         # MISSION STATUS: Cansat has landed, continue systems running, but start the alarm buzzer
         if missionMode == MISSION_MODES.LANDED:  # Amazing use of power
             ToggleAlarmBuzzer(True)
-            TogglePowerLed(True)
-            ToggleBuiltInLed(True)
+
+            # Rapid blinking
+            for i in range(0, 3):
+                ToggleBuiltInLed()
+                TogglePowerLed()
 
         # Evaluate tick differences
         currentTick = utime.ticks_ms()
