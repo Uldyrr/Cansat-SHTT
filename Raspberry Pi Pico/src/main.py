@@ -8,6 +8,7 @@ from bmp280 import *
 from dht import DHT11
 from micropyGPS import MicropyGPS
 from Servo import Servo
+from enum import Enum
 import _thread
 import utime
 
@@ -35,7 +36,7 @@ class components:
 mpuData: dict = {}
 
 # // Mission data
-missionMode: int = MISSION_MODES.PRELAUNCH
+missionMode: Enum = MISSION_MODES.PRELAUNCH
 missionAltitudeFailed: bool = False
 missionPreviousAltitude: float = 0.0
 missionPreviousAltitudeTrigger: float = 0.0
@@ -100,7 +101,7 @@ def MainCycle() -> None:
 
             # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-            print(f"Mission Code: {missionMode} | Alt: {altitudeData:.2f} | Air Temp: {airTemperatureData:.1f} | Air Pa: {airPressureData:.1f} | LatLng: {gpsLatitude}, {gpsLongitude} | Landing: ({abs(altitudeData - missionPreviousAltitude)} | {missionPreviousAltitudeTrigger}/{MISSION_LANDEDTRIGGER})")
+            print(f"Mission Code: {missionMode.name} | Alt: {altitudeData:.2f} | Air Temp: {airTemperatureData:.1f} | Air Pa: {airPressureData:.1f} | LatLng: {gpsLatitude}, {gpsLongitude} | Landing: ({abs(altitudeData - missionPreviousAltitude)} | {missionPreviousAltitudeTrigger}/{MISSION_LANDEDTRIGGER})")
 
         # MISSION STATUS: Cansat has landed, continue systems running, but start the alarm buzzer
         if missionMode == MISSION_MODES.LANDED:  # Amazing use of power
