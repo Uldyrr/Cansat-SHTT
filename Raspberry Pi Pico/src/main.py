@@ -113,6 +113,8 @@ def MainCycle() -> None:
                 ToggleStatusLed(True)
                 utime.sleep_ms(CANSAT_INITALIZATION_BLINKTIME)
 
+            ToggleStatusLed(False)  # Should the led stay on constantly?
+
         # Evaluate tick differences
         currentTick = utime.ticks_ms()
         tickDifference = currentTick - previousTick
