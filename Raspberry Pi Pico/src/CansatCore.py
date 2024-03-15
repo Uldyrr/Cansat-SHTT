@@ -52,20 +52,6 @@ MISSION_LAUNCHALTITUDE: float = 0.3      # m
 MISSION_LANDEDTHRESHOLD: float = 1.0     # m
 MISSION_LANDEDTRIGGER: int = 10          # Count before we can consider the cansat landed
 
-# -- Gass Constants
-GAS_PPM_A: float = 116.6020682  # Parameter a as the coefficient for calculating PPM
-GAS_PPM_B: float = 2.769034857  # Parameter b as the exponent for calculating PPM
-
-# Parameters to model temperature and humidity depencdence
-GAS_COR_A: float = 0.00035
-GAS_COR_B: float = 0.02718
-GAS_COR_C: float = 1.39538
-GAS_COR_D: float = 0.0018
-
-# -- Component Constants
-MQ135_LOADRESISTANCE = 1.0  # kOhm
-MQ131_LOADRESISTANCE = 1.0  # kOhm
-
 BUZZER_MICROSECONDS: int = 1_000_000  # 1 / 1000 (ms) / 1000 (us)
 
 
