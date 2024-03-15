@@ -1,3 +1,4 @@
+from CansatSoil import SoilMoistureSensor
 from machine import Pin, ADC, UART
 from imu import MPU6050
 from bmp280 import BMP280
@@ -258,7 +259,7 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
 # Secondary mission helper functions
 def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
     """
-    Uses a DHT11 object to get the current air humidity
+    Uses a DHT11 object to get the current air relative humidity
 
     Note
     ----
@@ -267,7 +268,7 @@ def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
     Parameters
     ----------
     dht : DHT11
-        An object of the DHT11 air humidity sensor class
+        An object of the DHT11 air relative humidity sensor class
 
     Returns
     -------

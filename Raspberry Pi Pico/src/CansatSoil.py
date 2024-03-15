@@ -1,8 +1,8 @@
 # Henrik, do your thing :D
 
-class EarthResistanceSensor:
+class SoilMoistureSensor:
     def __init__(self, adcPin: int):
         return
 
-    def Measure(self) -> int:
+    def MeasureRH(self) -> int:
         return -1
