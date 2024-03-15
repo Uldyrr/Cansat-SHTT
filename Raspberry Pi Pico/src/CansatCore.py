@@ -295,6 +295,8 @@ def ToggleSoilMoistureSensor(soilMoistureServo: Servo, extendedState: bool) -> N
 
     Parameters
     ----------
+    soilMoistureServo : Servo
+        The micro servo to use with extending or retracting the soil moisture sensor
     extendedState : bool
         The extented state of the soil moisture sensor. When set to true, EXERCISE CAUTION
     """
