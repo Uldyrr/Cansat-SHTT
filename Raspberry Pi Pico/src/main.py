@@ -8,7 +8,6 @@ from bmp280 import *
 from dht import DHT11
 from micropyGPS import MicropyGPS
 from Servo import Servo
-from enum import Enum
 import _thread
 import utime
 
