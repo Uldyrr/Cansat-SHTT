@@ -97,6 +97,7 @@ def MainCycle() -> None:
             airPressureData, airPressureReadSuccess = GetAirPressure(sensors.BMP)
             gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
             airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
+            soilRelativeHumidity: float = sensors.SoilMoisture.MeasureRH()
 
             # components.CansatLogger.LogData(gpsLatitude, gpsLongitude, airTemperatureData, airPressureData)
 
