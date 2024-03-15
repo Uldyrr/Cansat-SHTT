@@ -39,7 +39,7 @@ CANSAT_SEALEVELPRESSURE: float = 1013.25            # hPa
 CANSAT_INITALIZATION_BLINKS: int = 5                # Count of power led blinks
 CANSAT_INITALIZATION_BLINKTIME: int = int(100 / 2)  # ms, time of one power led blink
 
-CANSAT_LANDED_BLINKS: int = 10                       # Count of power led blinks
+CANSAT_LANDED_BLINKS: int = 10                      # Count of power led blinks
 CANSAT_LANDED_BLINKTIME: int = int(100 / 2)         # ms, time of one power led blink
 
 # -- Mission Constants
