@@ -2,6 +2,7 @@ from CansatCore import *
 from CansatCommunication import RadioCom
 from CansatLogger import CansatLogger
 from CansatGas import GasSensor, GASSENSOR_CALIBRATIONGAS, GASSENSOR_RZERO
+from CansatResistance import EarthResistanceSensor
 from machine import Pin, ADC, UART, I2C
 from imu import MPU6050
 from bmp280 import *
@@ -20,6 +21,7 @@ class sensors:
     DHT: DHT11 = DHT11(Pin(9))
     MQ135: GasSensor = GasSensor(27, 1.0, GASSENSOR_RZERO.OXYGEN, GASSENSOR_CALIBRATIONGAS.OXYGEN)
     MQ131: GasSensor = GasSensor(26, 1.0, GASSENSOR_RZERO.OZONE, GASSENSOR_CALIBRATIONGAS.OZONE)
+    EarthResistance: EarthResistanceSensor = EarthResistanceSensor(28)
 
 
 # // Components

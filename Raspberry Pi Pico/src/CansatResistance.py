@@ -1,8 +1,8 @@
+# Henrik, do your thing :D
+
 class EarthResistanceSensor:
-    def __init__(self):
-        print("Henrik do your thing :D")
+    def __init__(self, adcPin: int):
+        return
 
     def Measure(self) -> int:
-        print("Henrik pls implement")
-
         return -1
