@@ -5,7 +5,6 @@ from dht import DHT11
 from micropyGPS import MicropyGPS
 from vector3d import Vector3d
 from Servo import Servo
-from enum import Enum
 import _thread
 import utime
 import random
@@ -44,7 +43,7 @@ CANSAT_LANDED_BLINKS: int = 10                      # Count of power led blinks
 CANSAT_LANDED_BLINKTIME: int = int(100 / 2)         # ms, time of one power led blink
 
 # -- Mission Constants
-class MISSION_MODES(Enum):
+class MISSION_MODES:
     PRELAUNCH = 1,           # Hibernate mode, all systems will be off
     LAUNCH = 2,              # Mission mode, all systems will turned on
     LANDED = 3               # Retrival mode, all systems will continue running and an alarm buzzer will toggle
