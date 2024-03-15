@@ -37,7 +37,10 @@ CANSAT_SEALEVELPRESSURE: float = 1013.25            # hPa
 
 # -- Initialization Cansat Constants
 CANSAT_INITALIZATION_BLINKS: int = 5                # Count of power led blinks
-CANSAT_INITALIZATION_BLINKTIME: int = int(100 / 2)  # Time of one power led blink
+CANSAT_INITALIZATION_BLINKTIME: int = int(100 / 2)  # ms, time of one power led blink
+
+CANSAT_LANDED_BLINKS: int = 10                       # Count of power led blinks
+CANSAT_LANDED_BLINKTIME: int = int(100 / 2)         # ms, time of one power led blink
 
 # -- Mission Constants
 class MISSION_MODES:
@@ -401,14 +404,14 @@ def ToggleAlarmBuzzer(alarmState: bool = None) -> None:
         _alarmBuzzerRunning = False
 
 
-def TogglePowerLed(ledState: bool = None) -> None:
+def ToggleStatusLed(ledState: bool = None) -> None:
     """
-    Toggles the cansat's power led to show whether or not the cansat is powered
+    Toggles the cansat's status led to show that the cansat is functioning
 
     Parameters
     ----------
     ledState : bool
-        The on state of the power led. When None, the function will inverse the led state
+        The boolean on state of the status led. When None, the function will inverse the led state
     """
 
     if ledState is None:

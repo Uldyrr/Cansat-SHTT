@@ -106,10 +106,12 @@ def MainCycle() -> None:
         if missionMode == MISSION_MODES.LANDED:  # Amazing use of power
             ToggleAlarmBuzzer(True)
 
-            # Rapid blinking
-            for i in range(0, 3):
-                ToggleBuiltInLed()
-                TogglePowerLed()
+            # Visible blinking
+            for i in range(0, CANSAT_LANDED_BLINKS):
+                ToggleStatusLed(False)
+                utime.sleep_ms(CANSAT_INITALIZATION_BLINKTIME)
+                ToggleStatusLed(True)
+                utime.sleep_ms(CANSAT_INITALIZATION_BLINKTIME)
 
         # Evaluate tick differences
         currentTick = utime.ticks_ms()
@@ -122,7 +124,7 @@ def Init():
     print("Initializing!")
 
     # Standard initialization
-    TogglePowerLed(False)
+    ToggleStatusLed(False)
     ToggleAlarmBuzzer(False)
     ToggleSoilMoistureSensor(components.SoilMoistureServo, False)
 
@@ -138,11 +140,11 @@ def Init():
 
     for i in range(0, CANSAT_INITALIZATION_BLINKS):
         utime.sleep_ms(CANSAT_INITALIZATION_BLINKTIME)
-        TogglePowerLed(True)
+        ToggleStatusLed(True)
         utime.sleep_ms(CANSAT_INITALIZATION_BLINKTIME)
-        TogglePowerLed(False)
+        ToggleStatusLed(False)
 
-    TogglePowerLed(False)
+    ToggleStatusLed(False)
 
     print("Starting MainCycle()!\n")
 
