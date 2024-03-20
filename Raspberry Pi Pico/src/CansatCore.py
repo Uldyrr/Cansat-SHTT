@@ -1,4 +1,3 @@
-from CansatSoil import SoilMoistureSensor
 from machine import Pin, ADC, UART
 from imu import MPU6050
 from bmp280 import BMP280
