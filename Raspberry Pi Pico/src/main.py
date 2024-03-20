@@ -2,7 +2,7 @@ from CansatCore import *
 from CansatCommunication import RadioCom
 from CansatLogger import CansatLogger
 from CansatGas import GasSensor, GASSENSOR_CALIBRATIONGAS, GASSENSOR_RZERO
-from CansatSoil import SoilMoistureSensor
+from CansatSoil import SoilResistanceSensor
 from machine import Pin, ADC, UART, I2C
 from imu import MPU6050
 from bmp280 import *
@@ -21,12 +21,12 @@ class sensors:
     DHT: DHT11 = DHT11(Pin(9))
     MQ135: GasSensor = GasSensor(27, 1.0, GASSENSOR_RZERO.OXYGEN, GASSENSOR_CALIBRATIONGAS.OXYGEN)
     MQ131: GasSensor = GasSensor(26, 1.0, GASSENSOR_RZERO.OZONE, GASSENSOR_CALIBRATIONGAS.OZONE)
-    SoilMoisture: SoilMoistureSensor = SoilMoistureSensor(28)
+    SoilResistance: SoilResistanceSensor = SoilResistanceSensor(28)
 
 
 # // Components
 class components:
-    SoilMoistureServo: Servo = Servo(8)
+    SoilResistanceServo: Servo = Servo(8)
     GPSSerialBus: UART = UART(1, 9600, tx=Pin(4), rx=Pin(5))
     GPS: MicropyGPS = MicropyGPS(location_formatting='dd')
     Radio: RadioCom = RadioCom(UART(0, 9600, tx=Pin(16), rx=Pin(17)))
@@ -90,14 +90,14 @@ def MainCycle() -> None:
 
         # MISSION STATUS: Cansat has been launched, run all systems nominally
         if missionMode != MISSION_MODES.PRELAUNCH:
-            ToggleSoilMoistureSensor(components.SoilMoistureServo, True)
+            ToggleSoilResistanceSensor(components.SoilResistanceServo, True)
 
             altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
             airTemperatureData, airTemperatureReadSucces = GetAirTemperature(sensors.BMP)
             airPressureData, airPressureReadSuccess = GetAirPressure(sensors.BMP)
             gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
             airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
-            soilRelativeHumidity: float = sensors.SoilMoisture.MeasureRH()
+            soilRelativeHumidity: float = sensors.SoilResistance.MeasureResistance()
 
             # components.CansatLogger.LogData(gpsLatitude, gpsLongitude, airTemperatureData, airPressureData)
 
@@ -131,7 +131,7 @@ def Init():
     # Standard initialization
     ToggleStatusLed(False)
     ToggleAlarmBuzzer(False)
-    ToggleSoilMoistureSensor(components.SoilMoistureServo, False)
+    ToggleSoilResistanceSensor(components.SoilResistanceServo, False)
 
     sensors.BMP.use_case(BMP280_CASE_INDOOR)  # Is DROP an outdoor use case? :/
 

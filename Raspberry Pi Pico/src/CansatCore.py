@@ -286,9 +286,9 @@ def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
         return -1.0, False
 
 
-def ToggleSoilMoistureSensor(soilMoistureServo: Servo, extendedState: bool) -> None:
+def ToggleSoilResistanceSensor(soilResistanceServo: Servo, extendedState: bool) -> None:
     """
-    EXTENDS or Retracts the POINTY soil moisture sensor
+    EXTENDS or Retracts the POINTY soil resistance sensor
 
     Note
     ----
@@ -296,15 +296,15 @@ def ToggleSoilMoistureSensor(soilMoistureServo: Servo, extendedState: bool) -> N
 
     Parameters
     ----------
-    soilMoistureServo : Servo
-        The micro servo to use with extending or retracting the soil moisture sensor
+    soilResistanceServo : Servo
+        The micro servo to use with extending or retracting the soil resistance sensor
     extendedState : bool
-        The extented state of the soil moisture sensor. When set to true, EXERCISE CAUTION
+        The extented state of the soil resistance sensor. When set to true, EXERCISE CAUTION
     """
     if extendedState:
-        soilMoistureServo.move(90)
+        soilResistanceServo.move(90)
     else:
-        soilMoistureServo.move(0)
+        soilResistanceServo.move(0)
 
 
 # Helper component functions
