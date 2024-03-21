@@ -200,7 +200,8 @@ def GetAccelerationGyro(mpu: MPU6050) -> tuple[Vector3d, Vector3d, bool]:
     """
 
     accelerationGyroSuccess: bool = True
-    accelerationData, gyroData = None, None
+    accelerationData: Vector3d = None
+    gyroData: Vector3d = None
 
     try:
         accelerationData = mpu.accel
