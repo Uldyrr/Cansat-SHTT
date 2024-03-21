@@ -5,6 +5,7 @@ from dht import DHT11
 from micropyGPS import MicropyGPS
 from vector3d import Vector3d
 from Servo import Servo
+from math import atan2, sqrt, pi
 import _thread
 import utime
 import random
@@ -30,6 +31,7 @@ class _components:
 # -- General Cansat Constants
 CANSAT_ADC16BIT: float = 2**16 - 1                  # 16-bit ADC
 CANSAT_ADC12BIT: float = 2**12 - 1                  # 12-bit ADC
+CANSAT_RAD2DEG: float = 180.0 / pi                  # Ratio to calculate degrees from radians
 CANSAT_UPDATEHZ: float = 1.0                        # Hz
 CANSAT_UPDATETIME: float = 1 / CANSAT_UPDATEHZ      # Seconds
 CANSAT_ALTITUDECORRECTION: float = 120.0            # m | NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
@@ -210,6 +212,19 @@ def GetAccelerationGyro(mpu: MPU6050) -> tuple[Vector3d, Vector3d, bool]:
         accelerationGyroSuccess = False
 
     return accelerationData, gyroData, accelerationGyroSuccess
+
+
+def GetCansatPitchRoll(mpu: MPU6050) -> tuple[float, float]:
+    accelerationData, gyroData, accelerationGyroSuccess = GetAccelerationGyro(mpu)
+    cansatPitch: float = 0.0
+    cansatRoll: float = 0.0
+
+    if accelerationGyroSuccess:
+        cansatPitch = atan2(accelerationData.y, accelerationData.x) * CANSAT_RAD2DEG
+        cansatRoll = atan2(-accelerationData.x, sqrt(accelerationData.y * accelerationData.y + accelerationData.z * accelerationData.z)) * CANSAT_RAD2DEG
+
+    return cansatPitch, cansatRoll
+
 
 
 def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, list]:
