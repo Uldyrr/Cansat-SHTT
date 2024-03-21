@@ -184,7 +184,7 @@ def GetAltitude(bmp: BMP280) -> tuple[float, bool]:
     return altitudeData, altitudeReadSuccess
 
 
-def GetAccelerationGyro(mpu: MPU6050, mpuData: dict = None) -> tuple[dict, dict, bool]:
+def GetAccelerationGyro(mpu: MPU6050) -> tuple[Vector3d, Vector3d, bool]:
     """
     Gets the current acceleration and gyro of the cansat using the MPU6050 IMU sensor
 
@@ -192,38 +192,21 @@ def GetAccelerationGyro(mpu: MPU6050, mpuData: dict = None) -> tuple[dict, dict,
     ----------
     mpu : MPU6050
         The MPU6050 IMU sensor connected to the cansat
-    mpuData : dict?
-        A dictionary that when passed in will be updated with the mpu6050's data with the given keys: "Acceleration", "Gyroscope". Withh the values: "x", "y", "z"
 
     Returns
     -------
-    tuple[dict, dict, bool]
-        The acceleration and gyroscope data as dict objects and a value indicating whether the MPU6050 data was read
+    tuple[Vector3d?, Vector3d?, bool]
+        The acceleration and gyroscope data as Vector3d references and a boolean value indicating whether the MPU6050 data was read
     """
 
     accelerationGyroSuccess: bool = True
-    accelerationData: dict = {"x": 0, "y": 0, "z": 0}
-    gyroData: dict = {"x": 0, "y": 0, "z": 0}
+    accelerationData, gyroData = None, None
 
     try:
-        accelerationData = {"x": mpu.accel.x, "y": mpu.accel.y, "z": mpu.accel.x}
-        gyroData = {"x": mpu.gyro.x, "y": mpu.gyro.y, "z": mpu.gyro.x}
+        accelerationData = mpu.accel
+        gyroData = mpu.gyro
     except:
         accelerationGyroSuccess = False
-
-    # Update the mpuData dict (IF PROVIDED) with data from the MPU6050
-    if accelerationGyroSuccess and type(mpuData) is dict:
-        mpuData["Acceleration"] = [
-            accelerationData["x"],
-            accelerationData["y"],
-            accelerationData["z"]
-        ]
-
-        mpuData["Gyroscope"] = [
-            gyroData["x"],
-            gyroData["y"],
-            gyroData["z"]
-        ]
 
     return accelerationData, gyroData, accelerationGyroSuccess
 
