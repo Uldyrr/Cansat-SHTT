@@ -1,5 +1,5 @@
 # Henrik, do your thing :D
-from CansatCore import CANSAT_ADC16BIT
+from CansatCore import CANSAT_ADC16BIT, Clamp
 from machine import Pin, ADC
 
 
@@ -14,11 +14,10 @@ class SoilResistanceSensor:
         self._adc = ADC(adcPin)
 
     def MeasureResistance(self) -> int:
-        raw = self._adc.read_u16()
+        raw = Clamp(self._adc.read_u16(), 1, CANSAT_ADC16BIT)
 
-        buffer = raw * SOIL_VOLTAGEIN
-        voltage_out = buffer / CANSAT_ADC16BIT
-        buffer = SOIL_VOLTAGEIN / voltage_out - 1
-        measured_resistance = SOIL_REFERENCERESISTANCE * buffer
+        voltage_out: float = SOIL_VOLTAGEIN * raw / CANSAT_ADC16BIT
+        buffer: float = SOIL_VOLTAGEIN / voltage_out - 1
+        measured_resistance: int = int(SOIL_REFERENCERESISTANCE * buffer)
 
         return measured_resistance
