@@ -428,7 +428,7 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
 
     # Initialize sensor constants
     if bmp is not None:
-        print("[CansatCore.py] Calibrating altitude!")
+        print("[CansatCore.py] Calibrating BMP altitude")
         CANSAT_ALTITUDECORRECTION = 0.0  # Set to zero to get the actual altitude offset one will get from calling GetAltitude()
         CANSAT_ALTITUDECORRECTION, _ = GetAltitude(bmp)
         print(f"[CansatCore.py] Got altitude correction: {CANSAT_ALTITUDECORRECTION:.2f}m")
