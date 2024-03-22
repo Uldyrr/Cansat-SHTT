@@ -14,10 +14,10 @@ class SoilResistanceSensor:
         self._adc = ADC(adcPin)
 
     def MeasureResistance(self) -> int:
-        raw = Clamp(self._adc.read_u16(), 1, CANSAT_ADC16BIT)
+        raw = Clamp(self._adc.read_u16(), 1, CANSAT_ADC16BIT - 1)
 
         voltage_out: float = SOIL_VOLTAGEIN * raw / CANSAT_ADC16BIT
-        buffer: float = SOIL_VOLTAGEIN / voltage_out - 1
-        measured_resistance: int = int(SOIL_REFERENCERESISTANCE * (1 / buffer))
+        buffer: float = SOIL_VOLTAGEIN / voltage_out - 1.0
+        measured_resistance: int = int(SOIL_REFERENCERESISTANCE * (1.0 / buffer))
 
         return measured_resistance

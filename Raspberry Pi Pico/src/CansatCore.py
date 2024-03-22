@@ -6,7 +6,7 @@ from dht import DHT11
 from micropyGPS import MicropyGPS
 from vector3d import Vector3d
 from Servo import Servo
-from math import atan2, sqrt, pi
+from math import atan2, asin, sqrt, pi
 import _thread
 import utime
 import random
@@ -204,8 +204,8 @@ def GetAccelerationGyro(mpu: MPU6050) -> tuple[Vector3, Vector3, bool]:
     """
 
     accelerationGyroSuccess: bool = True
-    accelerationData: Vector3 = None
-    gyroData: Vector3 = None
+    accelerationData: Vector3 = Vector3.Empty()
+    gyroData: Vector3 = Vector3.Empty()
 
     try:
         accelerationData = Vector3(mpu.accel.x, mpu.accel.y, mpu.accel.z)
@@ -222,8 +222,8 @@ def GetCansatPitchRoll(mpu: MPU6050) -> tuple[float, float]:
     cansatRoll: float = 0.0
 
     if accelerationGyroSuccess:
-        cansatPitch = atan2(accelerationData.Y, accelerationData.X) * CANSAT_RAD2DEG
-        cansatRoll = atan2(-accelerationData.X, sqrt(accelerationData.Y * accelerationData.Y + accelerationData.Z * accelerationData.Z)) * CANSAT_RAD2DEG
+        cansatPitch = asin(accelerationData.Y) * CANSAT_RAD2DEG
+        cansatRoll = asin(accelerationData.X / sqrt(accelerationData.X * accelerationData.X + accelerationData.Y * accelerationData.Y + accelerationData.Z * accelerationData.Z)) * CANSAT_RAD2DEG
 
     return cansatPitch, cansatRoll
 
