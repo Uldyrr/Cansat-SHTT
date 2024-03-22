@@ -19,6 +19,5 @@ class SoilResistanceSensor:
         voltage_out: float = SOIL_VOLTAGEIN * raw / CANSAT_ADC16BIT
         buffer: float = SOIL_VOLTAGEIN / voltage_out - 1
         measured_resistance: int = int(SOIL_REFERENCERESISTANCE * (1 / buffer))
-        #R1 * (1 / (vin / vout - 1))
 
         return measured_resistance
