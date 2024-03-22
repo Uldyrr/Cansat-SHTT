@@ -204,8 +204,8 @@ def GetAccelerationGyro(mpu: MPU6050) -> tuple[Vector3, Vector3, bool]:
     """
 
     accelerationGyroSuccess: bool = True
-    accelerationData: Vector3d = None
-    gyroData: Vector3d = None
+    accelerationData: Vector3 = None
+    gyroData: Vector3 = None
 
     try:
         accelerationData = Vector3(mpu.accel.x, mpu.accel.y, mpu.accel.z)
@@ -431,6 +431,7 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
 
     if mpu is not None:
         return
+
 
 
 
