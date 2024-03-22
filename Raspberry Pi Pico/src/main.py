@@ -123,7 +123,7 @@ def MainCycle() -> None:
 
 
 def Init():
-    print("Initializing!")
+    print("[main.py] Initializing!")
 
     # Standard initialization
     ToggleStatusLed(False)
@@ -133,12 +133,12 @@ def Init():
     sensors.BMP.use_case(BMP280_CASE_INDOOR)  # Is DROP an outdoor use case? :/
 
     # Core module initalization
-    print("Initializing CansatCore.py!")
+    print("[main.py] Initializing CansatCore.py!")
 
     InitCansatCore(sensors.BMP, sensors.MPU)
 
     # Finalization
-    print("Initialized!")
+    print("[main.py] Initialized!")
 
     for i in range(0, CANSAT_INITALIZATION_BLINKS):
         utime.sleep_ms(CANSAT_INITALIZATION_BLINKTIME)
@@ -148,7 +148,7 @@ def Init():
 
     ToggleStatusLed(False)
 
-    print("Starting MainCycle()!\n")
+    print("[main.py] Starting MainCycle()!\n")
 
     MainCycle()
 
