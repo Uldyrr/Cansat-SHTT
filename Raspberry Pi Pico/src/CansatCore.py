@@ -40,11 +40,13 @@ CANSAT_ACCELEROMETERCORRECTION: Vector3 = Vector3.Empty()  # x, y, z correction
 CANSAT_SEALEVELPRESSURE: float = 1013.25                   # hPa
 
 # -- Initialization Cansat Constants
-CANSAT_INITALIZATION_BLINKS: int = 5                # Count of power led blinks
-CANSAT_INITALIZATION_BLINKTIME: int = int(100 / 2)  # ms, time of one power led blink
+CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS: int = 50  # Measurement calibration count
 
-CANSAT_LANDED_BLINKS: int = 10                      # Count of power led blinks
-CANSAT_LANDED_BLINKTIME: int = int(100 / 2)         # ms, time of one power led blink
+CANSAT_INITALIZATION_BLINKS: int = 5                        # Count of power led blinks
+CANSAT_INITALIZATION_BLINKTIME: int = int(100 / 2)          # ms, time of one power led blink
+
+CANSAT_LANDED_BLINKS: int = 10                              # Count of power led blinks
+CANSAT_LANDED_BLINKTIME: int = int(100 / 2)                 # ms, time of one power led blink
 
 # -- Mission Constants
 class MISSION_MODES:
@@ -430,7 +432,24 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
         CANSAT_ALTITUDECORRECTION, _ = GetAltitude(bmp)
 
     if mpu is not None:
-        return
+        t = utime.ticks_ms()
+
+        accelerometerTotal = Vector3.Empty()
+        accelerometerData, gyroData = None, None
+
+        for i in range(0, CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS):
+            accelerometerData, gyroData, accelGyroRead = GetAccelerationGyro(mpu)
+
+            accelerometerTotal.X += accelerometerData.X
+            accelerometerTotal.Y += accelerometerData.Y
+            accelerometerTotal.Z += accelerometerData.Z
+
+        accelerometerTotal.X /= CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
+        accelerometerTotal.Y /= CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
+        accelerometerTotal.Z /= CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
+
+        print(accelerometerTotal)
+        print(utime.ticks_ms() - t)
 
 
 

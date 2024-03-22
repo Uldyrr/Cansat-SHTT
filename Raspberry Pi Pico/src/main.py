@@ -135,7 +135,7 @@ def Init():
     # Core module initalization
     print("Initializing CansatCore.py!")
 
-    InitCansatCore(sensors.BMP)
+    InitCansatCore(sensors.BMP, sensors.MPU)
 
     # Finalization
     print("Initialized!")
