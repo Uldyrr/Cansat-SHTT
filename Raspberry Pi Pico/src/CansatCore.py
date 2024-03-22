@@ -446,7 +446,7 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
 
         accelerometerTotal.X /= CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
         accelerometerTotal.Y /= CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
-        accelerometerTotal.Z /= CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
+        accelerometerTotal.Z /= CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS - 1  # Z is in the direction of gravity
 
         print(accelerometerTotal)
         print(utime.ticks_ms() - t)
