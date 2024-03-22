@@ -32,9 +32,6 @@ class components:
     CansatLogger = CansatLogger()
 
 
-# // Sensor data
-mpuData: dict = {}
-
 # // Mission data
 missionMode: int = MISSION_MODES.PRELAUNCH
 missionAltitudeFailed: bool = False

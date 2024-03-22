@@ -1,3 +1,4 @@
+from CansatDataStructures import Vector3
 from machine import Pin, ADC, UART
 from imu import MPU6050
 from bmp280 import BMP280
@@ -29,13 +30,14 @@ class _components:
 
 # // Constants
 # -- General Cansat Constants
-CANSAT_ADC16BIT: float = 2**16 - 1                  # 16-bit ADC
-CANSAT_ADC12BIT: float = 2**12 - 1                  # 12-bit ADC
-CANSAT_RAD2DEG: float = 180.0 / pi                  # Ratio to calculate degrees from radians
-CANSAT_UPDATEHZ: float = 1.0                        # Hz
-CANSAT_UPDATETIME: float = 1 / CANSAT_UPDATEHZ      # Seconds
-CANSAT_ALTITUDECORRECTION: float = 120.0            # m | NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
-CANSAT_SEALEVELPRESSURE: float = 1013.25            # hPa
+CANSAT_ADC16BIT: float = 2**16 - 1                         # 16-bit ADC
+CANSAT_ADC12BIT: float = 2**12 - 1                         # 12-bit ADC
+CANSAT_RAD2DEG: float = 180.0 / pi                         # Ratio to calculate degrees from radians
+CANSAT_UPDATEHZ: float = 1.0                               # Hz
+CANSAT_UPDATETIME: float = 1 / CANSAT_UPDATEHZ             # Seconds
+CANSAT_ALTITUDECORRECTION: float = 120.0                   # m | NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
+CANSAT_ACCELEROMETERCORRECTION: Vector3 = Vector3.Empty()  # x, y, z correction
+CANSAT_SEALEVELPRESSURE: float = 1013.25                   # hPa
 
 # -- Initialization Cansat Constants
 CANSAT_INITALIZATION_BLINKS: int = 5                # Count of power led blinks
@@ -186,7 +188,7 @@ def GetAltitude(bmp: BMP280) -> tuple[float, bool]:
     return altitudeData, altitudeReadSuccess
 
 
-def GetAccelerationGyro(mpu: MPU6050) -> tuple[Vector3d, Vector3d, bool]:
+def GetAccelerationGyro(mpu: MPU6050) -> tuple[Vector3, Vector3, bool]:
     """
     Gets the current acceleration and gyro of the cansat using the MPU6050 IMU sensor
 
@@ -206,8 +208,8 @@ def GetAccelerationGyro(mpu: MPU6050) -> tuple[Vector3d, Vector3d, bool]:
     gyroData: Vector3d = None
 
     try:
-        accelerationData = mpu.accel
-        gyroData = mpu.gyro
+        accelerationData = Vector3(mpu.accel.x, mpu.accel.y, mpu.accel.z)
+        gyroData = Vector3(mpu.gyro.x, mpu.gyro.y, mpu.gyro.z)
     except:
         accelerationGyroSuccess = False
 
@@ -408,7 +410,7 @@ def ToggleStatusLed(ledState: bool = None) -> None:
 
 
 # Init
-def InitCansatCore(bmp: BMP280 = None) -> None:
+def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
     """
     Initializes the Core module of SHTT Cansat
 
@@ -416,14 +418,19 @@ def InitCansatCore(bmp: BMP280 = None) -> None:
     ----------
     bmp : BMP280?
         The BMP280 air pressure & temperature sensor object, or None if no automatic altitude correction should be performed
+    mpu : MPU6050?
+        The MPU6050 IMU sensor object, or None if no automatic calibration should be performed
     """
 
     global CANSAT_ALTITUDECORRECTION
 
-    # Initialize constants
+    # Initialize sensor constants
     if bmp is not None:
         CANSAT_ALTITUDECORRECTION = 0  # Set to zero to get the actual altitude offset one will get from calling GetAltitude()
         CANSAT_ALTITUDECORRECTION, _ = GetAltitude(bmp)
+
+    if mpu is not None:
+        return
 
 
 
