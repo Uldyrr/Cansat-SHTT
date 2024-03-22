@@ -3,8 +3,8 @@ from CansatCore import CANSAT_ADC16BIT, Clamp
 from machine import Pin, ADC
 
 
-SOIL_VOLTAGEIN = 3.3               # Volts
-SOIL_REFERENCERESISTANCE = 100000  # Ohms
+SOIL_VOLTAGEIN: float = 3.3             # Volts
+SOIL_REFERENCERESISTANCE: int = 100000  # Ohms
 
 
 class SoilResistanceSensor:
