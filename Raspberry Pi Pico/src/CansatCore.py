@@ -428,14 +428,16 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
 
     # Initialize sensor constants
     if bmp is not None:
-        CANSAT_ALTITUDECORRECTION = 0  # Set to zero to get the actual altitude offset one will get from calling GetAltitude()
+        print("[CansatCore.py] Calibrating altitude!")
+        CANSAT_ALTITUDECORRECTION = 0.0  # Set to zero to get the actual altitude offset one will get from calling GetAltitude()
         CANSAT_ALTITUDECORRECTION, _ = GetAltitude(bmp)
+        print(f"[CansatCore.py] Got altitude correction: {CANSAT_ALTITUDECORRECTION:.2f}m")
 
     if mpu is not None:
+        print("[CansatCore.py] Calibrating MPU6050")
         t = utime.ticks_ms()
 
         accelerometerTotal = Vector3.Empty()
-        accelerometerData, gyroData, accelGyroRead = None, None, None
 
         for i in range(0, CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS):
             accelerometerData, gyroData, accelGyroRead = GetAccelerationGyro(mpu)
@@ -448,8 +450,7 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
         CANSAT_ACCELEROMETERCORRECTION.Y = accelerometerTotal.Y / CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
         CANSAT_ACCELEROMETERCORRECTION.Z = accelerometerTotal.Z / CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS - 1  # Z is in the direction of gravity
 
-        print(CANSAT_ACCELEROMETERCORRECTION)
-        print(utime.ticks_ms() - t)
+        print(f"[CansatCore.py] Got accelerometer correction: [{CANSAT_ACCELEROMETERCORRECTION}] in {utime.ticks_ms() - t}ms")
 
 
 
