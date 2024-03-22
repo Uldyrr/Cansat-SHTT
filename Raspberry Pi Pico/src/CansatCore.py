@@ -222,8 +222,8 @@ def GetCansatPitchRoll(mpu: MPU6050) -> tuple[float, float]:
     cansatRoll: float = 0.0
 
     if accelerationGyroSuccess:
-        cansatPitch = atan2(accelerationData.X, sqrt(accelerationData.Z * accelerationData.Z + accelerationData.Y * accelerationData.Y)) * CANSAT_RAD2DEG
-        cansatRoll = atan2(accelerationData.Y, sqrt(accelerationData.Z * accelerationData.Z + accelerationData.X * accelerationData.X)) * CANSAT_RAD2DEG
+        cansatPitch = atan2(accelerationData.Y, sqrt(accelerationData.Z * accelerationData.Z + accelerationData.X * accelerationData.X)) * CANSAT_RAD2DEG
+        cansatRoll = atan2(-accelerationData.X, sqrt(accelerationData.Z * accelerationData.Z + accelerationData.Y * accelerationData.Y)) * CANSAT_RAD2DEG
 
     return cansatPitch, cansatRoll
 
@@ -431,6 +431,7 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
 
     if mpu is not None:
         return
+
 
 
 
