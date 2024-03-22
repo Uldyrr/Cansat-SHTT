@@ -9,7 +9,6 @@ from bmp280 import *
 from dht import DHT11
 from micropyGPS import MicropyGPS
 from Servo import Servo
-import _thread
 import utime
 
 
@@ -95,6 +94,7 @@ def MainCycle() -> None:
             altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
             airTemperatureData, airTemperatureReadSucces = GetAirTemperature(sensors.BMP)
             airPressureData, airPressureReadSuccess = GetAirPressure(sensors.BMP)
+            cansatPitch, cansatRoll = GetCansatPitchRoll(sensors.MPU)
             gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
             airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
             soilRelativeHumidity: float = sensors.SoilResistance.MeasureResistance()
