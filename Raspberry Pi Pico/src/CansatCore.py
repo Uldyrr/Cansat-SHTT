@@ -210,7 +210,7 @@ def GetAccelerationGyro(mpu: MPU6050) -> tuple[Vector3, Vector3, bool]:
     gyroData: Vector3 = Vector3.Empty()
 
     try:
-        accelerationData = Vector3(mpu.accel.x, mpu.accel.y, mpu.accel.z)
+        accelerationData = Vector3(mpu.accel.x - CANSAT_ACCELEROMETERCORRECTION.X, mpu.accel.y - CANSAT_ACCELEROMETERCORRECTION.Y, mpu.accel.z - CANSAT_ACCELEROMETERCORRECTION.Z)
         gyroData = Vector3(mpu.gyro.x, mpu.gyro.y, mpu.gyro.z)
     except:
         accelerationGyroSuccess = False
@@ -435,7 +435,7 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
         t = utime.ticks_ms()
 
         accelerometerTotal = Vector3.Empty()
-        accelerometerData, gyroData = None, None
+        accelerometerData, gyroData, accelGyroRead = None, None, None
 
         for i in range(0, CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS):
             accelerometerData, gyroData, accelGyroRead = GetAccelerationGyro(mpu)
@@ -444,11 +444,11 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
             accelerometerTotal.Y += accelerometerData.Y
             accelerometerTotal.Z += accelerometerData.Z
 
-        accelerometerTotal.X /= CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
-        accelerometerTotal.Y /= CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
-        accelerometerTotal.Z /= CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS - 1  # Z is in the direction of gravity
+        CANSAT_ACCELEROMETERCORRECTION.X = accelerometerTotal.X / CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
+        CANSAT_ACCELEROMETERCORRECTION.Y = accelerometerTotal.Y / CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
+        CANSAT_ACCELEROMETERCORRECTION.Z = accelerometerTotal.Z / CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS - 1  # Z is in the direction of gravity
 
-        print(accelerometerTotal)
+        print(CANSAT_ACCELEROMETERCORRECTION)
         print(utime.ticks_ms() - t)
 
 
