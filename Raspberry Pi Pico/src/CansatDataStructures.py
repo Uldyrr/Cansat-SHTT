@@ -8,6 +8,9 @@ class Vector3:
         self.Y = y
         self.Z = z
 
+    def __str__(self):
+        return f"{self.X}, {self.Y}, {self.Z}"
+
     @staticmethod
     def Empty():
         return Vector3(0, 0, 0)
