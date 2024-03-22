@@ -224,7 +224,7 @@ def GetCansatPitchRoll(mpu: MPU6050) -> tuple[float, float]:
     cansatRoll: float = 0.0
 
     if accelerationGyroSuccess:
-        cansatPitch = atan2(accelerationData.Y, sqrt(accelerationData.Z * accelerationData.Z + accelerationData.X * accelerationData.X)) * CANSAT_RAD2DEG
+        cansatPitch = atan2(accelerationData.Z, sqrt(accelerationData.Y * accelerationData.Y + accelerationData.X * accelerationData.X)) * CANSAT_RAD2DEG
         cansatRoll = atan2(-accelerationData.X, sqrt(accelerationData.Z * accelerationData.Z + accelerationData.Y * accelerationData.Y)) * CANSAT_RAD2DEG
 
     return cansatPitch, cansatRoll
@@ -447,8 +447,8 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
             accelerometerTotal.Z += accelerometerData.Z
 
         CANSAT_ACCELEROMETERCORRECTION.X = accelerometerTotal.X / CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
-        CANSAT_ACCELEROMETERCORRECTION.Y = accelerometerTotal.Y / CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
-        CANSAT_ACCELEROMETERCORRECTION.Z = accelerometerTotal.Z / CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS - 1  # Z is in the direction of gravity
+        CANSAT_ACCELEROMETERCORRECTION.Y = accelerometerTotal.Y / CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS - 1  # Y will be in the direction of gravity
+        CANSAT_ACCELEROMETERCORRECTION.Z = accelerometerTotal.Z / CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
 
         print(f"[CansatCore.py] Got accelerometer correction: [{CANSAT_ACCELEROMETERCORRECTION}] in {utime.ticks_ms() - t}ms")
 
