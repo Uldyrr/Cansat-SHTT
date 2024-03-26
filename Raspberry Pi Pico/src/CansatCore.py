@@ -423,6 +423,7 @@ def DebugLog(message: str, source: str = None) -> None:
     source : str?
         The source .py file. Performs a regular print when not provided
     """
+
     if source:
         print(f"[{utime.ticks_diff(utime.ticks_ms(), CANSAT_BOOTTIME) / 1000.0:.3f}s | {source}]: {message}")
     else:
