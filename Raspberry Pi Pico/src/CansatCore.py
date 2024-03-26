@@ -413,6 +413,16 @@ def ToggleStatusLed(ledState: bool = None) -> None:
 
 # Generic function for printing debug/log messages
 def DebugLog(message: str, source: str = None) -> None:
+    """
+    Debug/Log generic message printing function
+
+    Parameters
+    ----------
+    message : str
+        The message to print
+    source : str?
+        The source .py file. Performs a regular print when not provided
+    """
     if source:
         print(f"[{utime.ticks_diff(utime.ticks_ms(), CANSAT_BOOTTIME) / 1000.0:.3f}s | {source}]: {message}")
     else:
