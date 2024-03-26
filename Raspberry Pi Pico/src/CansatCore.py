@@ -31,6 +31,7 @@ class _components:
 # -- General Cansat Constants
 CANSAT_UPDATEHZ: float = 1.0                               # Hz
 CANSAT_UPDATETIME: float = 1 / CANSAT_UPDATEHZ             # Seconds
+CANSAT_BOOTTIME: int = 0                                   # Ms
 
 CANSAT_ADC16BIT: float = 2**16 - 1                         # 16-bit ADC
 CANSAT_ADC12BIT: float = 2**12 - 1                         # 12-bit ADC
@@ -47,18 +48,17 @@ INITALIZATION_ACCELEROMETER_MEASUREMENTS: int = 50  # Measurement calibration co
 INITALIZATION_BLINKS: int = 5                        # Count of power led blinks
 INITALIZATION_BLINKTIME: int = int(100 / 2)          # ms, time of one power led blink
 
-LANDED_BLINKS: int = 10                              # Count of power led blinks
-LANDED_BLINKTIME: int = int(100 / 2)                 # ms, time of one power led blink
-
 # -- Mission Constants
 class MISSION_MODES:
     PRELAUNCH = 1,           # Hibernate mode, all systems will be off
     LAUNCH = 2,              # Mission mode, all systems will turned on
     LANDED = 3               # Retrival mode, all systems will continue running and an alarm buzzer will toggle
 
-MISSION_LAUNCHALTITUDE: float = 0.3      # m
-MISSION_LANDEDTHRESHOLD: float = 1.0     # m
-MISSION_LANDEDTRIGGER: int = 10          # Count before we can consider the cansat landed
+MISSION_LAUNCHALTITUDE: float = 0.3           # m
+MISSION_LANDED_THRESHOLD: float = 1.0         # m
+MISSION_LANDED_TRIGGER: int = 10              # Count before we can consider the cansat landed
+MISSION_LANDED_BLINKS: int = 10               # Count of power led blinks
+MISSION_LANDED_BLINKTIME: int = int(100 / 2)  # ms, time of one power led blink
 
 
 # Generic helper functions
@@ -411,6 +411,11 @@ def ToggleStatusLed(ledState: bool = None) -> None:
     _components.StatusLed.value(ledState)
 
 
+# Generic function for printing debug/log messages
+def DebugLog(message: str, source: str) -> None:
+    print(f"[{source}]: {message}")
+
+
 # Init
 def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
     """
@@ -424,19 +429,21 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
         The MPU6050 IMU sensor object, or None if no automatic calibration should be performed
     """
 
-    global CANSAT_CORRECTION_ALTITUDE, CANSAT_CORRECTION_ACCELEROMETER
+    global CANSAT_BOOTTIME, CANSAT_CORRECTION_ALTITUDE, CANSAT_CORRECTION_ACCELEROMETER
+
+    CANSAT_BOOTTIME = utime.ticks_ms()  # The precise time in ms ticks when the cansat has first booted up
 
     # Initialize sensor constants
     if bmp is not None:
-        print("[CansatCore.py] Calibrating BMP altitude")
+        DebugLog("Calibrating BMP altitude", "CansatCore.py")
 
         CANSAT_CORRECTION_ALTITUDE = 0.0  # Set to zero to get the actual altitude offset one will get from calling GetAltitude()
         CANSAT_CORRECTION_ALTITUDE, _ = GetAltitude(bmp)
 
-        print(f"[CansatCore.py] Got altitude correction: {CANSAT_CORRECTION_ALTITUDE:.2f}m")
+        DebugLog(f"Got altitude correction: {CANSAT_CORRECTION_ALTITUDE:.2f}m", "CansatCore.py")
 
     if mpu is not None:
-        print("[CansatCore.py] Calibrating MPU6050")
+        DebugLog("CansatCore.py Calibrating MPU6050", "CansatCore.py")
 
         t = utime.ticks_ms()
 
@@ -453,4 +460,4 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
         CANSAT_CORRECTION_ACCELEROMETER.Y = accelerometerTotal.Y / INITALIZATION_ACCELEROMETER_MEASUREMENTS - 1  # Y will be in the direction of gravity
         CANSAT_CORRECTION_ACCELEROMETER.Z = accelerometerTotal.Z / INITALIZATION_ACCELEROMETER_MEASUREMENTS
 
-        print(f"[CansatCore.py] Got accelerometer correction: [{CANSAT_CORRECTION_ACCELEROMETER}] in {utime.ticks_ms() - t}ms")
+        DebugLog(f"Got accelerometer correction: [{CANSAT_CORRECTION_ACCELEROMETER}] in {utime.ticks_diff(utime.ticks_ms(), t)}ms", "CansatCore.py")
