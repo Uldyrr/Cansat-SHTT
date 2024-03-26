@@ -33,20 +33,21 @@ class _components:
 CANSAT_ADC16BIT: float = 2**16 - 1                         # 16-bit ADC
 CANSAT_ADC12BIT: float = 2**12 - 1                         # 12-bit ADC
 CANSAT_RAD2DEG: float = 180.0 / pi                         # Ratio to calculate degrees from radians
+CANSAT_MICROSECONDS: int = 1_000_000                       # 1 / 1000 (ms) / 1000 (us)
 CANSAT_UPDATEHZ: float = 1.0                               # Hz
 CANSAT_UPDATETIME: float = 1 / CANSAT_UPDATEHZ             # Seconds
 CANSAT_ALTITUDECORRECTION: float = 120.0                   # m | NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
 CANSAT_ACCELEROMETERCORRECTION: Vector3 = Vector3.Empty()  # x, y, z correction
 CANSAT_SEALEVELPRESSURE: float = 1013.25                   # hPa
 
-# -- Initialization Cansat Constants
-CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS: int = 50  # Measurement calibration count
+# -- Initialization Constants
+INITALIZATION_ACCELEROMETER_MEASUREMENTS: int = 50  # Measurement calibration count
 
-CANSAT_INITALIZATION_BLINKS: int = 5                        # Count of power led blinks
-CANSAT_INITALIZATION_BLINKTIME: int = int(100 / 2)          # ms, time of one power led blink
+INITALIZATION_BLINKS: int = 5                        # Count of power led blinks
+INITALIZATION_BLINKTIME: int = int(100 / 2)          # ms, time of one power led blink
 
-CANSAT_LANDED_BLINKS: int = 10                              # Count of power led blinks
-CANSAT_LANDED_BLINKTIME: int = int(100 / 2)                 # ms, time of one power led blink
+LANDED_BLINKS: int = 10                              # Count of power led blinks
+LANDED_BLINKTIME: int = int(100 / 2)                 # ms, time of one power led blink
 
 # -- Mission Constants
 class MISSION_MODES:
@@ -58,7 +59,6 @@ MISSION_LAUNCHALTITUDE: float = 0.3      # m
 MISSION_LANDEDTHRESHOLD: float = 1.0     # m
 MISSION_LANDEDTRIGGER: int = 10          # Count before we can consider the cansat landed
 
-BUZZER_MICROSECONDS: int = 1_000_000  # 1 / 1000 (ms) / 1000 (us)
 
 
 # Generic helper functions
@@ -223,7 +223,7 @@ def GetCansatPitchRoll(mpu: MPU6050) -> tuple[float, float]:
     cansatPitch: float = 0.0
     cansatRoll: float = 0.0
 
-    # Corrected for initial upward orientation
+    # Corrected for initial upward orientation (Up vector: Y axis)
     if accelerationGyroSuccess:
         cansatPitch = atan2(accelerationData.Z, sqrt(accelerationData.Y * accelerationData.Y + accelerationData.X * accelerationData.X)) * CANSAT_RAD2DEG
         cansatRoll = atan2(-accelerationData.X, sqrt(accelerationData.Z * accelerationData.Z + accelerationData.Y * accelerationData.Y)) * CANSAT_RAD2DEG
@@ -338,8 +338,8 @@ def _AlarmBuzzerIntervalUpdate(pitch: int, time: float) -> None:
     time : float
         A floating point type value that will be used to play the pitch for a certain amount of time
     """
-    sleepTime: int = int(BUZZER_MICROSECONDS / pitch / 2)  # Microseconds pitch time
-    loopIntervals: int = int(time * BUZZER_MICROSECONDS / sleepTime)
+    sleepTime: int = int(CANSAT_MICROSECONDS / pitch / 2)  # Microseconds pitch time
+    loopIntervals: int = int(time * CANSAT_MICROSECONDS / sleepTime)
 
     for _ in range(0, loopIntervals):
         _components.AlarmBuzzer.value(1)
@@ -439,16 +439,16 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
 
         accelerometerTotal = Vector3.Empty()
 
-        for i in range(0, CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS):
+        for i in range(0, INITALIZATION_ACCELEROMETER_MEASUREMENTS):
             accelerometerData, gyroData, accelGyroRead = GetAccelerationGyro(mpu)
 
             accelerometerTotal.X += accelerometerData.X
             accelerometerTotal.Y += accelerometerData.Y
             accelerometerTotal.Z += accelerometerData.Z
 
-        CANSAT_ACCELEROMETERCORRECTION.X = accelerometerTotal.X / CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
-        CANSAT_ACCELEROMETERCORRECTION.Y = accelerometerTotal.Y / CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS - 1  # Y will be in the direction of gravity
-        CANSAT_ACCELEROMETERCORRECTION.Z = accelerometerTotal.Z / CANSAT_INITALIZATION_ACCELEROMETER_MEASUREMENTS
+        CANSAT_ACCELEROMETERCORRECTION.X = accelerometerTotal.X / INITALIZATION_ACCELEROMETER_MEASUREMENTS
+        CANSAT_ACCELEROMETERCORRECTION.Y = accelerometerTotal.Y / INITALIZATION_ACCELEROMETER_MEASUREMENTS - 1  # Y will be in the direction of gravity
+        CANSAT_ACCELEROMETERCORRECTION.Z = accelerometerTotal.Z / INITALIZATION_ACCELEROMETER_MEASUREMENTS
 
         print(f"[CansatCore.py] Got accelerometer correction: [{CANSAT_ACCELEROMETERCORRECTION}] in {utime.ticks_ms() - t}ms")
 
