@@ -53,38 +53,28 @@ def MissionStateUpdate() -> None:
         DebugLog("Altitude read unsuccessful", "main.py -> MissionStateUpdate()")
         return
 
-    if missionMode == MISSION_MODES.PRELAUNCH and altitudeData > MISSION_LAUNCH_ALTITUDE:
-        # Stage 1. The cansat lifts off higher than a predefined launch altitude
-        # Here we want to check if our delta altitude is large enough to consider this a launch
+    if missionMode == MISSION_MODES.PRELAUNCH and altitudeData > MISSION_LAUNCH_DELTATHRESHOLD:
+        # Stage 1. The cansat lifts off higher than a predefined launch threshold
 
-        missionAltitudePrevious = CANSAT_CORRECTION_ALTITUDE + MISSION_LAUNCH_ALTITUDE
-
-        if altitudeData - missionAltitudePrevious > MISSION_LAUNCH_THRESHOLD:
-            missionAltitudePrevious = altitudeData
-            missionMode = MISSION_MODES.LAUNCH
+        missionMode = MISSION_MODES.LAUNCH
     elif missionMode == MISSION_MODES.LAUNCH:
         # Stage 2. The cansat has launched
-        # Here we want to check if our delta altitude is low enough from the highest altitude recorded
-        # Then we want to check for an amount of iterations if we have stopped
 
-        if altitudeData > missionAltitudeMax:
-            missionAltitudeMax = altitudeData
+        # Record highest altitude and evaluate if we are falling
+        missionAltitudeMax = altitudeData if altitudeData > missionAltitudeMax else missionAltitudeMax
 
-        if missionAltitudeMax - altitudeData < MISSION_LAUNCH_THRESHOLD:
+        if missionAltitudeMax - altitudeData < MISSION_LAUNCH_DELTATHRESHOLD:
+            missionAltitudePrevious = altitudeData
             return
 
-        missionAltitudeDelta: float = abs(altitudeData - missionAltitudePrevious)
-
-        if missionAltitudeDelta < MISSION_LANDED_THRESHOLD:
+        # Check if we have stopped for an amount of iterations
+        if abs(altitudeData - missionAltitudePrevious) < MISSION_LANDED_DELTATHRESHOLD:
             missionLandedTrigger += 1
 
-            if missionLandedTrigger > MISSION_LANDED_TRIGGER:
+            if missionLandedTrigger >= MISSION_LANDED_TRIGGER:
                 missionMode = MISSION_MODES.LANDED
         else:
             missionAltitudePrevious = altitudeData
-
-
-
 
 
 # The heart of the Cansat
@@ -98,9 +88,6 @@ def MainCycle() -> None:
         utime.sleep(CANSAT_UPDATETIME - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATETIME * 0.3))
 
         MissionStateUpdate()
-
-        if missionMode == MISSION_MODES.PRELAUNCH:
-            DebugLog(f"AWAITING PROPER HEIGHT! Previous Altitude: {missionPreviousAltitude:.2f} | Launch Altitude: {MISSION_LAUNCHALTITUDE:.2f}", "main.py")
 
         # MISSION STATUS: Cansat has been launched, run all systems nominally
         if missionMode != MISSION_MODES.PRELAUNCH:
