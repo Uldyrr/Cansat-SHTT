@@ -52,9 +52,10 @@ INITALIZATION_BLINKTIME: int = int(100 / 2)          # ms, time of one power led
 class MISSION_MODES:
     PRELAUNCH = 1,           # Hibernate mode, all systems will be off
     LAUNCH = 2,              # Mission mode, all systems will turned on
-    LANDED = 3               # Retrival mode, all systems will continue running and an alarm buzzer will toggle
+    LANDED = 3,              # Retrival mode, all systems will continue running and an alarm buzzer will toggle
 
-MISSION_LAUNCHALTITUDE: float = 0.3           # m
+MISSION_LAUNCH_ALTITUDE: float = 0.3          # m
+MISSION_LAUNCH_THRESHOLD: float = 0.3         # m
 MISSION_LANDED_THRESHOLD: float = 1.0         # m
 MISSION_LANDED_TRIGGER: int = 10              # Count before we can consider the cansat landed
 MISSION_LANDED_BLINKS: int = 10               # Count of power led blinks

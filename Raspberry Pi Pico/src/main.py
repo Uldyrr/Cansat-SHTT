@@ -35,43 +35,61 @@ class components:
 # // Mission data
 missionMode: int = MISSION_MODES.PRELAUNCH
 missionAltitudeFailed: bool = False
-missionPreviousAltitude: float = 0.0
-missionPreviousAltitudeTrigger: float = 0.0
+missionAltitudePrevious: float = 0.0
+missionAltitudeMax: float = 0.0
+missionLandedTrigger: int = 0
 
 
 # The mission state status update
 def MissionStateUpdate() -> None:
-    global missionMode, missionAltitudeFailed, missionPreviousAltitude, missionPreviousAltitudeTrigger
+    global missionMode, missionAltitudeFailed, missionAltitudePrevious, missionAltitudeMax, missionLandedTrigger
 
     altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
 
-    # Stop the cansat from going to MISSION_MODES.LANDED and inform the ground station if the bmp280 has gone kaput
+    # Stop any mission mode updates and inform the ground station of altitude read failure
     if not altitudeReadSuccess:
         missionAltitudeFailed = True
+        missionMode = MISSION_MODES.LANDED
+        DebugLog("Altitude read unsuccessful", "main.py -> MissionStateUpdate()")
+        return
 
-    if missionMode == MISSION_MODES.PRELAUNCH:
-        # Check whether the cansat is above a certain valid launch altitude to confirm launch
-        missionMode = MISSION_MODES.LAUNCH if altitudeData >= MISSION_LAUNCHALTITUDE else MISSION_MODES.PRELAUNCH
-        missionPreviousAltitude = altitudeData
-    elif missionMode == MISSION_MODES.LAUNCH and not missionAltitudeFailed:
-        # Check whether the cansat is below the launch alitude and stays under an altitude for a certain amount of time
-        if altitudeData >= MISSION_LAUNCHALTITUDE:  # If we are above the launch altitude, reset values & early return
-            missionPreviousAltitude = altitudeData
-            missionPreviousAltitudeTrigger = 0
+    if missionMode == MISSION_MODES.PRELAUNCH and altitudeData > MISSION_LAUNCH_ALTITUDE:
+        # Stage 1. The cansat lifts off higher than a predefined launch altitude
+        # Here we want to check if our delta altitude is large enough to consider this a launch
+
+        missionAltitudePrevious = CANSAT_CORRECTION_ALTITUDE + MISSION_LAUNCH_ALTITUDE
+
+        if altitudeData - missionAltitudePrevious > MISSION_LAUNCH_THRESHOLD:
+            missionAltitudePrevious = altitudeData
+            missionMode = MISSION_MODES.LAUNCH
+    elif missionMode == MISSION_MODES.LAUNCH:
+        # Stage 2. The cansat has launched
+        # Here we want to check if our delta altitude is low enough from the highest altitude recorded
+        # Then we want to check for an amount of iterations if we have stopped
+
+        if altitudeData > missionAltitudeMax:
+            missionAltitudeMax = altitudeData
+
+        if missionAltitudeMax - altitudeData < MISSION_LAUNCH_THRESHOLD:
             return
 
-        if abs(altitudeData - missionPreviousAltitude) < MISSION_LANDED_THRESHOLD:  # Increment trigger if the delta altitude is below a delta thershold
-            missionPreviousAltitudeTrigger += 1
-        else:  # If our altitude change is too high, reset values and continue trying to evaluate whether we've landed
-            missionPreviousAltitudeTrigger = 0
-            missionPreviousAltitude = altitudeData
+        missionAltitudeDelta: float = abs(altitudeData - missionAltitudePrevious)
 
-        missionMode = MISSION_MODES.LANDED if missionPreviousAltitudeTrigger >= MISSION_LANDED_TRIGGER else MISSION_MODES.LAUNCH
+        if missionAltitudeDelta < MISSION_LANDED_THRESHOLD:
+            missionLandedTrigger += 1
+
+            if missionLandedTrigger > MISSION_LANDED_TRIGGER:
+                missionMode = MISSION_MODES.LANDED
+        else:
+            missionAltitudePrevious = altitudeData
+
+
+
 
 
 # The heart of the Cansat
 def MainCycle() -> None:
-    global missionMode, missionAltitudeFailed, missionPreviousAltitude, missionPreviousAltitudeTrigger
+    global missionMode, missionAltitudeFailed
 
     previousTick: int = utime.ticks_ms()
     tickUpdateOffset: int = 0
@@ -86,7 +104,8 @@ def MainCycle() -> None:
 
         # MISSION STATUS: Cansat has been launched, run all systems nominally
         if missionMode != MISSION_MODES.PRELAUNCH:
-            ToggleSoilResistanceSensor(components.SoilResistanceServo, True)
+            if not missionAltitudeFailed:
+                ToggleSoilResistanceSensor(components.SoilResistanceServo, True)
 
             altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
             airTemperatureData, airTemperatureReadSucces = GetAirTemperature(sensors.BMP)
