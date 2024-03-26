@@ -4,7 +4,6 @@ from imu import MPU6050
 from bmp280 import BMP280
 from dht import DHT11
 from micropyGPS import MicropyGPS
-from vector3d import Vector3d
 from Servo import Servo
 from math import atan2, sqrt, pi
 import _thread
@@ -25,20 +24,22 @@ class _sensors:
 class _components:
     BuiltInLed: Pin = Pin(25, Pin.OUT)
     AlarmBuzzer: Pin = Pin(13, Pin.OUT)
-    PowerLed: Pin = Pin(2, Pin.OUT)
+    StatusLed: Pin = Pin(2, Pin.OUT)
 
 
 # // Constants
 # -- General Cansat Constants
+CANSAT_UPDATEHZ: float = 1.0                               # Hz
+CANSAT_UPDATETIME: float = 1 / CANSAT_UPDATEHZ             # Seconds
+
 CANSAT_ADC16BIT: float = 2**16 - 1                         # 16-bit ADC
 CANSAT_ADC12BIT: float = 2**12 - 1                         # 12-bit ADC
 CANSAT_RAD2DEG: float = 180.0 / pi                         # Ratio to calculate degrees from radians
 CANSAT_MICROSECONDS: int = 1_000_000                       # 1 / 1000 (ms) / 1000 (us)
-CANSAT_UPDATEHZ: float = 1.0                               # Hz
-CANSAT_UPDATETIME: float = 1 / CANSAT_UPDATEHZ             # Seconds
-CANSAT_ALTITUDECORRECTION: float = 120.0                   # m | NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
-CANSAT_ACCELEROMETERCORRECTION: Vector3 = Vector3.Empty()  # x, y, z correction
 CANSAT_SEALEVELPRESSURE: float = 1013.25                   # hPa
+
+CANSAT_CORRECTION_ALTITUDE: float = 120.0                   # m | NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
+CANSAT_CORRECTION_ACCELEROMETER: Vector3 = Vector3.Empty()  # x, y, z correction
 
 # -- Initialization Constants
 INITALIZATION_ACCELEROMETER_MEASUREMENTS: int = 50  # Measurement calibration count
@@ -58,7 +59,6 @@ class MISSION_MODES:
 MISSION_LAUNCHALTITUDE: float = 0.3      # m
 MISSION_LANDEDTHRESHOLD: float = 1.0     # m
 MISSION_LANDEDTRIGGER: int = 10          # Count before we can consider the cansat landed
-
 
 
 # Generic helper functions
@@ -113,7 +113,7 @@ def GetHypsometricEquationAltitude(airPressurePa: float, airTemperatureCelsius: 
     airTemperatureKelvin = airTemperatureCelsius + 273.15
 
     pressureRatio: float = CANSAT_SEALEVELPRESSURE / airPressurehPa
-    altitude: float = (((pressureRatio ** (1 / 5.257)) - 1) * airTemperatureKelvin) / 0.0065 - CANSAT_ALTITUDECORRECTION
+    altitude: float = (((pressureRatio ** (1 / 5.257)) - 1) * airTemperatureKelvin) / 0.0065 - CANSAT_CORRECTION_ALTITUDE
 
     return altitude
 
@@ -164,7 +164,6 @@ def GetAirPressure(bmp: BMP280) -> tuple[float, bool]:
         return -1.0, False
 
 
-
 def GetAltitude(bmp: BMP280) -> tuple[float, bool]:
     """
     Gets the current pressure and temperature using bmp280 to calculate the cansat's current altitude
@@ -184,8 +183,7 @@ def GetAltitude(bmp: BMP280) -> tuple[float, bool]:
     airTemperatureCelsius, airTemperatureSuccess = GetAirTemperature(bmp)
 
     altitudeData: float = GetHypsometricEquationAltitude(airPressurePa, airTemperatureCelsius)
-
-    altitudeReadSuccess = airPressureSuccess and airTemperatureSuccess
+    altitudeReadSuccess: bool = airPressureSuccess and airTemperatureSuccess
 
     return altitudeData, altitudeReadSuccess
 
@@ -210,7 +208,7 @@ def GetAccelerationGyro(mpu: MPU6050) -> tuple[Vector3, Vector3, bool]:
     gyroData: Vector3 = Vector3.Empty()
 
     try:
-        accelerationData = Vector3(mpu.accel.x - CANSAT_ACCELEROMETERCORRECTION.X, mpu.accel.y - CANSAT_ACCELEROMETERCORRECTION.Y, mpu.accel.z - CANSAT_ACCELEROMETERCORRECTION.Z)
+        accelerationData = Vector3(mpu.accel.x - CANSAT_CORRECTION_ACCELEROMETER.X, mpu.accel.y - CANSAT_CORRECTION_ACCELEROMETER.Y, mpu.accel.z - CANSAT_CORRECTION_ACCELEROMETER.Z)
         gyroData = Vector3(mpu.gyro.x, mpu.gyro.y, mpu.gyro.z)
     except:
         accelerationGyroSuccess = False
@@ -366,6 +364,8 @@ def _AlarmBuzzerThreadUpdate() -> None:
     while _alarmBuzzerRunning:
         _AlarmBuzzerIntervalUpdate(random.randint(100, 3000), random.randint(5, 10) / 100)
 
+    _thread.exit()
+
 
 def ToggleAlarmBuzzer(alarmState: bool = None) -> None:
     """
@@ -406,9 +406,9 @@ def ToggleStatusLed(ledState: bool = None) -> None:
     """
 
     if ledState is None:
-        ledState = not _components.PowerLed.value()
+        ledState = not _components.StatusLed.value()
 
-    _components.PowerLed.value(ledState)
+    _components.StatusLed.value(ledState)
 
 
 # Init
@@ -424,17 +424,20 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
         The MPU6050 IMU sensor object, or None if no automatic calibration should be performed
     """
 
-    global CANSAT_ALTITUDECORRECTION
+    global CANSAT_CORRECTION_ALTITUDE, CANSAT_CORRECTION_ACCELEROMETER
 
     # Initialize sensor constants
     if bmp is not None:
         print("[CansatCore.py] Calibrating BMP altitude")
-        CANSAT_ALTITUDECORRECTION = 0.0  # Set to zero to get the actual altitude offset one will get from calling GetAltitude()
-        CANSAT_ALTITUDECORRECTION, _ = GetAltitude(bmp)
-        print(f"[CansatCore.py] Got altitude correction: {CANSAT_ALTITUDECORRECTION:.2f}m")
+
+        CANSAT_CORRECTION_ALTITUDE = 0.0  # Set to zero to get the actual altitude offset one will get from calling GetAltitude()
+        CANSAT_CORRECTION_ALTITUDE, _ = GetAltitude(bmp)
+
+        print(f"[CansatCore.py] Got altitude correction: {CANSAT_CORRECTION_ALTITUDE:.2f}m")
 
     if mpu is not None:
         print("[CansatCore.py] Calibrating MPU6050")
+
         t = utime.ticks_ms()
 
         accelerometerTotal = Vector3.Empty()
@@ -446,18 +449,8 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
             accelerometerTotal.Y += accelerometerData.Y
             accelerometerTotal.Z += accelerometerData.Z
 
-        CANSAT_ACCELEROMETERCORRECTION.X = accelerometerTotal.X / INITALIZATION_ACCELEROMETER_MEASUREMENTS
-        CANSAT_ACCELEROMETERCORRECTION.Y = accelerometerTotal.Y / INITALIZATION_ACCELEROMETER_MEASUREMENTS - 1  # Y will be in the direction of gravity
-        CANSAT_ACCELEROMETERCORRECTION.Z = accelerometerTotal.Z / INITALIZATION_ACCELEROMETER_MEASUREMENTS
+        CANSAT_CORRECTION_ACCELEROMETER.X = accelerometerTotal.X / INITALIZATION_ACCELEROMETER_MEASUREMENTS
+        CANSAT_CORRECTION_ACCELEROMETER.Y = accelerometerTotal.Y / INITALIZATION_ACCELEROMETER_MEASUREMENTS - 1  # Y will be in the direction of gravity
+        CANSAT_CORRECTION_ACCELEROMETER.Z = accelerometerTotal.Z / INITALIZATION_ACCELEROMETER_MEASUREMENTS
 
-        print(f"[CansatCore.py] Got accelerometer correction: [{CANSAT_ACCELEROMETERCORRECTION}] in {utime.ticks_ms() - t}ms")
-
-
-
-
-
-
-
-
-
-
+        print(f"[CansatCore.py] Got accelerometer correction: [{CANSAT_CORRECTION_ACCELEROMETER}] in {utime.ticks_ms() - t}ms")
