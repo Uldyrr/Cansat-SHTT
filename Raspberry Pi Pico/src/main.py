@@ -53,10 +53,13 @@ def MissionStateUpdate() -> None:
         DebugLog("Altitude read unsuccessful", "main.py -> MissionStateUpdate()")
         return
 
-    if missionMode == MISSION_MODES.PRELAUNCH and altitudeData > MISSION_LAUNCH_DELTATHRESHOLD:
+    if missionMode == MISSION_MODES.PRELAUNCH:
         # Stage 1. The cansat lifts off higher than a predefined launch threshold
 
-        missionMode = MISSION_MODES.LAUNCH
+        DebugLog(f"PRELAUNCH: {altitudeData:.1f}m / {MISSION_LAUNCH_DELTATHRESHOLD:.1f}m", "main.py -> MissionStateUpdate()")
+
+        if altitudeData > MISSION_LAUNCH_DELTATHRESHOLD:
+            missionMode = MISSION_MODES.LAUNCH
     elif missionMode == MISSION_MODES.LAUNCH:
         # Stage 2. The cansat has launched
 
@@ -65,11 +68,14 @@ def MissionStateUpdate() -> None:
 
         if missionAltitudeMax - altitudeData < MISSION_LAUNCH_DELTATHRESHOLD:
             missionAltitudePrevious = altitudeData
+            DebugLog(f"LAUNCH: {altitudeData - missionAltitudeMax:.1f}m / {-MISSION_LAUNCH_DELTATHRESHOLD}m", "main.py -> MissionStateUpdate()")
             return
 
         # Check if we have stopped for an amount of iterations
         if abs(altitudeData - missionAltitudePrevious) < MISSION_LANDED_DELTATHRESHOLD:
             missionLandedTrigger += 1
+
+            DebugLog(f"LANDING: {missionLandedTrigger} / {MISSION_LANDED_TRIGGER}", "main.py -> MissionStateUpdate()")
 
             if missionLandedTrigger >= MISSION_LANDED_TRIGGER:
                 missionMode = MISSION_MODES.LANDED

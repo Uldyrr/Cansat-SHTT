@@ -421,7 +421,7 @@ def DebugLog(message: str, source: str = None) -> None:
     message : str
         The message to print
     source : str?
-        The source .py file. Performs a regular print when not provided
+        The source from which to indicate where this was printed from. Performs a regular print when not provided
     """
 
     if source:
