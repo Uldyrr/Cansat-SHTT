@@ -440,7 +440,7 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
         DebugLog(f"Got altitude correction: {CANSAT_CORRECTION_ALTITUDE:.2f}m", "CansatCore.py")
 
     if mpu is not None:
-        DebugLog("CansatCore.py Calibrating MPU6050", "CansatCore.py")
+        DebugLog("Calibrating MPU6050", "CansatCore.py")
 
         t = utime.ticks_ms()
 
