@@ -39,7 +39,7 @@ CANSAT_RAD2DEG: float = 180.0 / pi                         # Ratio to calculate 
 CANSAT_MICROSECONDS: int = 1_000_000                       # 1 / 1000 (ms) / 1000 (us)
 CANSAT_SEALEVELPRESSURE: float = 1013.25                   # hPa
 
-CANSAT_CORRECTION_ALTITUDE: float = 120.0                   # m | NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
+CANSAT_CORRECTION_ALTITUDE: float = 0.0                   # m | NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
 CANSAT_CORRECTION_ACCELEROMETER: Vector3 = Vector3.Empty()  # x, y, z correction
 
 # -- Initialization Constants
@@ -435,7 +435,6 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
     if bmp is not None:
         DebugLog("Calibrating BMP altitude", "CansatCore.py")
 
-        CANSAT_CORRECTION_ALTITUDE = 0.0  # Set to zero to get the actual altitude offset one will get from calling GetAltitude()
         CANSAT_CORRECTION_ALTITUDE, _ = GetAltitude(bmp)
 
         DebugLog(f"Got altitude correction: {CANSAT_CORRECTION_ALTITUDE:.2f}m", "CansatCore.py")
