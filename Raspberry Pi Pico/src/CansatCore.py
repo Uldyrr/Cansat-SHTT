@@ -447,7 +447,7 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
         accelerometerTotal = Vector3.Empty()
 
         for i in range(0, INITALIZATION_ACCELEROMETER_MEASUREMENTS):
-            accelerometerData, gyroData, accelGyroRead = GetAccelerationGyro(mpu)
+            accelerometerData, gyroData, _ = GetAccelerationGyro(mpu)
 
             accelerometerTotal.X += accelerometerData.X
             accelerometerTotal.Y += accelerometerData.Y
