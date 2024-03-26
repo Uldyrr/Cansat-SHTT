@@ -60,13 +60,13 @@ def MissionStateUpdate() -> None:
             missionPreviousAltitudeTrigger = 0
             return
 
-        if abs(altitudeData - missionPreviousAltitude) < MISSION_LANDEDTHRESHOLD:  # Increment trigger if the delta altitude is below a delta thershold
+        if abs(altitudeData - missionPreviousAltitude) < MISSION_LANDED_THRESHOLD:  # Increment trigger if the delta altitude is below a delta thershold
             missionPreviousAltitudeTrigger += 1
         else:  # If our altitude change is too high, reset values and continue trying to evaluate whether we've landed
             missionPreviousAltitudeTrigger = 0
             missionPreviousAltitude = altitudeData
 
-        missionMode = MISSION_MODES.LANDED if missionPreviousAltitudeTrigger >= MISSION_LANDEDTRIGGER else MISSION_MODES.LAUNCH
+        missionMode = MISSION_MODES.LANDED if missionPreviousAltitudeTrigger >= MISSION_LANDED_TRIGGER else MISSION_MODES.LAUNCH
 
 
 # The heart of the Cansat
@@ -100,32 +100,33 @@ def MainCycle() -> None:
 
             # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-            print(f"Mission Code: {missionMode} | Alt: {altitudeData:.2f} | Air Temp: {airTemperatureData:.1f} | Air Pa: {airPressureData:.1f} | LatLng: {gpsLatitude}, {gpsLongitude} | Landing: ({abs(altitudeData - missionPreviousAltitude)} | {missionPreviousAltitudeTrigger}/{MISSION_LANDEDTRIGGER})")
+            print(f"Mission Code: {missionMode} | Alt: {altitudeData:.2f} | Air Temp: {airTemperatureData:.1f} | Air Pa: {airPressureData:.1f} | LatLng: {gpsLatitude}, {gpsLongitude} | Landing: ({abs(altitudeData - missionPreviousAltitude)} | {missionPreviousAltitudeTrigger}/{MISSION_LANDED_TRIGGER})")
 
-        # MISSION STATUS: Cansat has landed, continue systems running, but start the alarm buzzer
-        if missionMode == MISSION_MODES.LANDED:  # Amazing use of power
+        # MISSION STATUS: Cansat has landed, continue systems running, but start auditory and visual help cues for locating the cansat
+        if missionMode == MISSION_MODES.LANDED:
             ToggleAlarmBuzzer(True)
 
             # Visible blinking
-            for i in range(0, CANSAT_LANDED_BLINKS):
+            for i in range(0, MISSION_LANDED_BLINKS):
                 ToggleStatusLed(False)
-                utime.sleep_ms(CANSAT_INITALIZATION_BLINKTIME)
+                utime.sleep_ms(MISSION_LANDED_BLINKTIME)
                 ToggleStatusLed(True)
-                utime.sleep_ms(CANSAT_INITALIZATION_BLINKTIME)
+                utime.sleep_ms(MISSION_LANDED_BLINKTIME)
 
-            ToggleStatusLed(False)  # Should the led stay on constantly?
+            ToggleStatusLed(False)
 
-        # Evaluate tick differences
+        # Evaluate main loop tick differences
         currentTick = utime.ticks_ms()
-        tickDifference = currentTick - previousTick
+        tickDifference = utime.ticks_diff(currentTick, previousTick)
         previousTick = currentTick
         tickUpdateOffset = tickDifference - 1000 if tickDifference > (1000 + tickUpdateOffset) else tickUpdateOffset
 
 
 def Init():
-    print("[main.py] Initializing!")
+    DebugLog("Initializing!", "main.py")
 
     # Standard initialization
+    ToggleBuiltInLed(False)
     ToggleStatusLed(False)
     ToggleAlarmBuzzer(False)
     ToggleSoilResistanceSensor(components.SoilResistanceServo, False)
@@ -133,22 +134,22 @@ def Init():
     sensors.BMP.use_case(BMP280_CASE_INDOOR)  # Is DROP an outdoor use case? :/
 
     # Core module initalization
-    print("[main.py] Initializing CansatCore.py!")
+    DebugLog(" Initializing CansatCore.py!", "main.py")
 
     InitCansatCore(sensors.BMP, sensors.MPU)
 
     # Finalization
-    print("[main.py] Initialized!")
+    DebugLog("Initialized!", "main.py")
 
-    for i in range(0, CANSAT_INITALIZATION_BLINKS):
-        utime.sleep_ms(CANSAT_INITALIZATION_BLINKTIME)
+    for i in range(0, INITALIZATION_BLINKS):
+        utime.sleep_ms(INITALIZATION_BLINKTIME)
         ToggleStatusLed(True)
-        utime.sleep_ms(CANSAT_INITALIZATION_BLINKTIME)
+        utime.sleep_ms(INITALIZATION_BLINKTIME)
         ToggleStatusLed(False)
 
     ToggleStatusLed(False)
 
-    print("[main.py] Starting MainCycle()!\n")
+    DebugLog("Executing MainCycle()!\n", "main.py")
 
     MainCycle()
 

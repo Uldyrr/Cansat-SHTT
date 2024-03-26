@@ -31,7 +31,7 @@ class _components:
 # -- General Cansat Constants
 CANSAT_UPDATEHZ: float = 1.0                               # Hz
 CANSAT_UPDATETIME: float = 1 / CANSAT_UPDATEHZ             # Seconds
-CANSAT_BOOTTIME: int = 0                                   # Ms
+CANSAT_BOOTTIME: int = utime.ticks_ms()                    # Ms
 
 CANSAT_ADC16BIT: float = 2**16 - 1                         # 16-bit ADC
 CANSAT_ADC12BIT: float = 2**12 - 1                         # 12-bit ADC
@@ -429,9 +429,7 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
         The MPU6050 IMU sensor object, or None if no automatic calibration should be performed
     """
 
-    global CANSAT_BOOTTIME, CANSAT_CORRECTION_ALTITUDE, CANSAT_CORRECTION_ACCELEROMETER
-
-    CANSAT_BOOTTIME = utime.ticks_ms()  # The precise time in ms ticks when the cansat has first booted up
+    global CANSAT_CORRECTION_ALTITUDE, CANSAT_CORRECTION_ACCELEROMETER
 
     # Initialize sensor constants
     if bmp is not None:
