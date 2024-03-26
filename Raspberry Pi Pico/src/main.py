@@ -82,7 +82,7 @@ def MainCycle() -> None:
         MissionStateUpdate()
 
         if missionMode == MISSION_MODES.PRELAUNCH:
-            print(f"AWAITING PROPER HEIGHT! Previous Altitude: {missionPreviousAltitude:.2f} | Launch Altitude: {MISSION_LAUNCHALTITUDE:.2f}")
+            DebugLog(f"AWAITING PROPER HEIGHT! Previous Altitude: {missionPreviousAltitude:.2f} | Launch Altitude: {MISSION_LAUNCHALTITUDE:.2f}", "main.py")
 
         # MISSION STATUS: Cansat has been launched, run all systems nominally
         if missionMode != MISSION_MODES.PRELAUNCH:
@@ -100,7 +100,7 @@ def MainCycle() -> None:
 
             # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-            print(f"Mission Code: {missionMode} | Alt: {altitudeData:.2f} | Air Temp: {airTemperatureData:.1f} | Air Pa: {airPressureData:.1f} | LatLng: {gpsLatitude}, {gpsLongitude} | Landing: ({abs(altitudeData - missionPreviousAltitude)} | {missionPreviousAltitudeTrigger}/{MISSION_LANDED_TRIGGER})")
+            DebugLog(f"Mission Code: {missionMode} | Alt: {altitudeData:.2f} | Air Temp: {airTemperatureData:.1f} | Air Pa: {airPressureData:.1f} | LatLng: {gpsLatitude}, {gpsLongitude} | Landing: ({abs(altitudeData - missionPreviousAltitude)} | {missionPreviousAltitudeTrigger}/{MISSION_LANDED_TRIGGER})", "main.py")
 
         # MISSION STATUS: Cansat has landed, continue systems running, but start auditory and visual help cues for locating the cansat
         if missionMode == MISSION_MODES.LANDED:
@@ -116,8 +116,8 @@ def MainCycle() -> None:
             ToggleStatusLed(False)
 
         # Evaluate main loop tick differences
-        currentTick = utime.ticks_ms()
-        tickDifference = utime.ticks_diff(currentTick, previousTick)
+        currentTick: int = utime.ticks_ms()
+        tickDifference: int = utime.ticks_diff(currentTick, previousTick)
         previousTick = currentTick
         tickUpdateOffset = tickDifference - 1000 if tickDifference > (1000 + tickUpdateOffset) else tickUpdateOffset
 
