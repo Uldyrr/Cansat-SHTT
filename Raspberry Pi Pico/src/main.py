@@ -112,9 +112,9 @@ def MainCycle() -> None:
 
             # components.Radio.Send(f"{GetBuiltInTemperature()}:{airHumidityData}\n")
 
-            DebugLog(f"Mission Code: {missionMode} | Alt: {altitudeData:.2f} | Air Temp: {airTemperatureData:.1f} | Air Pa: {airPressureData:.1f} | LatLng: {gpsLatitude}, {gpsLongitude}", "main.py")
+            DebugLog(f"Mission Code: {missionMode} | Alt: {altitudeData:.1f} | Air Temp: {airTemperatureData:.1f} | Air Pa: {airPressureData:.1f} | LatLng: {gpsLatitude}, {gpsLongitude}", "main.py")
 
-        # MISSION STATUS: Cansat has landed, continue systems running, but start auditory and visual help cues for locating the cansat
+        # MISSION STATUS: Cansat has landed, start auditory and visual help cues for locating the cansat
         if missionMode == MISSION_MODES.LANDED:
             ToggleAlarmBuzzer(True)
 
