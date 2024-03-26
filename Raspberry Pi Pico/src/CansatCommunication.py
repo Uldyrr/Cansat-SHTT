@@ -14,9 +14,7 @@ class RadioCom:
         return self._serialBus.write(data)
 
     def Read(self) -> str:
-        bytesData = self._serialBus.read()
-        strData = bytesData.decode("utf-8")
+        bytesData: bytes = self._serialBus.read()
+        strData: str = bytesData.decode("utf-8")
 
         return strData
-
-
