@@ -1,4 +1,4 @@
-from CansatCore import CANSAT_ADC16BIT
+from CansatCore import CANSAT_ADC16BIT, Clamp, DebugLog
 from machine import Pin, ADC
 
 # Constants
@@ -27,6 +27,7 @@ class GASSENSOR_CALIBRATIONGAS:
     """
     Contains rough PPM values of various gasses in regular air for calibration purposes
     """
+
     CO2: float = 411.9
     OXYGEN: float = 0.0
     OZONE: float = 0.0
@@ -87,9 +88,10 @@ class GasSensor:
         Returns
         -------
         float
-            The raw ADC value as a unsigned short value (u16)
+            The raw ADC value as an unsigned short value (ushort)
         """
-        return self._adc.read_u16() + 1
+
+        return Clamp(self._adc.read_u16(), 1, CANSAT_ADC16BIT - 1)
 
     def GetSensorResistance(self, airTemperature: float, airHumidity: float) -> float:
         """
@@ -126,8 +128,6 @@ class GasSensor:
             The current air temperature
         airHumidity : float
             The current relative air humidity
-        calibrationGas : float
-            The GASSENSOR_CALIBRATIONGAS constant value for calculating a correct R0 for a specific concentration of gas
 
         Returns
         -------
@@ -184,6 +184,4 @@ class GasSensor:
             The current relative air humidity
         """
 
-        print(f"Air temperature: {airTemperature}\nAir humidity: {airHumidity}\nADC value: {self.GetRawADC()}\nSensor resistance: {self.GetSensorResistance(airTemperature, airHumidity)}\nResistance Zero: {self.GetResistanceZero(airTemperature, airHumidity)}\nPPM CO2: {self.GetPPM(airTemperature, airHumidity)}\n")
-
-
+        DebugLog(f"Air temperature: {airTemperature}\nAir humidity: {airHumidity}\nADC value: {self.GetRawADC()}\nSensor resistance: {self.GetSensorResistance(airTemperature, airHumidity)}\nResistance Zero: {self.GetResistanceZero(airTemperature, airHumidity)}\nPPM CO2: {self.GetPPM(airTemperature, airHumidity)}\n", "CansatGas.py")
