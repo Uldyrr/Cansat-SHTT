@@ -15,8 +15,8 @@ import utime
 # Values
 # // Sensors
 class sensors:
-    MPU: MPU6050 = MPU6050(I2C(0, sda=Pin(16), scl=Pin(17)))
-    BMP: BMP280 = BMP280(I2C(0, sda=Pin(16), scl=Pin(17)))
+    MPU: MPU6050 = MPU6050(I2C(1, sda=Pin(18), scl=Pin(19)))
+    BMP: BMP280 = BMP280(I2C(1, sda=Pin(18), scl=Pin(19)))
     DHT: DHT11 = DHT11(Pin(9))
     MQ135: GasSensor = GasSensor(27, 1.0, GASSENSOR_RZERO.OXYGEN, GASSENSOR_CALIBRATIONGAS.OXYGEN)
     MQ131: GasSensor = GasSensor(26, 1.0, GASSENSOR_RZERO.OZONE, GASSENSOR_CALIBRATIONGAS.OZONE)
