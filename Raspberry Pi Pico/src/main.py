@@ -138,7 +138,7 @@ def MainCycle() -> None:
 def Init():
     InitCansatBoot()  # First init sequence
 
-    DebugLog("Initializing!")
+    DebugLog("Initializing!", "main.py")
 
     # Standard initialization
     ToggleBuiltInLed(False)
@@ -170,3 +170,4 @@ def Init():
 
 
 Init()
+
