@@ -68,6 +68,7 @@ def MissionStateUpdate() -> None:
 
         if missionAltitudeMax - altitudeData < MISSION_LAUNCH_DELTATHRESHOLD:
             missionAltitudePrevious = altitudeData
+            missionLandedTrigger = 0
             DebugLog(f"LAUNCH: {altitudeData - missionAltitudeMax:.1f}m / {-MISSION_LAUNCH_DELTATHRESHOLD}m", "main.py -> MissionStateUpdate()")
             return
 
