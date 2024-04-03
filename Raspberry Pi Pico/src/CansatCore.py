@@ -445,9 +445,6 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
 
     global CANSAT_BOOTTIME, CANSAT_CORRECTION_ALTITUDE, CANSAT_CORRECTION_ACCELEROMETER
 
-    # Initialize cansat constants
-    CANSAT_BOOTTIME = utime.ticks_ms()
-
     # Initialize sensor constants
     if bmp is not None:
         DebugLog("Calibrating BMP altitude", "CansatCore.py")
