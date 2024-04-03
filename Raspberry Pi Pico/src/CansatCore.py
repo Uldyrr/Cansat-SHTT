@@ -431,6 +431,16 @@ def DebugLog(message: str, source: str = None) -> None:
 
 
 # Init
+def InitCansatBoot():
+    """
+    Boot init of the Cansat
+    """
+    global CANSAT_BOOTTIME
+
+    # Initialize cansat constants
+    CANSAT_BOOTTIME = utime.ticks_ms()
+
+
 def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
     """
     Initializes the Core module of SHTT Cansat

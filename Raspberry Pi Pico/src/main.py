@@ -135,6 +135,8 @@ def MainCycle() -> None:
 
 
 def Init():
+    InitCansatBoot()  # First init sequence
+
     DebugLog("Initializing!")
 
     # Standard initialization
