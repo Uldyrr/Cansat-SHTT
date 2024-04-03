@@ -135,7 +135,7 @@ def MainCycle() -> None:
 
 
 def Init():
-    DebugLog("Initializing!", "main.py")
+    DebugLog("Initializing!")
 
     # Standard initialization
     ToggleBuiltInLed(False)
