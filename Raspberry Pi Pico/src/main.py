@@ -56,7 +56,8 @@ def MissionStateUpdate() -> None:
     if missionMode == MISSION_MODES.PRELAUNCH:
         # Stage 1. The cansat lifts off higher than a predefined launch threshold
 
-        DebugLog(f"PRELAUNCH: {altitudeData:.1f}m / {MISSION_LAUNCH_DELTATHRESHOLD:.1f}m", "main.py -> MissionStateUpdate()")
+        DebugLog(f"PRELAUNCH: {altitudeData:.1f}m / {MISSION_LAUNCH_DELTATHRESHOLD:.1f}m",
+                 "main.py -> MissionStateUpdate()")
 
         if altitudeData > MISSION_LAUNCH_DELTATHRESHOLD:
             missionMode = MISSION_MODES.LAUNCH
@@ -69,7 +70,8 @@ def MissionStateUpdate() -> None:
         if missionAltitudeMax - altitudeData < MISSION_LAUNCH_DELTATHRESHOLD:
             missionAltitudePrevious = altitudeData
             missionLandedTrigger = 0
-            DebugLog(f"LAUNCH: {altitudeData - missionAltitudeMax:.1f}m / {-MISSION_LAUNCH_DELTATHRESHOLD}m", "main.py -> MissionStateUpdate()")
+            DebugLog(f"LAUNCH: {altitudeData - missionAltitudeMax:.1f}m / {-MISSION_LAUNCH_DELTATHRESHOLD}m",
+                     "main.py -> MissionStateUpdate()")
             return
 
         # Check if we have stopped for an amount of iterations
@@ -93,6 +95,8 @@ def MainCycle() -> None:
 
     while True:
         utime.sleep(CANSAT_UPDATETIME - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATETIME * 0.3))
+
+        components.Radio.Send("test\n")
 
         MissionStateUpdate()
 
