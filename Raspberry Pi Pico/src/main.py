@@ -98,6 +98,10 @@ def MainCycle() -> None:
 
         components.Radio.Send("test\n")
 
+        airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
+
+        DebugLog(airHumidityData, "main.py")
+
         MissionStateUpdate()
 
         # MISSION STATUS: Cansat has been launched, run all systems nominally
