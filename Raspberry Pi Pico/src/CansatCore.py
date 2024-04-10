@@ -29,35 +29,37 @@ class _components:
 
 # // Constants
 # -- General Cansat Constants
-CANSAT_UPDATEHZ: float = 1.0                               # Hz
-CANSAT_UPDATETIME: float = 1 / CANSAT_UPDATEHZ             # Seconds
-CANSAT_BOOTTIME: int = 0                                   # Ms
+CANSAT_UPDATEHZ: float = 1.0  # Hz
+CANSAT_UPDATETIME: float = 1 / CANSAT_UPDATEHZ  # Seconds
+CANSAT_BOOTTIME: int = 0  # Ms
 
-CANSAT_ADC16BIT: float = 2**16 - 1                         # 16-bit ADC
-CANSAT_ADC12BIT: float = 2**12 - 1                         # 12-bit ADC
-CANSAT_RAD2DEG: float = 180.0 / pi                         # Ratio to calculate degrees from radians
-CANSAT_MICROSECONDS: int = 1_000_000                       # 1 / 1000 (ms) / 1000 (us)
-CANSAT_SEALEVELPRESSURE: float = 1013.25                   # hPa
+CANSAT_ADC16BIT: float = 2 ** 16 - 1  # 16-bit ADC
+CANSAT_ADC12BIT: float = 2 ** 12 - 1  # 12-bit ADC
+CANSAT_RAD2DEG: float = 180.0 / pi  # Ratio to calculate degrees from radians
+CANSAT_MICROSECONDS: int = 1_000_000  # 1 / 1000 (ms) / 1000 (us)
+CANSAT_SEALEVELPRESSURE: float = 1013.25  # hPa
 
-CANSAT_CORRECTION_ALTITUDE: float = 0.0                   # m | NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
+CANSAT_CORRECTION_ALTITUDE: float = 0.0  # m | NOTE: Currently automatically updated in InitCansatCore() IF a BMP280 object is provided
 CANSAT_CORRECTION_ACCELEROMETER: Vector3 = Vector3.Empty()  # x, y, z correction
 
 # -- Initialization Constants
 INITALIZATION_ACCELEROMETER_MEASUREMENTS: int = 50  # Measurement calibration count
 
-INITALIZATION_BLINKS: int = 5                        # Count of power led blinks
-INITALIZATION_BLINKTIME: int = int(100 / 2)          # ms, time of one power led blink
+INITALIZATION_BLINKS: int = 5  # Count of power led blinks
+INITALIZATION_BLINKTIME: int = int(100 / 2)  # ms, time of one power led blink
+
 
 # -- Mission Constants
 class MISSION_MODES:
-    PRELAUNCH = 1,           # Hibernate mode, all systems will be off
-    LAUNCH = 2,              # Mission mode, all systems will turned on
-    LANDED = 3,              # Retrival mode, all systems will continue running and an alarm buzzer will toggle
+    PRELAUNCH = 1,  # Hibernate mode, all systems will be off
+    LAUNCH = 2,  # Mission mode, all systems will turned on
+    LANDED = 3,  # Retrival mode, all systems will continue running and an alarm buzzer will toggle
 
-MISSION_LAUNCH_DELTATHRESHOLD: float = 0.3    # m
-MISSION_LANDED_DELTATHRESHOLD: float = 1.0    # m
-MISSION_LANDED_TRIGGER: int = 10              # Count before we can consider the cansat landed
-MISSION_LANDED_BLINKS: int = 10               # Count of power led blinks
+
+MISSION_LAUNCH_DELTATHRESHOLD: float = 0.3  # m
+MISSION_LANDED_DELTATHRESHOLD: float = 1.0  # m
+MISSION_LANDED_TRIGGER: int = 10  # Count before we can consider the cansat landed
+MISSION_LANDED_BLINKS: int = 10  # Count of power led blinks
 MISSION_LANDED_BLINKTIME: int = int(100 / 2)  # ms, time of one power led blink
 
 
@@ -113,7 +115,8 @@ def GetHypsometricEquationAltitude(airPressurePa: float, airTemperatureCelsius: 
     airTemperatureKelvin = airTemperatureCelsius + 273.15
 
     pressureRatio: float = CANSAT_SEALEVELPRESSURE / airPressurehPa
-    altitude: float = (((pressureRatio ** (1 / 5.257)) - 1) * airTemperatureKelvin) / 0.0065 - CANSAT_CORRECTION_ALTITUDE
+    altitude: float = (((pressureRatio ** (
+                1 / 5.257)) - 1) * airTemperatureKelvin) / 0.0065 - CANSAT_CORRECTION_ALTITUDE
 
     return altitude
 
@@ -208,7 +211,9 @@ def GetAccelerationGyro(mpu: MPU6050) -> tuple[Vector3, Vector3, bool]:
     gyroData: Vector3 = Vector3.Empty()
 
     try:
-        accelerationData = Vector3(mpu.accel.x - CANSAT_CORRECTION_ACCELEROMETER.X, mpu.accel.y - CANSAT_CORRECTION_ACCELEROMETER.Y, mpu.accel.z - CANSAT_CORRECTION_ACCELEROMETER.Z)
+        accelerationData = Vector3(mpu.accel.x - CANSAT_CORRECTION_ACCELEROMETER.X,
+                                   mpu.accel.y - CANSAT_CORRECTION_ACCELEROMETER.Y,
+                                   mpu.accel.z - CANSAT_CORRECTION_ACCELEROMETER.Z)
         gyroData = Vector3(mpu.gyro.x, mpu.gyro.y, mpu.gyro.z)
     except:
         accelerationGyroSuccess = False
@@ -223,8 +228,10 @@ def GetCansatPitchRoll(mpu: MPU6050) -> tuple[float, float]:
 
     # Corrected for initial upward orientation (Up vector: Y axis)
     if accelerationGyroSuccess:
-        cansatPitch = atan2(accelerationData.Z, sqrt(accelerationData.Y * accelerationData.Y + accelerationData.X * accelerationData.X)) * CANSAT_RAD2DEG
-        cansatRoll = atan2(-accelerationData.X, sqrt(accelerationData.Z * accelerationData.Z + accelerationData.Y * accelerationData.Y)) * CANSAT_RAD2DEG
+        cansatPitch = atan2(accelerationData.Z, sqrt(
+            accelerationData.Y * accelerationData.Y + accelerationData.X * accelerationData.X)) * CANSAT_RAD2DEG
+        cansatRoll = atan2(-accelerationData.X, sqrt(
+            accelerationData.Z * accelerationData.Z + accelerationData.Y * accelerationData.Y)) * CANSAT_RAD2DEG
 
     return cansatPitch, cansatRoll
 
@@ -283,7 +290,7 @@ def GetAirHumidity(dht: DHT11) -> tuple[float, bool]:
 
         return round(dht.humidity(), 2), True
     except:
-        return -1.0, False
+        return round(dht.humidity(), 2), False
 
 
 def ToggleSoilResistanceSensor(soilResistanceServo: Servo, extendedState: bool) -> None:
@@ -481,4 +488,7 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
         CANSAT_CORRECTION_ACCELEROMETER.Y = accelerometerTotal.Y / INITALIZATION_ACCELEROMETER_MEASUREMENTS - 1.0  # Y will be in the direction of gravity
         CANSAT_CORRECTION_ACCELEROMETER.Z = accelerometerTotal.Z / INITALIZATION_ACCELEROMETER_MEASUREMENTS
 
-        DebugLog(f"Got accelerometer correction: [{CANSAT_CORRECTION_ACCELEROMETER}] in {utime.ticks_diff(utime.ticks_ms(), t)}ms", "CansatCore.py")
+        DebugLog(
+            f"Got accelerometer correction: [{CANSAT_CORRECTION_ACCELEROMETER}] in {utime.ticks_diff(utime.ticks_ms(), t)}ms",
+            "CansatCore.py")
+
