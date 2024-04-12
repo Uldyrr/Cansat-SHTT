@@ -93,10 +93,16 @@ def MainCycle() -> None:
     previousTick: int = utime.ticks_ms()
     tickUpdateOffset: int = 0
 
+    yes: bool = False
+
     while True:
         utime.sleep(CANSAT_UPDATETIME - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATETIME * 0.3))
 
         components.Radio.Send("test\n")
+
+        yes = not yes
+
+        ToggleSoilResistanceSensor(components.SoilResistanceServo, yes)
 
         airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
 

@@ -309,9 +309,9 @@ def ToggleSoilResistanceSensor(soilResistanceServo: Servo, extendedState: bool) 
         The extented state of the soil resistance sensor. When set to true, EXERCISE CAUTION
     """
     if extendedState:
-        soilResistanceServo.move(90)
-    else:
         soilResistanceServo.move(0)
+    else:
+        soilResistanceServo.move(90)
 
 
 # Helper component functions
