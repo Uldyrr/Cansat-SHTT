@@ -2,7 +2,7 @@ from machine import Pin, PWM
 
 class Servo:
     __servo_pwm_freq = 50
-    __min_u16_duty = 1640 - 2 # offset for correction
+    __min_u16_duty = 1640 - 2  # offset for correction
     __max_u16_duty = 7864 - 0  # offset for correction
     min_angle = 0
     max_angle = 180
