@@ -24,7 +24,7 @@ class _sensors:
 class _components:
     BuiltInLed: Pin = Pin(25, Pin.OUT)
     AlarmBuzzer: Pin = Pin(13, Pin.OUT)
-    StatusLed: Pin = Pin(0, Pin.OUT)
+    StatusLed: Pin = Pin(22, Pin.OUT)
 
 
 # // Constants
@@ -309,9 +309,9 @@ def ToggleSoilResistanceSensor(soilResistanceServo: Servo, extendedState: bool) 
         The extented state of the soil resistance sensor. When set to true, EXERCISE CAUTION
     """
     if extendedState:
-        soilResistanceServo.move(0)
-    else:
         soilResistanceServo.move(90)
+    else:
+        soilResistanceServo.move(0)
 
 
 # Helper component functions
@@ -491,4 +491,5 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
         DebugLog(
             f"Got accelerometer correction: [{CANSAT_CORRECTION_ACCELEROMETER}] in {utime.ticks_diff(utime.ticks_ms(), t)}ms",
             "CansatCore.py")
+
 
