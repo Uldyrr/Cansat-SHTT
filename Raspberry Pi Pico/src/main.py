@@ -160,7 +160,6 @@ def Init():
     ToggleAlarmBuzzer(False)
     ToggleSoilResistanceSensor(components.SoilResistanceServo, False)
 
-
     sensors.BMP.use_case(BMP280_CASE_INDOOR)  # Is DROP an outdoor use case? :/
 
     # Core module initalization
