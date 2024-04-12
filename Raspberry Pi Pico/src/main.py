@@ -111,11 +111,11 @@ def MainCycle() -> None:
             airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
             soilRelativeHumidity: float = sensors.SoilResistance.MeasureResistance()
 
-            components.CansatLogger.LogData(gpsLatitude, gpsLongitude, cansatPitch, cansatRoll, airTemperatureData, airPressureData, airHumidityData, soilRelativeHumidity)
+            components.CansatLogger.LogData(missionMode, gpsLatitude, gpsLongitude, cansatPitch, cansatRoll, airTemperatureData, airPressureData, airHumidityData, soilRelativeHumidity)
 
             components.Radio.Send(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{cansatPitch}:{cansatRoll}:{airTemperatureData}:{airPressureData}:{airHumidityData}:{soilRelativeHumidity}\n")
 
-            DebugLog(f"{gpsLatitude}:{gpsLongitude}:{cansatPitch}:{cansatRoll}:{airTemperatureData}:{airPressureData}:{airHumidityData}:{soilRelativeHumidity}", "main.py")
+            DebugLog(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{cansatPitch}:{cansatRoll}:{airTemperatureData}:{airPressureData}:{airHumidityData}:{soilRelativeHumidity}", "main.py")
 
         # MISSION STATUS: Cansat has landed, start auditory and visual help cues for locating the cansat
         if missionMode == MISSION_MODES.LANDED:
@@ -172,4 +172,5 @@ def Init():
 
 
 Init()
+
 
