@@ -117,6 +117,10 @@ def MainCycle() -> None:
 
             DebugLog(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{altitudeData}:{airTemperatureData}:{airPressureData}:{airHumidityData}:{soilRelativeHumidity}", "main.py")
 
+            ozoneData = sensors.MQ131.GetPPM(airTemperatureData, airHumidityData)
+
+            print(ozoneData)
+
         # MISSION STATUS: Cansat has landed, start auditory and visual help cues for locating the cansat
         if missionMode == MISSION_MODES.LANDED:
             ToggleAlarmBuzzer(True)
