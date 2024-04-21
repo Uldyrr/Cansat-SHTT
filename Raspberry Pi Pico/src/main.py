@@ -94,7 +94,7 @@ def MainCycle() -> None:
     tickUpdateOffset: int = 0
 
     while True:
-        utime.sleep(CANSAT_UPDATETIME - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATETIME * 0.3))
+        utime.sleep(CANSAT_UPDATETIME - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATETIME * 0.33))
 
         MissionStateUpdate()
 
@@ -110,16 +110,12 @@ def MainCycle() -> None:
             gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
             airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
             soilRelativeHumidity: float = sensors.SoilResistance.MeasureResistance()
+            oxygenPPMData, oxygenReadSuccess = sensors.MQ135.GetPPM(airTemperatureData, airHumidityData)
+            ozonePPBData, ozoneReadSuccess = sensors.MQ131.GetPPM(airTemperatureData, airHumidityData)
 
-            components.CansatLogger.LogData(missionMode, gpsLatitude, gpsLongitude, cansatPitch, cansatRoll, altitudeData, airTemperatureData, airPressureData, airHumidityData, soilRelativeHumidity)
+            components.Radio.Send(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{cansatPitch}:{cansatRoll}:{altitudeData}:{airTemperatureData}:{airPressureData}:{airHumidityData}:{soilRelativeHumidity}:{oxygenPPMData}:{ozonePPBData}\n")
 
-            components.Radio.Send(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{cansatPitch}:{cansatRoll}:{altitudeData}:{airTemperatureData}:{airPressureData}:{airHumidityData}:{soilRelativeHumidity}\n")
-
-            DebugLog(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{altitudeData}:{airTemperatureData}:{airPressureData}:{airHumidityData}:{soilRelativeHumidity}", "main.py")
-
-            ozoneData = sensors.MQ131.GetPPM(airTemperatureData, airHumidityData)
-
-            print(ozoneData)
+            components.CansatLogger.LogData(missionMode, gpsLatitude, gpsLongitude, cansatPitch, cansatRoll, altitudeData, airTemperatureData, airPressureData, airHumidityData, soilRelativeHumidity, oxygenPPMData, ozonePPBData)
 
         # MISSION STATUS: Cansat has landed, start auditory and visual help cues for locating the cansat
         if missionMode == MISSION_MODES.LANDED:
