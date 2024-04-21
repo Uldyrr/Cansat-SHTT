@@ -236,7 +236,7 @@ def GetCansatPitchRoll(mpu: MPU6050) -> tuple[float, float]:
     return cansatPitch, cansatRoll
 
 
-def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, list]:
+def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[float, float]:
     """
     Uses the cansat's gps module to get the current latitude and longitude of the cansat
 
@@ -249,7 +249,7 @@ def GetGPSLatitudeLongitude(gps: MicropyGPS, gpsSerialBus: UART) -> tuple[list, 
 
     Returns
     -------
-    tuple[list, list]
+    tuple[float | list, float | list]
         The latitude and longitude data from the gps
     """
 
