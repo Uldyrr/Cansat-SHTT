@@ -228,10 +228,8 @@ def GetCansatPitchRoll(mpu: MPU6050) -> tuple[float, float]:
 
     # Corrected for initial upward orientation (Up vector: Y axis)
     if accelerationGyroSuccess:
-        cansatPitch = atan2(accelerationData.Z, sqrt(
-            accelerationData.Y * accelerationData.Y + accelerationData.X * accelerationData.X)) * CANSAT_RAD2DEG
-        cansatRoll = atan2(-accelerationData.X, sqrt(
-            accelerationData.Z * accelerationData.Z + accelerationData.Y * accelerationData.Y)) * CANSAT_RAD2DEG
+        cansatPitch = atan2(accelerationData.Z, sqrt(accelerationData.Y * accelerationData.Y + accelerationData.X * accelerationData.X)) * CANSAT_RAD2DEG
+        cansatRoll = atan2(-accelerationData.X, sqrt(accelerationData.Z * accelerationData.Z + accelerationData.Y * accelerationData.Y)) * CANSAT_RAD2DEG
 
     return cansatPitch, cansatRoll
 
