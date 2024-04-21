@@ -50,7 +50,7 @@ def MissionStateUpdate() -> None:
     if not altitudeReadSuccess:
         missionAltitudeFailed = True
         missionMode = MISSION_MODES.LANDED
-        DebugLog("Altitude read unsuccessful", "main.py -> MissionStateUpdate()")
+        DebugLog("Altitude read unsuccessful", "MissionStateUpdate()")
         return
 
     if missionMode == MISSION_MODES.PRELAUNCH:
@@ -71,14 +71,14 @@ def MissionStateUpdate() -> None:
             missionAltitudePrevious = altitudeData
             missionLandedTrigger = 0
             DebugLog(f"LAUNCH: {altitudeData - missionAltitudeMax:.1f}m / {-MISSION_LAUNCH_DELTATHRESHOLD}m",
-                     "main.py -> MissionStateUpdate()")
+                     "MissionStateUpdate()")
             return
 
         # Check if we have stopped for an amount of iterations
         if abs(altitudeData - missionAltitudePrevious) < MISSION_LANDED_DELTATHRESHOLD:
             missionLandedTrigger += 1
 
-            DebugLog(f"LANDING: {missionLandedTrigger} / {MISSION_LANDED_TRIGGER}", "main.py -> MissionStateUpdate()")
+            DebugLog(f"LANDING: {missionLandedTrigger} / {MISSION_LANDED_TRIGGER}", "MissionStateUpdate()")
 
             if missionLandedTrigger >= MISSION_LANDED_TRIGGER:
                 missionMode = MISSION_MODES.LANDED
