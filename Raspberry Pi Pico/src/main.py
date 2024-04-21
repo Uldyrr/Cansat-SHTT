@@ -117,6 +117,12 @@ def MainCycle() -> None:
 
             components.CansatLogger.LogData(missionMode, gpsLatitude, gpsLongitude, cansatPitch, cansatRoll, altitudeData, airTemperatureData, airPressureData, airHumidityData, soilRelativeHumidity, oxygenPPMData, ozonePPBData)
 
+        # Evaluate main loop tick differences
+        currentTick: int = utime.ticks_ms()
+        tickDifference: int = utime.ticks_diff(currentTick, previousTick)
+        previousTick = currentTick
+        tickUpdateOffset = tickDifference - 1000 if tickDifference > (1000 + tickUpdateOffset) else tickUpdateOffset
+
         # MISSION STATUS: Cansat has landed, start auditory and visual help cues for locating the cansat
         if missionMode == MISSION_MODES.LANDED:
             ToggleAlarmBuzzer(True)
@@ -129,12 +135,6 @@ def MainCycle() -> None:
                 utime.sleep_ms(MISSION_LANDED_BLINKTIME)
 
             ToggleStatusLed(False)
-
-        # Evaluate main loop tick differences
-        currentTick: int = utime.ticks_ms()
-        tickDifference: int = utime.ticks_diff(currentTick, previousTick)
-        previousTick = currentTick
-        tickUpdateOffset = tickDifference - 1000 if tickDifference > (1000 + tickUpdateOffset) else tickUpdateOffset
 
 
 def Init():
