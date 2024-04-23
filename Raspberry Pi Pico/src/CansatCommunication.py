@@ -1,4 +1,5 @@
 from machine import UART
+from CansatCore import CANSAT_DATAPRECISION
 
 
 class RadioCom:
@@ -18,3 +19,15 @@ class RadioCom:
         strData: str = bytesData.decode("utf-8")
 
         return strData
+
+    @staticmethod
+    def FormatCansatData(data: any):
+        """
+        Formats any data that will be sent from the cansat to have a minimal yet sufficient amount of bytes
+        """
+
+        if type(data) is float:
+            data = round(data, CANSAT_DATAPRECISION)
+
+        return data
+

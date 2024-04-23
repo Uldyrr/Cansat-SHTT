@@ -105,21 +105,26 @@ def MainCycle() -> None:
             if not missionAltitudeFailed:
                 ToggleSoilResistanceSensor(components.SoilResistanceServo, True)
 
-            altitudeData, altitudeReadSuccess = GetAltitude(sensors.BMP)
+            altitudeData = RadioCom.FormatCansatData(GetAltitude(sensors.BMP)[0])
             airTemperatureData, airTemperatureReadSucces = GetAirTemperature(sensors.BMP)
-            airPressureData, airPressureReadSuccess = GetAirPressure(sensors.BMP)
-            cansatPitch, cansatRoll = GetCansatPitchRoll(sensors.MPU)
+            formattedAirTemperatureData = RadioCom.FormatCansatData(airTemperatureData)
+            airPressureData = RadioCom.FormatCansatData(GetAirPressure(sensors.BMP)[0])
+            cansatPitch = RadioCom.FormatCansatData(GetCansatPitchRoll(sensors.MPU)[0])
+            cansatRoll = RadioCom.FormatCansatData(GetCansatPitchRoll(sensors.MPU)[1])
             gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
             airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
-            soilResistance: float = sensors.SoilResistance.MeasureResistance()
-            oxygenPPMData = sensors.MQ135.GetPPM(airTemperatureData, airHumidityData)
-            ozonePPBData = sensors.MQ131.GetPPM(airTemperatureData, airHumidityData)
+            formattedAirHumidityData = RadioCom.FormatCansatData(airHumidityData)
+            soilResistance = sensors.SoilResistance.MeasureResistance()
+            oxygenPPMData = RadioCom.FormatCansatData(sensors.MQ135.GetPPM(airTemperatureData, airHumidityData))
+            ozonePPBData = RadioCom.FormatCansatData(sensors.MQ131.GetPPM(airTemperatureData, airHumidityData))
 
-            components.Radio.Send(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{cansatPitch}:{cansatRoll}:{altitudeData}:{airTemperatureData}:{airPressureData}:{airHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}\n")
+            components.Radio.Send(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{cansatPitch}:{cansatRoll}:{altitudeData}:{formattedAirTemperatureData}:{airPressureData}:{formattedAirHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}\n")
 
-            components.CansatLogger.LogData(missionMode, gpsLatitude, gpsLongitude, cansatPitch, cansatRoll, altitudeData, airTemperatureData, airPressureData, airHumidityData, soilResistance, oxygenPPMData, ozonePPBData)
+            components.CansatLogger.LogData(missionMode, gpsLatitude, gpsLongitude, cansatPitch, cansatRoll,
+                                            altitudeData, formattedAirTemperatureData, airPressureData, formattedAirHumidityData,
+                                            soilResistance, oxygenPPMData, ozonePPBData)
 
-            print(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{cansatPitch}:{cansatRoll}:{altitudeData}:{airTemperatureData}:{airPressureData}:{airHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}")
+            print(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{cansatPitch}:{cansatRoll}:{altitudeData}:{formattedAirTemperatureData}:{airPressureData}:{formattedAirHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}")
 
         # Evaluate main loop tick differences
         currentTick: int = utime.ticks_ms()
@@ -176,5 +181,3 @@ def Init():
 
 
 Init()
-
-
