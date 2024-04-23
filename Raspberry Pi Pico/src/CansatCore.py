@@ -32,6 +32,7 @@ class _components:
 CANSAT_UPDATEHZ: float = 1.0  # Hz
 CANSAT_UPDATETIME: float = 1 / CANSAT_UPDATEHZ  # Seconds
 CANSAT_BOOTTIME: int = 0  # Ms
+CANSAT_DATAPRECISION = 2  # Decimal precision of the data sent (EXCLUDING GPS DATA)
 
 CANSAT_ADC16BIT: float = 2 ** 16 - 1  # 16-bit ADC
 CANSAT_ADC12BIT: float = 2 ** 12 - 1  # 12-bit ADC
