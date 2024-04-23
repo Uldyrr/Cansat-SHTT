@@ -119,7 +119,7 @@ def MainCycle() -> None:
 
             components.CansatLogger.LogData(missionMode, gpsLatitude, gpsLongitude, cansatPitch, cansatRoll, altitudeData, airTemperatureData, airPressureData, airHumidityData, soilResistance, oxygenPPMData, ozonePPBData)
 
-            print("sending")
+            print(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{cansatPitch}:{cansatRoll}:{altitudeData}:{airTemperatureData}:{airPressureData}:{airHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}")
 
         # Evaluate main loop tick differences
         currentTick: int = utime.ticks_ms()
