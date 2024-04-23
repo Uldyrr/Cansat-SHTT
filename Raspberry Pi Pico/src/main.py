@@ -118,13 +118,13 @@ def MainCycle() -> None:
             oxygenPPMData = RadioCom.FormatCansatData(sensors.MQ135.GetPPM(airTemperatureData, airHumidityData))
             ozonePPBData = RadioCom.FormatCansatData(sensors.MQ131.GetPPM(airTemperatureData, airHumidityData))
 
-            components.Radio.Send(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{cansatPitch}:{cansatRoll}:{altitudeData}:{formattedAirTemperatureData}:{airPressureData}:{formattedAirHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}\n")
+            components.Radio.Send(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{formattedAirTemperatureData}:{airPressureData}:{formattedAirHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}\n")
 
             components.CansatLogger.LogData(missionMode, gpsLatitude, gpsLongitude, cansatPitch, cansatRoll,
                                             altitudeData, formattedAirTemperatureData, airPressureData, formattedAirHumidityData,
                                             soilResistance, oxygenPPMData, ozonePPBData)
 
-            print(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{cansatPitch}:{cansatRoll}:{altitudeData}:{formattedAirTemperatureData}:{airPressureData}:{formattedAirHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}")
+            print(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{formattedAirTemperatureData}:{airPressureData}:{formattedAirHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}")
 
         # Evaluate main loop tick differences
         currentTick: int = utime.ticks_ms()
