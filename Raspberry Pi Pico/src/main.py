@@ -96,7 +96,9 @@ def MainCycle() -> None:
     while True:
         utime.sleep(CANSAT_UPDATETIME - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATETIME * 0.33))
 
-        MissionStateUpdate()
+        # MissionStateUpdate()
+
+        missionMode = MISSION_MODES.LAUNCH
 
         # MISSION STATUS: Cansat has been launched, run all systems nominally
         if missionMode != MISSION_MODES.PRELAUNCH:
@@ -116,6 +118,8 @@ def MainCycle() -> None:
             components.Radio.Send(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{cansatPitch}:{cansatRoll}:{altitudeData}:{airTemperatureData}:{airPressureData}:{airHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}\n")
 
             components.CansatLogger.LogData(missionMode, gpsLatitude, gpsLongitude, cansatPitch, cansatRoll, altitudeData, airTemperatureData, airPressureData, airHumidityData, soilResistance, oxygenPPMData, ozonePPBData)
+
+            print("sending")
 
         # Evaluate main loop tick differences
         currentTick: int = utime.ticks_ms()
