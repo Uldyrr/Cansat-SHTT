@@ -110,8 +110,8 @@ def MainCycle() -> None:
             gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
             airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
             soilResistance: float = sensors.SoilResistance.MeasureResistance()
-            oxygenPPMData, oxygenReadSuccess = sensors.MQ135.GetPPM(airTemperatureData, airHumidityData)
-            ozonePPBData, ozoneReadSuccess = sensors.MQ131.GetPPM(airTemperatureData, airHumidityData)
+            oxygenPPMData = sensors.MQ135.GetPPM(airTemperatureData, airHumidityData)
+            ozonePPBData = sensors.MQ131.GetPPM(airTemperatureData, airHumidityData)
 
             components.Radio.Send(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{cansatPitch}:{cansatRoll}:{altitudeData}:{airTemperatureData}:{airPressureData}:{airHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}\n")
 
