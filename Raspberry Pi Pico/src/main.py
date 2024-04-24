@@ -96,9 +96,7 @@ def MainCycle() -> None:
     while True:
         utime.sleep(CANSAT_UPDATETIME - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATETIME * 0.33))
 
-        # MissionStateUpdate()
-
-        missionMode = MISSION_MODES.LAUNCH
+        MissionStateUpdate()
 
         # MISSION STATUS: Cansat has been launched, run all systems nominally
         if missionMode != MISSION_MODES.PRELAUNCH:
