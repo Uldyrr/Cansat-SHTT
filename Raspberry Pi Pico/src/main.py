@@ -128,7 +128,7 @@ def MainCycle() -> None:
                                             formattedAirHumidityData,
                                             soilResistance, oxygenPPMData, ozonePPBData)
 
-            print(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{formattedAirTemperatureData}:{airPressureData}:{airHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}")
+            # print(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{formattedAirTemperatureData}:{airPressureData}:{airHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}")
 
         # Evaluate main loop tick differences
         currentTick: int = utime.ticks_ms()
