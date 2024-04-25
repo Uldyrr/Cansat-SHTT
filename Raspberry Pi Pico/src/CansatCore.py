@@ -52,7 +52,7 @@ INITALIZATION_BLINKTIME: int = int(100 / 2)  # ms, time of one power led blink
 
 # -- Mission Constants
 class MISSION_MODES:
-    PRELAUNCH = 1  # Hibernate mode, all systems will be off
+    PRELAUNCH = 1  # Hibernate mode, all systems will wait for go
     LAUNCH = 2     # Mission mode, all systems will turned on
     LANDED = 3     # Retrival mode, all systems will continue running and an alarm buzzer will toggle
 
