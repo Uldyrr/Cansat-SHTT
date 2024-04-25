@@ -112,7 +112,7 @@ def MainCycle() -> None:
             gpsLatitude, gpsLongitude = GetGPSLatitudeLongitude(components.GPS, components.GPSSerialBus)
             airHumidityData, airHumidityReadSuccess = GetAirHumidity(sensors.DHT)
             formattedAirHumidityData = RadioCom.FormatCansatData(airHumidityData)
-            soilResistance = sensors.SoilResistance.MeasureResistance()
+            soilResistance = RadioCom.FormatCansatData(sensors.SoilResistance.MeasureResistance())
             oxygenPPMData = RadioCom.FormatCansatData(sensors.MQ135.GetPPM(airTemperatureData, airHumidityData))
             ozonePPBData = RadioCom.FormatCansatData(sensors.MQ131.GetPPM(airTemperatureData, airHumidityData))
 
