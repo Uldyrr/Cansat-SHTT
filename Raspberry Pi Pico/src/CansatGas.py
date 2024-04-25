@@ -17,8 +17,8 @@ class GASSENSOR_RZERO:
     """
 
     CO2: float = 112.4269
-    OXYGEN: float = 1.0
-    OZONE: float = 112.4269
+    OXYGEN: float = 209500.0
+    OZONE: float = 0.036
 
 
 # // Calibration constants
@@ -29,8 +29,8 @@ class GASSENSOR_CALIBRATIONGAS:
     """
 
     CO2: float = 411.9
-    OXYGEN: float = 1.0
-    OZONE: float = 411.9
+    OXYGEN: float = 209500.0
+    OZONE: float = 0.045
 
 
 # // PPM calculation constants
