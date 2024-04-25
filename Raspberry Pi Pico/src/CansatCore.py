@@ -57,7 +57,7 @@ class MISSION_MODES:
     LANDED = 3     # Retrival mode, all systems will continue running and an alarm buzzer will toggle
 
 
-MISSION_LAUNCH_DELTATHRESHOLD: float = 0.5  # m
+MISSION_LAUNCH_DELTATHRESHOLD: float = 25   # m
 MISSION_LANDED_DELTATHRESHOLD: float = 1.0  # m
 MISSION_LANDED_TRIGGER: int = 10  # Count before we can consider the cansat landed
 MISSION_LANDED_BLINKS: int = 10  # Count of power led blinks
