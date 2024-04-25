@@ -96,9 +96,11 @@ def MainCycle() -> None:
     while True:
         utime.sleep(CANSAT_UPDATETIME - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATETIME * 0.33))
 
-        # MissionStateUpdate()
+        MissionStateUpdate()
 
-        missionMode = MISSION_MODES.LAUNCH
+        # MISSION STATUS: Cansat is waiting for the correct amount of change in altitude
+        if missionMode == MISSION_MODES.PRELAUNCH:
+            ToggleStatusLed()
 
         # MISSION STATUS: Cansat has been launched, run all systems nominally
         if missionMode != MISSION_MODES.PRELAUNCH:
@@ -183,4 +185,5 @@ def Init():
 
 
 Init()
+
 
