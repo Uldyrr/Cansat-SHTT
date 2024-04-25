@@ -484,7 +484,7 @@ def InitCansatCore(bmp: BMP280 = None, mpu: MPU6050 = None) -> None:
             accelerometerTotal.Z += accelerometerData.Z
 
         CANSAT_CORRECTION_ACCELEROMETER.X = accelerometerTotal.X / INITALIZATION_ACCELEROMETER_MEASUREMENTS
-        CANSAT_CORRECTION_ACCELEROMETER.Y = accelerometerTotal.Y / INITALIZATION_ACCELEROMETER_MEASUREMENTS - 1.0  # Y will be in the direction of gravity
+        CANSAT_CORRECTION_ACCELEROMETER.Y = accelerometerTotal.Y / INITALIZATION_ACCELEROMETER_MEASUREMENTS - 1.0  # The Y axis will be in the direction of gravity
         CANSAT_CORRECTION_ACCELEROMETER.Z = accelerometerTotal.Z / INITALIZATION_ACCELEROMETER_MEASUREMENTS
 
         DebugLog( f"Got accelerometer correction: [{CANSAT_CORRECTION_ACCELEROMETER}] in {utime.ticks_diff(utime.ticks_ms(), t)}ms","CansatCore.py")
