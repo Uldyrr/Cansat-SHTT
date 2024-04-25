@@ -96,7 +96,9 @@ def MainCycle() -> None:
     while True:
         utime.sleep(CANSAT_UPDATETIME - Clamp(tickUpdateOffset * 0.001, 0, CANSAT_UPDATETIME * 0.33))
 
-        MissionStateUpdate()
+        # MissionStateUpdate()
+
+        missionMode = MISSION_MODES.LAUNCH
 
         # MISSION STATUS: Cansat has been launched, run all systems nominally
         if missionMode != MISSION_MODES.PRELAUNCH:
@@ -116,13 +118,19 @@ def MainCycle() -> None:
             oxygenPPMData = RadioCom.FormatCansatData(sensors.MQ135.GetPPM(airTemperatureData, airHumidityData))
             ozonePPBData = RadioCom.FormatCansatData(sensors.MQ131.GetPPM(airTemperatureData, airHumidityData))
 
-            components.Radio.Send(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{formattedAirTemperatureData}:{airPressureData}:{formattedAirHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}\n")
+            components.Radio.Send(
+                f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{formattedAirTemperatureData}:{airPressureData}:{airHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}\n")
 
             components.CansatLogger.LogData(missionMode, gpsLatitude, gpsLongitude, cansatPitch, cansatRoll,
-                                            altitudeData, formattedAirTemperatureData, airPressureData, formattedAirHumidityData,
+                                            altitudeData, formattedAirTemperatureData, airPressureData,
+                                            formattedAirHumidityData,
                                             soilResistance, oxygenPPMData, ozonePPBData)
 
-            print(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{formattedAirTemperatureData}:{airPressureData}:{formattedAirHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}")
+            sensors.DHT.measure()
+
+            print(airHumidityData, airHumidityReadSuccess)
+
+            # print(f"{missionMode}:{gpsLatitude}:{gpsLongitude}:{formattedAirTemperatureData}:{airPressureData}:{airHumidityData}:{soilResistance}:{oxygenPPMData}:{ozonePPBData}")
 
         # Evaluate main loop tick differences
         currentTick: int = utime.ticks_ms()
@@ -179,3 +187,4 @@ def Init():
 
 
 Init()
+
